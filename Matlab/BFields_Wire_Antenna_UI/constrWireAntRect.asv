@@ -1,0 +1,10 @@
+
+function [xS,yS,zS] = constrWireAntRect(h,w,l,N,O,wT)
+    deltaS   = 200;
+    rectSTEP = phi;
+    start    = 0;
+    fin      = N*(2*pi) + rectSTEP/2;
+    cst_xxx = start:helixSTEP:fin;
+
+    
+end

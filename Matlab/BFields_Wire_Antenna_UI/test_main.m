@@ -11,9 +11,12 @@ tic;
 %% Construct Wire Antenna
 % h=10; 
 % ra=0.3; ri=0.3; phi=2; N=4; O=1; wT=0.2546e-3; h=(1.1)*(2*wT*N);
-ra=0.3; ri=0.3; phi=2; N=4; O=1; wT=0.1; h=(1.1)*(2*wT*N);
+ra=0.3; ri=0.3; phi=2; N=2; O=1; wT=0.1; h=(1.1)*(2*wT*N);
 [xS,yS,zS] = constrWireAnt(h,ra,ri,phi,N,O,wT);
-
+%%
+plot3(xS,yS,zS);
+xlabel('x'); ylabel('y'); zlabel('z');
+view(0,90);
 %% Calc B-Fields
 I = 1; Nx = 50; Ny = 50; Nz = 50; Ns = [Nx,Ny,Nz];
 xminb=-(h+ra); yminb=-(h+ra); zminb=-(h+ra);

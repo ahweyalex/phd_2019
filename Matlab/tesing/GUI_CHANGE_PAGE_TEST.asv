@@ -114,7 +114,6 @@ function [] = GUI_CHANGE_PAGE_TEST()
                  'visible','on',...
                  'string',{'phi'});
    %% text edit
-   % ELLIPTICAL
    edx = px+pdx+dd_dx; 
    S.ep_in(1) = uicontrol('style','edit',...
                  'units','pixels',...
@@ -168,11 +167,10 @@ function [] = GUI_CHANGE_PAGE_TEST()
 
     switch h
         case S.tg(1)    %RECTANGULAR
-            set([S.ax,S.dd],{'visible'},{'on'});
-            set([S.ep_in,S.ep_txt,S.dd],{'visible'},{'off'});
+            set([S.ax,S.dd],{'visible'},{'on'})
+            set([S.ep_in,S.ep_txt],{},{'on'})
         case S.tg(2)    % ELLIPTICAL
             set([S.ax],{'visible'},{'off'})
-            set([S.ep_in,S.ep_txt,S.dd],{'visible'},{'on'});
         otherwise       % IMPORT
             set([S.ax],{'visible'},{'off'})
     end
