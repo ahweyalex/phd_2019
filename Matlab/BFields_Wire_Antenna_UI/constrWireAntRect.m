@@ -9,21 +9,29 @@ start=0; fin = N*(2*pi) + helixSTEP/2;
 cst_xxx = start:helixSTEP:fin;
 cstSize = floor((numel(cst_xxx)/4)/N);
 
-x = linspace(-W0/2,W0/2,cstSize)'; xc = W0*ones(1,cstSize)';
-y = linspace(-L0/2,L0/2,cstSize)'; yc = L0*ones(1,cstSize)';
-x0 = [x;xc;flipud(x);-xc];           y0 = [-yc;y;yc;flipud(y)];
+x  = linspace(-W0/2,W0/2,cstSize)';  
+xi = linspace(0,W0/2,floor(cstSize/2))';
+xc = W0/2*ones(1,cstSize)';
+
+y  = linspace(-L0/2,L0/2,cstSize)';  
+yi = L0/2*ones(1,floor(cstSize/2))';
+yc = L0/2*ones(1,cstSize)';
+%%
+% x0 = [x;   xc;        flipud(x);-xc];
+% y0 = [-yc; flipud(y); yc;         y];
+
+x0 = [x;xc;-x;-xc];
+y0 = [-yc;y;yc;-y];
 
 xS0 = repmat(x0,N,1);
 yS0 = repmat(y0,N,1);
-
 zSize = numel(xS0);
 zS0 = linspace(start,fin, zSize)';
 
-%%
 H1=plot3(xS0,yS0,zS0);
 %H=plot(xS0,yS0);
 title('rect wire');
-xlabel('x'); ylabel('y'); 
-%zlabel('z');
-view(0,90)
-%zS0 = ((h*cst_xxx)./(2*pi*N))';
+xlabel('x'); ylabel('y'); zlabel('z');
+xlim([-2 2]); ylim([-7 7]);
+view(90,0)
+grid on;
