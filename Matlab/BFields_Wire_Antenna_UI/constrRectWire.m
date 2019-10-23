@@ -9,8 +9,7 @@ function [xS,yS,zS] = constrRectWire(h,W0,L0,phi,N,O,wT)
 
     x  = linspace(-W0/2,W0/2,cstSize)';  
     xi = linspace(0,W0/2,floor(cstSize/2))';
-    xc = W0/2*ones(1,cstSize)';
-    
+    xc = W0/2*ones(1,cstSize)'; 
     y   = linspace(-L0/2,L0/2,cstSize)';  
     yc  = L0/2*ones(1,cstSize)';
     yic = L0/2*ones(1,hSize)';

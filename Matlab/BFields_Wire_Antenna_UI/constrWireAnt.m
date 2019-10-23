@@ -53,41 +53,65 @@
 % ------------------------------------------------------------------------
 % ------------------------------------------------------------------------
 
-function [xS,yS,zS] = constrWireAnt(h,ra,ri,phi,N,O,wT)
+function [xS0,yS0,zS0,xS1,yS1,zS1] = constrWireAnt(h,ra,ri,phi,Nz,O,wT,N)
     %% Construct Circular Wire Antenna Structure
-        deltaS = 200;
-        helixSTEP = phi*(pi/180);
-        start=0;
-        fin = N*(2*pi) + helixSTEP/2;
-        cst_xxx = start:helixSTEP:fin;
-        numel(cst_xxx)
-        if(O==1) % clock wise
-            xS0 = ra.*sin(cst_xxx);
-            yS0 = ri.*cos(cst_xxx);
-            zS0 = (h*cst_xxx)./(2*pi*N);
-        else % counter clock wise
-            xS0 = -ra.*sin(cst_xxx);
-            yS0 = ri.*cos(cst_xxx);
-            zS0 = (h*cst_xxx)./(2*pi*N);
-        end
-        xS0=xS0'; yS0=yS0'; zS0=zS0';
-        %numel(xS0)
-        % Adding "thickens" to wire structure (along current path)
-        S0 = [xS0,      yS0,      zS0+wT/2;
-              xS0,      yS0,      zS0-wT/2;
-              xS0+wT/2, yS0+wT/2, zS0;
-              xS0-wT/2, yS0-wT/2, zS0;
-              % new addtions
-              xS0-wT/2, yS0-wT/2, zS0+wT/4;
-              xS0-wT/2, yS0-wT/2, zS0-wT/4;
-              xS0+wT/2, yS0+wT/2, zS0+wT/4;
-              xS0+wT/2, yS0+wT/2, zS0-wT/4;
-              % new(er) additions
-              xS0-wT/4, yS0-wT/4, zS0+wT/2;
-              xS0-wT/4, yS0-wT/4, zS0-wT/2;
-              xS0+wT/4, yS0+wT/4, zS0+wT/2;
-              xS0+wT/4, yS0+wT/4, zS0-wT/2;
-              ];
-        xS = S0(:,1); yS = S0(:,2); zS = S0(:,3);
-        
+    helixSTEP = phi*(pi/180);
+    start=0; fin = Nz*(2*pi) + helixSTEP/2;
+    cst_xxx = start:helixSTEP:fin;
+    
+    if(O==1) % clock wise
+        xS0 = (ra+ wT*N).*sin(cst_xxx);
+        yS0 = (ri+ wT*N).*cos(cst_xxx);
+        zS0 = (h*cst_xxx)./(2*pi*Nz);
+
+        xS1 = -(ra+ wT*N+1).*sin(cst_xxx);
+        yS1 = (ri+ wT*N+1).*cos(cst_xxx);
+        zS1 = (h*cst_xxx)./(2*pi*Nz);
+    else % counter clock wise
+        xS0 = -(ra+ wT*N).*sin(cst_xxx);
+        yS0 = (ri+ wT*N).*cos(cst_xxx);
+        zS0 = (h*cst_xxx)./(2*pi*Nz);
+
+        xS1 = (ra + wT*N+1).*sin(cst_xxx);
+        yS1 = (ri + wT*N+1).*cos(cst_xxx);
+        zS1 = (h*cst_xxx)./(2*pi*Nz);
+    end
+    xS0=xS0'; yS0=yS0'; zS0=zS0';
+    xS1=xS1'; yS1=yS1'; zS1=zS1';
+    
+    % Adding "thickens" to wire structure (along current path)
+    S0 = [xS0,      yS0,      zS0+wT/2;
+          xS0,      yS0,      zS0-wT/2;
+          xS0+wT/2, yS0+wT/2, zS0;
+          xS0-wT/2, yS0-wT/2, zS0;
+          % new addtions
+          xS0-wT/2, yS0-wT/2, zS0+wT/4;
+          xS0-wT/2, yS0-wT/2, zS0-wT/4;
+          xS0+wT/2, yS0+wT/2, zS0+wT/4;
+          xS0+wT/2, yS0+wT/2, zS0-wT/4;
+          % new(er) additions
+          xS0-wT/4, yS0-wT/4, zS0+wT/2;
+          xS0-wT/4, yS0-wT/4, zS0-wT/2;
+          xS0+wT/4, yS0+wT/4, zS0+wT/2;
+          xS0+wT/4, yS0+wT/4, zS0-wT/2;
+          ];
+
+    S1 = [xS1,      yS1,      zS1+wT/2;
+          xS1,      yS1,      zS1-wT/2;
+          xS1+wT/2, yS1+wT/2, zS1;
+          xS1-wT/2, yS1-wT/2, zS1;
+          % new addtions
+          xS1-wT/2, yS1-wT/2, zS1+wT/4;
+          xS1-wT/2, yS1-wT/2, zS1-wT/4;
+          xS1+wT/2, yS1+wT/2, zS1+wT/4;
+          xS1+wT/2, yS1+wT/2, zS1-wT/4;
+          % new(er) additions
+          xS1-wT/4, yS1-wT/4, zS1+wT/2;
+          xS1-wT/4, yS1-wT/4, zS1-wT/2;
+          xS1+wT/4, yS1+wT/4, zS1+wT/2;
+          xS1+wT/4, yS1+wT/4, zS1-wT/2;
+          ];
+
+    %xS = S0(:,1); yS = S0(:,2); zS = S0(:,3);
+    
 end % end of constrWireAnt_10_25_2018
