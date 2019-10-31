@@ -89,20 +89,20 @@ function [xS0,yS0,zS0] = constrWireAnt(h,ra,ri,phi,Nz,O,wT,N)
     end % END: O
     xS0=xS0'; yS0=yS0'; zS0=zS0';
     % Adding "thickens" to wire structure (along current path)
-    S0 = [xS0,      yS0,      zS0+wT/2;
-          xS0,      yS0,      zS0-wT/2;
-          xS0+wT/2, yS0+wT/2, zS0;
-          xS0-wT/2, yS0-wT/2, zS0;
+    S0 = [xS0,      yS0,      zS0+wT/2;     %+z
+          xS0,      yS0,      zS0-wT/2;     %-z
+          xS0+wT/2, yS0+wT/2, zS0;          %+xy
+          xS0-wT/2, yS0-wT/2, zS0;          %-xy
           % new addtions
-          xS0-wT/2, yS0-wT/2, zS0+wT/4;
-          xS0-wT/2, yS0-wT/2, zS0-wT/4;
-          xS0+wT/2, yS0+wT/2, zS0+wT/4;
-          xS0+wT/2, yS0+wT/2, zS0-wT/4;
-          % new(er) additions
-          xS0-wT/4, yS0-wT/4, zS0+wT/2;
-          xS0-wT/4, yS0-wT/4, zS0-wT/2;
-          xS0+wT/4, yS0+wT/4, zS0+wT/2;
-          xS0+wT/4, yS0+wT/4, zS0-wT/2;
+          xS0-wT/2, yS0-wT/2, zS0+wT/4;     %-(xy)/2,+z
+          xS0-wT/2, yS0-wT/2, zS0-wT/4;     %-(xy)/2,-z
+          xS0+wT/2, yS0+wT/2, zS0+wT/4;     %+(xy)/2,+z
+          xS0+wT/2, yS0+wT/2, zS0-wT/4;     %+(xy)/2,-z
+          % new-er addtions
+          xS0-wT/4, yS0-wT/4, zS0+wT/2;     %-(xy)/4,+z
+          xS0-wT/4, yS0-wT/4, zS0-wT/2;     %-(xy)/4,-z
+          xS0+wT/4, yS0+wT/4, zS0+wT/2;     %+(xy)/4,+z
+          xS0+wT/4, yS0+wT/4, zS0-wT/2;     %+(xy)/4,-z
           ];
     xS = S0(:,1); yS = S0(:,2); zS = S0(:,3);
     

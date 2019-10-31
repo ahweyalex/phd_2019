@@ -1,4 +1,4 @@
-function [xS,yS,zS] = constrRectWire(h,W0,L0,phi,N,O,wT)
+function [xS,yS,zS] = constrRectWire(h,W0,L0,phi,N,O,wT,Nz)
 %% Construct Rect Wire Antenna Structure
     deltaS = 200;
     helixSTEP = phi*(pi/180);
@@ -14,16 +14,17 @@ function [xS,yS,zS] = constrRectWire(h,W0,L0,phi,N,O,wT)
     yc  = L0/2*ones(1,cstSize)';
     yic = L0/2*ones(1,hSize)';
     
+    x0 = [];
+    y0 = [];
     if(O==1) %clock wise
         x0 = [xc; -x; -xc;   x];
         y0 = [ y; yc;  -y; -yc];
         xS0 = repmat(x0,N,1);   xS0(end-hSize:end)=[]; 
         yS0 = repmat(y0,N,1);   yS0(end-hSize:end)=[];
-        xS0 = [xi;xS0];         
-        yS0 = [-yic;yS0]; 
+        xS0 = [xi;xS0];         yS0 = [-yic;yS0]; 
         zSize = numel(xS0);
         zp = linspace(start,fin, zSize)';
-        zS0 = (h*zp)./(2*pi*N);s
+        zS0 = (h*zp)./(2*pi*N);
     else %counter clock wise
         x0 = [-xc; x; xc; -x];
         y0 = [ y; yc; -y; -yc];
@@ -35,6 +36,8 @@ function [xS,yS,zS] = constrRectWire(h,W0,L0,phi,N,O,wT)
         zS0 = (h*zp)./(2*pi*N);
     end 
     
+    
+    %
     S0 = [xS0,      yS0,      zS0+wT/2;
           xS0,      yS0,      zS0-wT/2;
           xS0+wT/2, yS0+wT/2, zS0;
@@ -50,6 +53,7 @@ function [xS,yS,zS] = constrRectWire(h,W0,L0,phi,N,O,wT)
           xS0+wT/4, yS0+wT/4, zS0+wT/2;
           xS0+wT/4, yS0+wT/4, zS0-wT/2;
         ];
+    %}
     xS = S0(:,1); yS = S0(:,2); zS = S0(:,3);
     
 end

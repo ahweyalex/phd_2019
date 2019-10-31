@@ -206,7 +206,7 @@ function [] = GUI_CHANGE_PAGE_TEST()
             set([S.ep_in(2),S.ep_in(3),S.ep_txt(2),S.ep_txt(3),S.dd],{'visible'},{'off'});
             set([S.ep_in(8),S.ep_in(9),S.ep_txt(8),S.ep_txt(9),S.dd],{'visible'},{'on'});
         case S.tg(2)    % ELLIPTICAL
-            set([S.ax],{'visible'},{'off'});
+            set([S.ax],{'visible'},{'on'});
             set([S.ep_in(2),S.ep_in(3),S.ep_txt(2),S.ep_txt(3),S.dd],{'visible'},{'on'});
             set([S.ep_in(8),S.ep_in(9),S.ep_txt(8),S.ep_txt(9)],{'visible'},{'off'});
         otherwise       % IMPORT
