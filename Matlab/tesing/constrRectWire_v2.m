@@ -1,6 +1,6 @@
 clear all; close all; clc;
 
-W0=0.3; L0=0.3; phi=2; N=1; O=1; wT=0.1; h=(1.1)*(2*wT*N); Nz=1;    
+W0=0.3; L0=0.3; phi=2; N=4; O=0; wT=0.1; h=(1.1)*(2*wT*N); Nz=1;    
 
     deltaS = 200;
     helixSTEP = phi*(pi/180);
@@ -25,36 +25,18 @@ W0=0.3; L0=0.3; phi=2; N=1; O=1; wT=0.1; h=(1.1)*(2*wT*N); Nz=1;
     t4  = (wT/4)*nx;
     
     xS=[]; yS=[]; zS=[];
-    %if(O==1) %clock wise
-    hold all;
-        %
-        x0 = [-xc;  xn;xp; xc; flipud(xp);flipud(xn);];
-        y0 = [yn;yp;   yc; flipud(yp); flipud(yn); -yc];  
-        xS0 = repmat(x0,N,1);   xS0(end-hSize:end)=[]; 
-        yS0 = repmat(y0,N,1);   yS0(end-hSize:end)=[];
-        xS0 = [flipud(xn);xS0]; yS0 = [-yc(1:numel(xn));yS0]; 
-        zSize = numel(xS0);
-        zp = linspace(start,fin, zSize)';
-        zS0 = (h*zp)./(2*pi*N);   
-
-        xS=[xS;xS0]; yS=[yS;yS0]; zS=[zS;zS0]; 
-        plot3(xS,yS,zS,'r-','LineWidth',3);
-        %}
-        %
+    if(O==1) %clock wise
         % +z
         x0 = [-xc;  xn;xp; xc; flipud(xp);flipud(xn);];
-        y0 = [yn;yp;   yc; flipud(yp); flipud(yn); -yc];  
+        y0 = [yn;yp;   yc; flipud(yp); flipud(yn); -yc];          
         xS0 = repmat(x0,N,1);   xS0(end-hSize:end)=[]; 
         yS0 = repmat(y0,N,1);   yS0(end-hSize:end)=[];
         xS0 = [flipud(xn);xS0]; yS0 = [-yc(1:numel(xn));yS0]; 
         zSize = numel(xS0);
         zp = linspace(start,fin, zSize)';
-        zS0 = (h*zp)./(2*pi*N);  
-        
-        xS1=[xS;xS0]; yS1=[yS;yS0]; zS1=[zS;zS0];
-        zS1 = zS1+t2;
-        plot3(xS1,yS1,zS1,'bo');
-        
+        zS0 = (h*zp)./(2*pi*N);   zS0 = zS0+t2;
+        xS=[xS;xS0]; yS=[yS;yS0]; zS=[zS;zS0];       
+        %xS0=[]; yS0=[]; zS0=[];  %clear out xS0,yS0,zS0
         % -z
         x0 = [-xc;  xn;xp; xc; flipud(xp);flipud(xn);];
         y0 = [yn;yp;   yc; flipud(yp); flipud(yn); -yc];    
@@ -63,22 +45,18 @@ W0=0.3; L0=0.3; phi=2; N=1; O=1; wT=0.1; h=(1.1)*(2*wT*N); Nz=1;
         xS0 = [flipud(xn);xS0]; yS0 = [-yc(1:numel(xn));yS0]; 
         zSize = numel(xS0);
         zp = linspace(start,fin, zSize)';
-        zS0 = (h*zp)./(2*pi*N);
-        xS2=[xS;xS0]; yS2=[yS;yS0]; zS2=[zS;zS0];  
-        zS2 = zS2-t2;
-        plot3(xS2,yS2,zS2,'g-');
-        %}
-        %
+        zS0 = (h*zp)./(2*pi*N);   zS0 = zS0-t2;
+        xS=[xS;xS0]; yS=[yS;yS0]; zS=[zS;zS0]; 
+        
         % +xy  
+        % set up x&y segments 
         xn = linspace(-(W0/2) -t2,0,hSize)'; xn(end)=[];
         xp = linspace(0,(W0/2)+t2,hSize)';
         xc = ((W0/2)+t2)*ones(1,2*hSize-1)'; 
-        
         yn  = linspace(-(L0/2)-t2,0,hSize)'; yn(end)=[];
         yp  = linspace(0,(L0/2)+t2,hSize)';
-        yc  = ((L0/2) + t2)*ones(1,2*hSize-1)';
-        yic = ((L0/2) + t2)*ones(1,hSize)';
-        
+        yc  = ((L0/2) + t2)*ones(1,2*hSize-1)';        
+        % set points that will be repmat
         x0 = [-xc;  xn;xp; xc; flipud(xp);flipud(xn);];
         y0 = [yn;yp;   yc; flipud(yp); flipud(yn); -yc];    
         xS0 = repmat(x0,N,1);   xS0(end-hSize:end)=[]; 
@@ -87,41 +65,95 @@ W0=0.3; L0=0.3; phi=2; N=1; O=1; wT=0.1; h=(1.1)*(2*wT*N); Nz=1;
         zSize = numel(xS0);
         zp = linspace(start,fin, zSize)';
         zS0 = (h*zp)./(2*pi*N);
-        xS3=[xS;xS0]; yS3=[yS;yS0]; zS3=[zS;zS0];  
+        xS=[xS;xS0]; yS=[yS;yS0]; zS=[zS;zS0];  
         
-        plot3(xS3,yS3,zS3,'b--');
-
         % -xy  
+        % set up x&y segments 
         xn = linspace(-(W0/2) +t2,0,hSize)'; xn(end)=[];
         xp = linspace(0,(W0/2)-t2,hSize)';
         xc = ((W0/2)-t2)*ones(1,2*hSize-1)'; 
-        
         yn  = linspace(-(L0/2)+t2,0,hSize)'; yn(end)=[];
         yp  = linspace(0,(L0/2)-t2,hSize)';
         yc  = ((L0/2) - t2)*ones(1,2*hSize-1)';
         yic = ((L0/2) - t2)*ones(1,hSize)';
-        
+        % set points that will be repmat
         x0 = [-xc;  xn;xp; xc; flipud(xp);flipud(xn);];
-        y0 = [yn;yp;   yc; flipud(yp); flipud(yn); -yc];    
+        y0 = [yn;yp;   yc; flipud(yp); flipud(yn); -yc]; 
+        
         xS0 = repmat(x0,N,1);   xS0(end-hSize:end)=[]; 
         yS0 = repmat(y0,N,1);   yS0(end-hSize:end)=[];
         xS0 = [flipud(xn);xS0]; yS0 = [-yc(1:numel(xn));yS0]; 
         zSize = numel(xS0);
         zp = linspace(start,fin, zSize)';
         zS0 = (h*zp)./(2*pi*N);
-        xS3=[xS;xS0]; yS3=[yS;yS0]; zS3=[zS;zS0];  
+        xS=[xS;xS0]; yS=[yS;yS0]; zS=[zS;zS0];   
+    else %counter clock wise
         
-        plot3(xS3,yS3,zS3,'mo');
-        
+        % +z
+        x0 = flipud([-xc;  xn;xp; xc; flipud(xp);flipud(xn);]);
+        y0 = flipud([yn;yp;   yc; flipud(yp); flipud(yn); -yc]);  
+        xS0 = repmat(x0,N,1);   xS0(1:hSize)=[]; 
+        yS0 = repmat(y0,N,1);   yS0(1:hSize)=[];
+        xS0 = [xS0;xn]; yS0 = [yS0;-yc(1:numel(xn))]; 
+        zSize = numel(xS0);
+        zp = linspace(start,fin, zSize)';
+        zS0 = (h*zp)./(2*pi*N);   zS0 = zS0+t2;
         xS=[xS;xS0]; yS=[yS;yS0]; zS=[zS;zS0];  
-        
-        
-    %else %counter clock wise
-
-   % end     
+        % -z
+        x0 = flipud([-xc;  xn;xp; xc; flipud(xp);flipud(xn);]);
+        y0 = flipud([yn;yp;   yc; flipud(yp); flipud(yn); -yc]);  
+        xS0 = repmat(x0,N,1);   xS0(1:hSize)=[]; 
+        yS0 = repmat(y0,N,1);   yS0(1:hSize)=[];
+        xS0 = [xS0;xn]; yS0 = [yS0;-yc(1:numel(xn))]; 
+        zSize = numel(xS0);
+        zp = linspace(start,fin, zSize)';
+        zS0 = (h*zp)./(2*pi*N);   zS0 = zS0-t2;
+        xS=[xS;xS0]; yS=[yS;yS0]; zS=[zS;zS0];  
+        %}
+        % +xy
+        xn = linspace(-(W0/2) -t2,0,hSize)';
+        xp = linspace(0,(W0/2)+t2,hSize)';
+        xc = ((W0/2)+t2)*ones(1,2*hSize-1)'; 
+        yn = linspace(-(L0/2)-t2,0,hSize)'; 
+        yp = linspace(0,(L0/2)+t2,hSize)';
+        yc = ((L0/2) + t2)*ones(1,2*hSize-1)';        
+        % set points that will be repmat
+        x0 = flipud([-xc;  xn;xp; xc; flipud(xp);flipud(xn);]);
+        y0 = flipud([yn;yp;   yc; flipud(yp); flipud(yn); -yc]); 
+        xS0 = repmat(x0,N,1);   xS0(1:hSize)=[]; 
+        yS0 = repmat(y0,N,1);   yS0(1:hSize)=[];
+        xS0 = [xS0;xn]; yS0 = [yS0;-yc(1:numel(xn))]; 
+        zSize = numel(xS0);
+        zp = linspace(start,fin, zSize)';
+        zS0 = (h*zp)./(2*pi*N);   zS0 = zS0;
+        xS=[xS;xS0]; yS=[yS;yS0]; zS=[zS;zS0]; 
+        %}
+        % -xy
+        xn = linspace(-(W0/2) +t2,0,hSize)';
+        xp = linspace(0,(W0/2)-t2,hSize)';
+        xc = ((W0/2)-t2)*ones(1,2*hSize-1)'; 
+        yn = linspace(-(L0/2)+t2,0,hSize)'; 
+        yp = linspace(0,(L0/2)-t2,hSize)';
+        yc = ((L0/2) - t2)*ones(1,2*hSize-1)';        
+        % set points that will be repmat
+        x0 = flipud([-xc;  xn;xp; xc; flipud(xp);flipud(xn);]);
+        y0 = flipud([yn;yp;   yc; flipud(yp); flipud(yn); -yc]); 
+        xS0 = repmat(x0,N,1);   xS0(1:hSize)=[]; 
+        yS0 = repmat(y0,N,1);   yS0(1:hSize)=[];
+        xS0 = [xS0;xn]; yS0 = [yS0;-yc(1:numel(xn))]; 
+        zSize = numel(xS0);
+        zp = linspace(start,fin, zSize)';
+        zS0 = (h*zp)./(2*pi*N);   zS0 = zS0;
+        xS=[xS;xS0]; yS=[yS;yS0]; zS=[zS;zS0]; 
+        %}
+    end     
     %
-    S0 = [xS0;yS0;zS0+wT/2];
+    % S0 = [xS0;yS0;zS0+wT/2];
     %xS = S0(:,1); yS = S0(:,2); zS = S0(:,3);
+    
+    plot3(xS,yS,zS,'o');
+    xlabel('x');ylabel('y');zlabel('z');
+    view(45,45); grid on;
     
 %% 
 
