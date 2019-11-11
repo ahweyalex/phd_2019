@@ -1,6 +1,6 @@
 clear all; close all; clc;
 
-W0=0.3; L0=0.3; phi=2; N=4; O=0; wT=0.1; h=(1.1)*(2*wT*N); Nz=1;    
+W0=0.3; L0=0.3; phi=2; N=4; O=1; wT=0.1; h=(1.1)*(2*wT*N); Nxy=2;    
 
     deltaS = 200;
     helixSTEP = phi*(pi/180);
@@ -8,85 +8,86 @@ W0=0.3; L0=0.3; phi=2; N=4; O=0; wT=0.1; h=(1.1)*(2*wT*N); Nz=1;
     cst_xxx = start:helixSTEP:fin;
     cstSize = floor((numel(cst_xxx)/4)/N);
     hSize   = floor(cstSize/2);
-
-    %x  = linspace(-W0/2,W0/2,cstSize)';  
-    xn = linspace(-W0/2,0,hSize)'; xn(end)=[];
-    xp = linspace(0,W0/2,hSize)';
-    xc = (W0/2)*ones(1,2*hSize-1)'; 
-   
-    % y   = linspace(-L0/2,L0/2,cstSize)';  
-    yn  = linspace(-L0/2,0,hSize)'; yn(end)=[];
-    yp  = linspace(0,L0/2,hSize)';
-    yc  = (L0/2)*ones(1,2*hSize-1)';
-    yic = (L0/2)*ones(1,hSize)';
-    
-    nx=1;
-    t2  = (wT/2)*nx;
-    t4  = (wT/4)*nx;
-    
     xS=[]; yS=[]; zS=[];
+    nx=1;
+    t2=(wT/2)*nx;
     if(O==1) %clock wise
-        % +z
-        x0 = [-xc;  xn;xp; xc; flipud(xp);flipud(xn);];
-        y0 = [yn;yp;   yc; flipud(yp); flipud(yn); -yc];          
-        xS0 = repmat(x0,N,1);   xS0(end-hSize:end)=[]; 
-        yS0 = repmat(y0,N,1);   yS0(end-hSize:end)=[];
-        xS0 = [flipud(xn);xS0]; yS0 = [-yc(1:numel(xn));yS0]; 
-        zSize = numel(xS0);
-        zp = linspace(start,fin, zSize)';
-        zS0 = (h*zp)./(2*pi*N);   zS0 = zS0+t2;
-        xS=[xS;xS0]; yS=[yS;yS0]; zS=[zS;zS0];       
-        %xS0=[]; yS0=[]; zS0=[];  %clear out xS0,yS0,zS0
-        % -z
-        x0 = [-xc;  xn;xp; xc; flipud(xp);flipud(xn);];
-        y0 = [yn;yp;   yc; flipud(yp); flipud(yn); -yc];    
-        xS0 = repmat(x0,N,1);   xS0(end-hSize:end)=[]; 
-        yS0 = repmat(y0,N,1);   yS0(end-hSize:end)=[];
-        xS0 = [flipud(xn);xS0]; yS0 = [-yc(1:numel(xn));yS0]; 
-        zSize = numel(xS0);
-        zp = linspace(start,fin, zSize)';
-        zS0 = (h*zp)./(2*pi*N);   zS0 = zS0-t2;
-        xS=[xS;xS0]; yS=[yS;yS0]; zS=[zS;zS0]; 
-        
-        % +xy  
-        % set up x&y segments 
-        xn = linspace(-(W0/2) -t2,0,hSize)'; xn(end)=[];
-        xp = linspace(0,(W0/2)+t2,hSize)';
-        xc = ((W0/2)+t2)*ones(1,2*hSize-1)'; 
-        yn  = linspace(-(L0/2)-t2,0,hSize)'; yn(end)=[];
-        yp  = linspace(0,(L0/2)+t2,hSize)';
-        yc  = ((L0/2) + t2)*ones(1,2*hSize-1)';        
-        % set points that will be repmat
-        x0 = [-xc;  xn;xp; xc; flipud(xp);flipud(xn);];
-        y0 = [yn;yp;   yc; flipud(yp); flipud(yn); -yc];    
-        xS0 = repmat(x0,N,1);   xS0(end-hSize:end)=[]; 
-        yS0 = repmat(y0,N,1);   yS0(end-hSize:end)=[];
-        xS0 = [flipud(xn);xS0]; yS0 = [-yc(1:numel(xn));yS0]; 
-        zSize = numel(xS0);
-        zp = linspace(start,fin, zSize)';
-        zS0 = (h*zp)./(2*pi*N);
-        xS=[xS;xS0]; yS=[yS;yS0]; zS=[zS;zS0];  
-        
-        % -xy  
-        % set up x&y segments 
-        xn = linspace(-(W0/2) +t2,0,hSize)'; xn(end)=[];
-        xp = linspace(0,(W0/2)-t2,hSize)';
-        xc = ((W0/2)-t2)*ones(1,2*hSize-1)'; 
-        yn  = linspace(-(L0/2)+t2,0,hSize)'; yn(end)=[];
-        yp  = linspace(0,(L0/2)-t2,hSize)';
-        yc  = ((L0/2) - t2)*ones(1,2*hSize-1)';
-        yic = ((L0/2) - t2)*ones(1,hSize)';
-        % set points that will be repmat
-        x0 = [-xc;  xn;xp; xc; flipud(xp);flipud(xn);];
-        y0 = [yn;yp;   yc; flipud(yp); flipud(yn); -yc]; 
-        
-        xS0 = repmat(x0,N,1);   xS0(end-hSize:end)=[]; 
-        yS0 = repmat(y0,N,1);   yS0(end-hSize:end)=[];
-        xS0 = [flipud(xn);xS0]; yS0 = [-yc(1:numel(xn));yS0]; 
-        zSize = numel(xS0);
-        zp = linspace(start,fin, zSize)';
-        zS0 = (h*zp)./(2*pi*N);
-        xS=[xS;xS0]; yS=[yS;yS0]; zS=[zS;zS0];   
+        for nx=1:Nxy
+            % +z
+            %x  = linspace(-W0/2,W0/2,cstSize)';  
+            xn = linspace((-W0/2)+t2,0,hSize)'; xn(end)=[];
+            xp = linspace(0,(W0/2)+t2,hSize)';
+            xc = (W0/2)*ones(1,2*hSize-1)';    
+            % y   = linspace(-L0/2,L0/2,cstSize)';  
+            yn  = linspace(-L0/2,0,hSize)'; yn(end)=[];
+            yp  = linspace(0,L0/2,hSize)';
+            yc  = (L0/2)*ones(1,2*hSize-1)';
+            yic = (L0/2)*ones(1,hSize)';
+
+            x0 = [-xc;  xn;xp; xc; flipud(xp);flipud(xn);];
+            y0 = [yn;yp;   yc; flipud(yp); flipud(yn); -yc];          
+            xS0 = repmat(x0,N,1);   xS0(end-hSize:end)=[]; 
+            yS0 = repmat(y0,N,1);   yS0(end-hSize:end)=[];
+            xS0 = [flipud(xn);xS0]; yS0 = [-yc(1:numel(xn));yS0]; 
+            zSize = numel(xS0);
+            zp = linspace(start,fin, zSize)';
+            zS0 = (h*zp)./(2*pi*N);   zS0 = zS0+t2;
+            xS=[xS;xS0]; yS=[yS;yS0]; zS=[zS;zS0];  
+            
+            %xS0=[]; yS0=[]; zS0=[];  %clear out xS0,yS0,zS0
+            %{
+            % -z
+            x0 = [-xc;  xn;xp; xc; flipud(xp);flipud(xn);];
+            y0 = [yn;yp;   yc; flipud(yp); flipud(yn); -yc];    
+            xS0 = repmat(x0,N,1);   xS0(end-hSize:end)=[]; 
+            yS0 = repmat(y0,N,1);   yS0(end-hSize:end)=[];
+            xS0 = [flipud(xn);xS0]; yS0 = [-yc(1:numel(xn));yS0]; 
+            zSize = numel(xS0);
+            zp = linspace(start,fin, zSize)';
+            zS0 = (h*zp)./(2*pi*N);   zS0 = zS0-t2;
+            xS=[xS;xS0]; yS=[yS;yS0]; zS=[zS;zS0]; 
+            
+            % +xy  
+            % set up x&y segments 
+            xn = linspace(-(W0/2) -t2,0,hSize)'; xn(end)=[];
+            xp = linspace(0,(W0/2)+t2,hSize)';
+            xc = ((W0/2)+t2)*ones(1,2*hSize-1)'; 
+            yn  = linspace(-(L0/2)-t2,0,hSize)'; yn(end)=[];
+            yp  = linspace(0,(L0/2)+t2,hSize)';
+            yc  = ((L0/2) + t2)*ones(1,2*hSize-1)';        
+            % set points that will be repmat
+            x0 = [-xc;  xn;xp; xc; flipud(xp);flipud(xn);];
+            y0 = [yn;yp;   yc; flipud(yp); flipud(yn); -yc];    
+            xS0 = repmat(x0,N,1);   xS0(end-hSize:end)=[]; 
+            yS0 = repmat(y0,N,1);   yS0(end-hSize:end)=[];
+            xS0 = [flipud(xn);xS0]; yS0 = [-yc(1:numel(xn));yS0]; 
+            zSize = numel(xS0);
+            zp = linspace(start,fin, zSize)';
+            zS0 = (h*zp)./(2*pi*N);
+            xS=[xS;xS0]; yS=[yS;yS0]; zS=[zS;zS0];  
+            
+            % -xy  
+            % set up x&y segments 
+            xn = linspace(-(W0/2) +t2,0,hSize)'; xn(end)=[];
+            xp = linspace(0,(W0/2)-t2,hSize)';
+            xc = ((W0/2)-t2)*ones(1,2*hSize-1)'; 
+            yn  = linspace(-(L0/2)+t2,0,hSize)'; yn(end)=[];
+            yp  = linspace(0,(L0/2)-t2,hSize)';
+            yc  = ((L0/2) - t2)*ones(1,2*hSize-1)';
+            yic = ((L0/2) - t2)*ones(1,hSize)';
+            % set points that will be repmat
+            x0 = [-xc;  xn;xp; xc; flipud(xp);flipud(xn);];
+            y0 = [yn;yp;   yc; flipud(yp); flipud(yn); -yc]; 
+
+            xS0 = repmat(x0,N,1);   xS0(end-hSize:end)=[]; 
+            yS0 = repmat(y0,N,1);   yS0(end-hSize:end)=[];
+            xS0 = [flipud(xn);xS0]; yS0 = [-yc(1:numel(xn));yS0]; 
+            zSize = numel(xS0);
+            zp = linspace(start,fin, zSize)';
+            zS0 = (h*zp)./(2*pi*N);
+            xS=[xS;xS0]; yS=[yS;yS0]; zS=[zS;zS0];   
+            %}
+        end
     else %counter clock wise
         
         % +z
