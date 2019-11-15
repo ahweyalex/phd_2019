@@ -1,59 +1,179 @@
-function [xS,yS,zS] = constrRectWire(h,W0,L0,phi,N,O,wT,Nz)
-%% Construct Rect Wire Antenna Structure
+function [xS,yS,zS] = constrRectWire(h,W0,L0,phi,N,O,wT,Nxy)
     deltaS = 200;
     helixSTEP = phi*(pi/180);
     start=0; fin = N*(2*pi) + helixSTEP/2;
     cst_xxx = start:helixSTEP:fin;
     cstSize = floor((numel(cst_xxx)/4)/N);
     hSize   = floor(cstSize/2);
-
-    x  = linspace(-W0/2,W0/2,cstSize)';  
-    xi = linspace(0,W0/2,floor(cstSize/2))';
-    xc = W0/2*ones(1,cstSize)'; 
-    y   = linspace(-L0/2,L0/2,cstSize)';  
-    yc  = L0/2*ones(1,cstSize)';
-    yic = L0/2*ones(1,hSize)';
-    
-    x0 = [];
-    y0 = [];
+    xS=[]; yS=[]; zS=[];
+    %nx=1;
     if(O==1) %clock wise
-        x0 = [xc; -x; -xc;   x];
-        y0 = [ y; yc;  -y; -yc];
-        xS0 = repmat(x0,N,1);   xS0(end-hSize:end)=[]; 
-        yS0 = repmat(y0,N,1);   yS0(end-hSize:end)=[];
-        xS0 = [xi;xS0];         yS0 = [-yic;yS0]; 
-        zSize = numel(xS0);
-        zp = linspace(start,fin, zSize)';
-        zS0 = (h*zp)./(2*pi*N);
-    else %counter clock wise
-        x0 = [-xc; x; xc; -x];
-        y0 = [ y; yc; -y; -yc];
-        xS0 = repmat(x0,N,1);   xS0(end-hSize:end)=[]; 
-        yS0 = repmat(y0,N,1);   yS0(end-hSize:end)=[];
-        xS0 = [-xi;xS0];        yS0 = [-yic;yS0];
-        zSize = numel(xS0);
-        zp = linspace(start,fin, zSize)';
-        zS0 = (h*zp)./(2*pi*N);
-    end 
-    
-    
-    %
-    S0 = [xS0,      yS0,      zS0+wT/2;
-          xS0,      yS0,      zS0-wT/2;
-          xS0+wT/2, yS0+wT/2, zS0;
-          xS0-wT/2, yS0-wT/2, zS0;
-          % new addtions
-          xS0-wT/2, yS0-wT/2, zS0+wT/4;
-          xS0-wT/2, yS0-wT/2, zS0-wT/4;
-          xS0+wT/2, yS0+wT/2, zS0+wT/4;
-          xS0+wT/2, yS0+wT/2, zS0-wT/4;
-          % new(er) additions
-          xS0-wT/4, yS0-wT/4, zS0+wT/2;
-          xS0-wT/4, yS0-wT/4, zS0-wT/2;
-          xS0+wT/4, yS0+wT/4, zS0+wT/2;
-          xS0+wT/4, yS0+wT/4, zS0-wT/2;
-        ];
-    %}
-    xS = S0(:,1); yS = S0(:,2); zS = S0(:,3);
+        for nx=1:Nxy
+            txy =(wT/2); 
+            t0 = (3/2)*(wT)*(nx-1);
+            %
+            % +z
+            %x  = linspace(-W0/2,W0/2,cstSize)';  
+            xn = linspace((-W0/2)-(t0),0,hSize)'; xn(end)=[];
+            xp = linspace(0,(W0/2)+(t0),hSize)';
+            xc = ((W0/2)+(t0))*ones(1,2*hSize-1)';    
+            % y   = linspace(-L0/2,L0/2,cstSize)';  
+            yn  = linspace( (-L0/2)-(t0),0,hSize)'; yn(end)=[];
+            yp  = linspace(0,(L0/2)+(t0),hSize)';
+            yc  = ((L0/2)+(t0))*ones(1,2*hSize-1)';
+            yic = ((L0/2)+(t0))*ones(1,hSize)';
+            x0 = [-xc;  xn;xp; xc; flipud(xp);flipud(xn);];
+            y0 = [yn;yp;   yc; flipud(yp); flipud(yn); -yc];          
+            xS0 = repmat(x0,N,1);   xS0(end-hSize:end)=[]; 
+            yS0 = repmat(y0,N,1);   yS0(end-hSize:end)=[];
+            xS0 = [flipud(xn);xS0]; yS0 = [-yc(1:numel(xn));yS0]; 
+            zSize = numel(xS0);
+            zp = linspace(start,fin, zSize)';
+            zS0 = (h*zp)./(2*pi*N);   zS0 = zS0+(wT/2);
+            xS=[xS;xS0]; yS=[yS;yS0]; zS=[zS;zS0];
+            
+            % -z
+            %x  = linspace(-W0/2,W0/2,cstSize)';  
+            xn = linspace((-W0/2)-(t0),0,hSize)'; xn(end)=[];
+            xp = linspace(0,(W0/2)+(t0),hSize)';
+            xc = ((W0/2)+(t0))*ones(1,2*hSize-1)';    
+            % y   = linspace(-L0/2,L0/2,cstSize)';  
+            yn  = linspace( (-L0/2)-(t0),0,hSize)'; yn(end)=[];
+            yp  = linspace(0,(L0/2)+(t0),hSize)';
+            yc  = ((L0/2)+(t0))*ones(1,2*hSize-1)';
+            yic = ((L0/2)+(t0))*ones(1,hSize)';                        
+            x0 = [-xc;  xn;xp; xc; flipud(xp);flipud(xn);];
+            y0 = [yn;yp;   yc; flipud(yp); flipud(yn); -yc];    
+            xS0 = repmat(x0,N,1);   xS0(end-hSize:end)=[]; 
+            yS0 = repmat(y0,N,1);   yS0(end-hSize:end)=[];
+            xS0 = [flipud(xn);xS0]; yS0 = [-yc(1:numel(xn));yS0]; 
+            zSize = numel(xS0);
+            zp = linspace(start,fin, zSize)';
+            zS0 = (h*zp)./(2*pi*N);   zS0 = zS0-(wT/2);
+            xS=[xS;xS0]; yS=[yS;yS0]; zS=[zS;zS0]; 
+            
+            % +xy  
+            % set up x&y segments 
+            xn = linspace(-(W0/2)-(t0+txy),0,hSize)'; xn(end)=[];
+            xp = linspace(0,(W0/2)+(t0+txy),hSize)';
+            xc = ((W0/2)+(t0+txy))*ones(1,2*hSize-1)'; 
+            yn  = linspace(-(L0/2)-(t0+txy),0,hSize)'; yn(end)=[];
+            yp  = linspace(0,(L0/2)+(t0+txy),hSize)';
+            yc  = ((L0/2) + (t0+txy))*ones(1,2*hSize-1)';        
+            % set points that will be repmat
+            x0 = [-xc;  xn;xp; xc; flipud(xp);flipud(xn);];
+            y0 = [yn;yp;   yc; flipud(yp); flipud(yn); -yc];    
+            xS0 = repmat(x0,N,1);   xS0(end-hSize:end)=[]; 
+            yS0 = repmat(y0,N,1);   yS0(end-hSize:end)=[];
+            xS0 = [flipud(xn);xS0]; yS0 = [-yc(1:numel(xn));yS0]; 
+            zSize = numel(xS0);
+            zp = linspace(start,fin, zSize)';
+            zS0 = (h*zp)./(2*pi*N);
+            xS=[xS;xS0]; yS=[yS;yS0]; zS=[zS;zS0];  
+            %
+            % -xy  
+            % set up x&y segments 
+
+            xn = linspace((-W0/2)-(t0)+txy,0,hSize)'; xn(end)=[];
+            xp = linspace(0,(W0/2)+(t0)-txy,hSize)';
+            xc = ((W0/2)+(t0)-txy)*ones(1,2*hSize-1)';    
+            % y   = linspace(-L0/2,L0/2,cstSize)';  
+            yn  = linspace( (-L0/2)-(t0)+txy,0,hSize)'; yn(end)=[];
+            yp  = linspace(0,(L0/2)+(t0)-txy,hSize)';
+            yc  = ((L0/2)+(t0)-txy)*ones(1,2*hSize-1)';    
+            
+            % set points that will be repmat
+            x0 = [-xc;  xn;xp; xc; flipud(xp);flipud(xn);];
+            y0 = [yn;yp;   yc; flipud(yp); flipud(yn); -yc]; 
+            xS0 = repmat(x0,N,1);   xS0(end-hSize:end)=[]; 
+            yS0 = repmat(y0,N,1);   yS0(end-hSize:end)=[];
+            xS0 = [flipud(xn);xS0]; yS0=[-yc(1:numel(xn));yS0]; 
+            zSize = numel(xS0);
+            zp = linspace(start,fin, zSize)';
+            zS0 = (h*zp)./(2*pi*N);
+            xS=[xS;xS0]; yS=[yS;yS0]; zS=[zS;zS0];  
+            %}
+        end
+            
+    else
+        %
+        for nx=1:Nxy
+            txy =(wT/2); 
+            t0 = (3/2)*(wT)*(nx-1);
+            % +z
+            xn = linspace((-W0/2)-(t0),0,hSize)'; xn(end)=[];
+            xp = linspace(0,(W0/2)+(t0),hSize)';
+            xc = ((W0/2)+(t0))*ones(1,2*hSize-1)';    
+            % y   = linspace(-L0/2,L0/2,cstSize)';  
+            yn  = linspace( (-L0/2)-(t0),0,hSize)'; yn(end)=[];
+            yp  = linspace(0,(L0/2)+(t0),hSize)';
+            yc  = ((L0/2)+(t0))*ones(1,2*hSize-1)';
+            x0 = flipud([-xc; xn;xp; xc; flipud(xp);flipud(xn);]);
+            y0 = flipud([yn;yp;   yc; flipud(yp); flipud(yn); -yc]);  
+            xS0 = repmat(x0,N,1); xS0(1:hSize)=[]; 
+            yS0 = repmat(y0,N,1); yS0(1:hSize)=[];
+            xS0 = [xS0;xn];       yS0=[yS0;-yc(1:numel(xn))]; 
+            zSize = numel(xS0);
+            zp = linspace(start,fin, zSize)';
+            zS0 = (h*zp)./(2*pi*N);   zS0 = zS0+txy;
+            xS=[xS;xS0]; yS=[yS;yS0]; zS=[zS;zS0]; 
+
+            % -z
+            xn = linspace((-W0/2)-(t0),0,hSize)'; xn(end)=[];
+            xp = linspace(0,(W0/2)+(t0),hSize)';
+            xc = ((W0/2)+(t0))*ones(1,2*hSize-1)';    
+            % y   = linspace(-L0/2,L0/2,cstSize)';  
+            yn  = linspace( (-L0/2)-(t0),0,hSize)'; yn(end)=[];
+            yp  = linspace(0,(L0/2)+(t0),hSize)';
+            yc  = ((L0/2)+(t0))*ones(1,2*hSize-1)';
+            x0 = flipud([-xc;  xn;xp; xc; flipud(xp);flipud(xn);]);
+            y0 = flipud([yn;yp;   yc; flipud(yp); flipud(yn); -yc]);  
+            xS0 = repmat(x0,N,1); xS0(1:hSize)=[]; 
+            yS0 = repmat(y0,N,1); yS0(1:hSize)=[];
+            xS0 = [xS0;xn];       yS0=[yS0;-yc(1:numel(xn))]; 
+            zSize = numel(xS0);
+            zp = linspace(start,fin, zSize)';
+            zS0 = (h*zp)./(2*pi*N);   zS0 = zS0-txy;
+            xS=[xS;xS0]; yS=[yS;yS0]; zS=[zS;zS0];  
+
+            % +xy 
+            xn = linspace(-(W0/2)-(t0+txy),0,hSize)';
+            xp = linspace(0,(W0/2)+(t0+txy),hSize)';
+            xc = ((W0/2)+(t0+txy))*ones(1,2*hSize-1)'; 
+            yn = linspace(-(L0/2)-(t0+txy),0,hSize)'; 
+            yp = linspace(0,(L0/2)+(t0+txy),hSize)';
+            yc = ((L0/2) + (t0+txy))*ones(1,2*hSize-1)';        
+            % set points that will be repmat
+            x0 = flipud([-xc; xn;xp; xc; flipud(xp);flipud(xn);]);
+            y0 = flipud([yn;yp;   yc; flipud(yp); flipud(yn); -yc]); 
+            xS0 = repmat(x0,N,1); xS0(1:hSize)=[]; 
+            yS0 = repmat(y0,N,1); yS0(1:hSize)=[];
+            xS0 = [xS0;xn];       yS0=[yS0;-yc(1:numel(xn))]; 
+            zSize = numel(xS0);
+            zp = linspace(start,fin, zSize)';
+            zS0 = (h*zp)./(2*pi*N);   zS0 = zS0;
+            xS=[xS;xS0]; yS=[yS;yS0]; zS=[zS;zS0]; 
+            
+            % -xy    
+            xn = linspace((-W0/2)-(t0)+txy,0,hSize)'; xn(end)=[];
+            xp = linspace(0,(W0/2)+(t0)-txy,hSize)';
+            xc = ((W0/2)+(t0)-txy)*ones(1,2*hSize-1)';    
+            % y   = linspace(-L0/2,L0/2,cstSize)';  
+            yn  = linspace( (-L0/2)-(t0)+txy,0,hSize)'; yn(end)=[];
+            yp  = linspace(0,(L0/2)+(t0)-txy,hSize)';
+            yc  = ((L0/2)+(t0)-txy)*ones(1,2*hSize-1)';            
+            % set points that will be repmat
+            x0 = flipud([-xc; xn;xp; xc; flipud(xp);flipud(xn);]);
+            y0 = flipud([yn;yp;    yc; flipud(yp); flipud(yn); -yc]); 
+            xS0 = repmat(x0,N,1);  xS0(1:hSize)=[]; 
+            yS0 = repmat(y0,N,1);  yS0(1:hSize)=[];
+            xS0 = [xS0;xn];        yS0=[yS0;-yc(1:numel(xn))]; 
+            zSize = numel(xS0);
+            zp = linspace(start,fin, zSize)';
+            zS0 = (h*zp)./(2*pi*N);   zS0 = zS0;
+            xS=[xS;xS0]; yS=[yS;yS0]; zS=[zS;zS0];   
+        end
+        %}
+    end     
     
 end
