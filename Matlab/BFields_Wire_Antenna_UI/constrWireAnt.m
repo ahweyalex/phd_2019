@@ -53,42 +53,44 @@
 % ------------------------------------------------------------------------
 % ------------------------------------------------------------------------
 
-function [xS0,yS0,zS0] = constrWireAnt(h,ra,ri,phi,Nz,O,wT,N)
+function [xS,yS,zS] = constrWireAnt(h,ra,ri,phi,N,O,wT,Nxy)
     %% Construct Circular Wire Antenna Structure
     helixSTEP = phi*(pi/180);
-    start=0; fin = Nz*(2*pi) + helixSTEP/2;
+    start=0; fin = N*(2*pi) + helixSTEP/2;
     cst_xxx = start:helixSTEP:fin;
     xS0=[];yS0=[];zS0=[];
     if(O==1) % clock wise
-        for nx=1:N
+        for nx=1:Nxy
             % checking: 1st iteration 
             if(mod(nx,2)~=0) 
                 xS0 = [xS0,(ra+ wT*nx).*sin(cst_xxx)];
                 yS0 = [yS0,(ri+ wT*nx).*cos(cst_xxx)];
-                zS0 = [zS0,(h*cst_xxx)./(2*pi*Nz)];
+                zS0 = [zS0,(h*cst_xxx)./(2*pi*N)];
             else
                 xS0 = [xS0,-(ra+ wT*nx).*sin(cst_xxx)];
                 yS0 = [yS0,(ri+ wT*nx).*cos(cst_xxx)];
-                zS0 = [zS0,(h*cst_xxx)./(2*pi*Nz)];
+                zS0 = [zS0,(h*cst_xxx)./(2*pi*N)];
             end % END: IF
         end %END: FOR
         
         else % counter clock wise
-        for nx=1:N
+        for nx=1:Nxy
             if(mod(nx,2)~=0)
                 xS0 = [xS0,-(ra+ wT*nx).*sin(cst_xxx)];
                 yS0 = [yS0,(ri+ wT*nx).*cos(cst_xxx)];
-                zS0 = [zS0,(h*cst_xxx)./(2*pi*Nz)];
+                zS0 = [zS0,(h*cst_xxx)./(2*pi*N)];
             else
                 xS1 = [xS0,(ra + wT*nx).*sin(cst_xxx)];
                 yS1 = [yS0,(ri + wT*nx).*cos(cst_xxx)];
-                zS1 = [zS0,(h*cst_xxx)./(2*pi*Nz)];
+                zS1 = [zS0,(h*cst_xxx)./(2*pi*N)];
             end % END: IF
         end % END: FOR
         
     end % END: O
     xS0=xS0'; yS0=yS0'; zS0=zS0';
     % Adding "thickens" to wire structure (along current path)
+    
+    %
     S0 = [xS0,      yS0,      zS0+wT/2;     %+z
           xS0,      yS0,      zS0-wT/2;     %-z
           xS0+wT/2, yS0+wT/2, zS0;          %+xy
@@ -99,11 +101,11 @@ function [xS0,yS0,zS0] = constrWireAnt(h,ra,ri,phi,Nz,O,wT,N)
           xS0+wT/2, yS0+wT/2, zS0+wT/4;     %+(xy)/2,+z
           xS0+wT/2, yS0+wT/2, zS0-wT/4;     %+(xy)/2,-z
           % new-er addtions
-          xS0-wT/4, yS0-wT/4, zS0+wT/2;     %-(xy)/4,+z
-          xS0-wT/4, yS0-wT/4, zS0-wT/2;     %-(xy)/4,-z
-          xS0+wT/4, yS0+wT/4, zS0+wT/2;     %+(xy)/4,+z
-          xS0+wT/4, yS0+wT/4, zS0-wT/2;     %+(xy)/4,-z
+          %xS0-wT/4, yS0-wT/4, zS0+wT/2;     %-(xy)/4,+z
+          %xS0-wT/4, yS0-wT/4, zS0-wT/2;     %-(xy)/4,-z
+          %xS0+wT/4, yS0+wT/4, zS0+wT/2;     %+(xy)/4,+z
+          %xS0+wT/4, yS0+wT/4, zS0-wT/2;     %+(xy)/4,-z
           ];
     xS = S0(:,1); yS = S0(:,2); zS = S0(:,3);
-    
+    %}
 end % end of constrWireAnt_10_25_2018
