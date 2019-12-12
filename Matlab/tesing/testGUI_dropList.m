@@ -1,4 +1,8 @@
 function testGUI_dropList
+    v0 = 0;
+    global gData;
+    gData = struct('h',v0,'W',v0,'L',v0,'wT',v0,'N',v0,'O',v0,'Nxy',v0,'phi',v0); 
+    
     fig = uifigure;
     ax  = uiaxes('Parent',fig,'Position',[10 10 400 400]);
     
@@ -25,8 +29,9 @@ function testGUI_dropList
 end
 
 
+
 function optionSelected(dd,typeVal)
-    val = dd.Value
+    gData.h = dd.Value
     fig = getappdata(dd,'ddParent');
     
     p = getappdata(fig,'plot1');

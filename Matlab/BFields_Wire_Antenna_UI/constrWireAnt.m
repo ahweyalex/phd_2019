@@ -53,8 +53,7 @@
 % ------------------------------------------------------------------------
 % ------------------------------------------------------------------------
 
-function [xS,yS,zS] = constrWireAnt(h,ra,ri,phi,N,O,wT,Nxy)
-    %% Construct Circular Wire Antenna Structure
+function [xS0,yS0,zS0] = constrWireAnt(h,ra,ri,phi,N,O,wT,Nxy)
     helixSTEP = phi*(pi/180);
     start=0; fin = N*(2*pi) + helixSTEP/2;
     cst_xxx = start:helixSTEP:fin;
@@ -62,50 +61,88 @@ function [xS,yS,zS] = constrWireAnt(h,ra,ri,phi,N,O,wT,Nxy)
     if(O==1) % clock wise
         for nx=1:Nxy
             % checking: 1st iteration 
+            t   = wT/2;
+            txy = (3/2)*wT*(nx-1);
             if(mod(nx,2)~=0) 
-                xS0 = [xS0,(ra+ wT*nx).*sin(cst_xxx)];
-                yS0 = [yS0,(ri+ wT*nx).*cos(cst_xxx)];
-                zS0 = [zS0,(h*cst_xxx)./(2*pi*N)];
+                %+z
+                xS0 = [xS0,(ra+txy).*sin(cst_xxx)];
+                yS0 = [yS0,(ri+txy).*cos(cst_xxx)];
+                zS0 = [zS0,((h+t)*cst_xxx)./(2*pi*N)];
+                %-z
+                xS0 = [xS0,(ra+txy).*sin(cst_xxx)];
+                yS0 = [yS0,(ri+txy).*cos(cst_xxx)];
+                zS0 = [zS0,((h-t)*cst_xxx)./(2*pi*N)];
+                %+xy
+                xS0 = [xS0,(ra+t+txy).*sin(cst_xxx)];
+                yS0 = [yS0,(ri+t+txy).*cos(cst_xxx)];
+                zS0 = [zS0,((h)*cst_xxx)./(2*pi*N)];
+                %-xy
+                xS0 = [xS0,(ra-t+txy).*sin(cst_xxx)];
+                yS0 = [yS0,(ri-t+txy).*cos(cst_xxx)];
+                zS0 = [zS0,((h)*cst_xxx)./(2*pi*N)];
             else
-                xS0 = [xS0,-(ra+ wT*nx).*sin(cst_xxx)];
-                yS0 = [yS0,(ri+ wT*nx).*cos(cst_xxx)];
-                zS0 = [zS0,(h*cst_xxx)./(2*pi*N)];
+                %+z
+                xS0 = [xS0,-(ra+txy).*sin(cst_xxx)];
+                yS0 = [yS0, (ri+txy).*cos(cst_xxx)];
+                zS0 = [zS0, ((h+t)*cst_xxx)./(2*pi*N)];
+                %-z
+                xS0 = [xS0,-(ra+txy).*sin(cst_xxx)];
+                yS0 = [yS0, (ri+txy).*cos(cst_xxx)];
+                zS0 = [zS0, ((h-t)*cst_xxx)./(2*pi*N)];
+                %+xy
+                xS0 = [xS0,-(ra+t+txy).*sin(cst_xxx)];
+                yS0 = [yS0, (ri+t+txy).*cos(cst_xxx)];
+                zS0 = [zS0, ((h)*cst_xxx)./(2*pi*N)];
+                %-xy
+                xS0 = [xS0,-(ra-t+txy).*sin(cst_xxx)];
+                yS0 = [yS0, (ri-t+txy).*cos(cst_xxx)];
+                zS0 = [zS0, ((h)*cst_xxx)./(2*pi*N)];
+                
             end % END: IF
         end %END: FOR
         
         else % counter clock wise
-        for nx=1:Nxy
-            if(mod(nx,2)~=0)
-                xS0 = [xS0,-(ra+ wT*nx).*sin(cst_xxx)];
-                yS0 = [yS0,(ri+ wT*nx).*cos(cst_xxx)];
-                zS0 = [zS0,(h*cst_xxx)./(2*pi*N)];
-            else
-                xS1 = [xS0,(ra + wT*nx).*sin(cst_xxx)];
-                yS1 = [yS0,(ri + wT*nx).*cos(cst_xxx)];
-                zS1 = [zS0,(h*cst_xxx)./(2*pi*N)];
-            end % END: IF
-        end % END: FOR
-        
-    end % END: O
-    xS0=xS0'; yS0=yS0'; zS0=zS0';
-    % Adding "thickens" to wire structure (along current path)
+            for nx=1:Nxy
+                t   = wT/2;
+                txy = (3/2)*wT*(nx-1);
+                
+                if(mod(nx,2)~=0)
+                    %+z
+                    xS0 = [xS0,-(ra+txy).*sin(cst_xxx)];
+                    yS0 = [yS0,(ri+txy).*cos(cst_xxx)];
+                    zS0 = [zS0,((h+t)*cst_xxx)./(2*pi*N)];
+                    %-z
+                    xS0 = [xS0,-(ra+txy).*sin(cst_xxx)];
+                    yS0 = [yS0, (ri+txy).*cos(cst_xxx)];
+                    zS0 = [zS0, ((h-t)*cst_xxx)./(2*pi*N)];
+                    %+xy
+                    xS0 = [xS0,-(ra+t+txy).*sin(cst_xxx)];
+                    yS0 = [yS0, (ri+t+txy).*cos(cst_xxx)];
+                    zS0 = [zS0, ((h)*cst_xxx)./(2*pi*N)];
+                    %-xy
+                    xS0 = [xS0,-(ra-t+txy).*sin(cst_xxx)];
+                    yS0 = [yS0, (ri-t+txy).*cos(cst_xxx)];
+                    zS0 = [zS0, ((h)*cst_xxx)./(2*pi*N)];        
+                    
+                else
+                    %+z
+                    xS0 = [xS0,(ra+txy).*sin(cst_xxx)];
+                    yS0 = [yS0,(ri+txy).*cos(cst_xxx)];
+                    zS0 = [zS0,((h+t)*cst_xxx)./(2*pi*N)];
+                    %-z
+                    xS0 = [xS0,(ra+txy).*sin(cst_xxx)];
+                    yS0 = [yS0,(ri+txy).*cos(cst_xxx)];
+                    zS0 = [zS0,((h-t)*cst_xxx)./(2*pi*N)];
+                    %+xy
+                    xS0 = [xS0,(ra+t+txy).*sin(cst_xxx)];
+                    yS0 = [yS0,(ri+t+txy).*cos(cst_xxx)];
+                    zS0 = [zS0,((h)*cst_xxx)./(2*pi*N)]; 
+                    %-xy
+                    xS0 = [xS0,(ra-t+txy).*sin(cst_xxx)];
+                    yS0 = [yS0,(ri-t+txy).*cos(cst_xxx)];
+                    zS0 = [zS0,((h)*cst_xxx)./(2*pi*N)];                 
+                end % END: IF
+            end % END: FOR        
+    end % END: 
     
-    %
-    S0 = [xS0,      yS0,      zS0+wT/2;     %+z
-          xS0,      yS0,      zS0-wT/2;     %-z
-          xS0+wT/2, yS0+wT/2, zS0;          %+xy
-          xS0-wT/2, yS0-wT/2, zS0;          %-xy
-          % new addtions
-          xS0-wT/2, yS0-wT/2, zS0+wT/4;     %-(xy)/2,+z
-          xS0-wT/2, yS0-wT/2, zS0-wT/4;     %-(xy)/2,-z
-          xS0+wT/2, yS0+wT/2, zS0+wT/4;     %+(xy)/2,+z
-          xS0+wT/2, yS0+wT/2, zS0-wT/4;     %+(xy)/2,-z
-          % new-er addtions
-          %xS0-wT/4, yS0-wT/4, zS0+wT/2;     %-(xy)/4,+z
-          %xS0-wT/4, yS0-wT/4, zS0-wT/2;     %-(xy)/4,-z
-          %xS0+wT/4, yS0+wT/4, zS0+wT/2;     %+(xy)/4,+z
-          %xS0+wT/4, yS0+wT/4, zS0-wT/2;     %+(xy)/4,-z
-          ];
-    xS = S0(:,1); yS = S0(:,2); zS = S0(:,3);
-    %}
 end % end of constrWireAnt_10_25_2018

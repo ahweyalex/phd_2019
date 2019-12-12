@@ -12,7 +12,9 @@ tic;
 % h=10; 
 % ra=0.3; ri=0.3; phi=2; N=4; O=1; wT=0.2546e-3; h=(1.1)*(2*wT*N);
 ra=0.3; ri=0.3; phi=2; N=2; O=1; wT=0.1; h=(1.1)*(2*wT*N);
-[xS,yS,zS] = constrWireAnt(h,ra,ri,phi,N,O,wT);
+%[xS,yS,zS] = constrWireAnt(h,ra,ri,phi,N,O,wT);
+
+[xS0,yS0,zS0] = constrWireAnt(h,ra,ri,phi,N,O,wT,Nxy)
 %%
 plot3(xS,yS,zS);
 xlabel('x'); ylabel('y'); zlabel('z');

@@ -14,8 +14,7 @@ function [xS,yS,zS] = constrRectWire(h,W0,L0,phi,N,O,wT,Nxy)
             % +z
             xn = linspace((-W0/2)-(t0),0,hSize)'; xn(end)=[];
             xp = linspace(0,(W0/2)+(t0),hSize)';
-            xc = ((W0/2)+(t0))*ones(1,2*hSize-1)';    
-            % y   = linspace(-L0/2,L0/2,cstSize)';  
+            xc = ((W0/2)+(t0))*ones(1,2*hSize-1)';  
             yn  = linspace( (-L0/2)-(t0),0,hSize)'; yn(end)=[];
             yp  = linspace(0,(L0/2)+(t0),hSize)';
             yc  = ((L0/2)+(t0))*ones(1,2*hSize-1)';
@@ -68,8 +67,7 @@ function [xS,yS,zS] = constrRectWire(h,W0,L0,phi,N,O,wT,Nxy)
             % set up x&y segments 
             xn = linspace((-W0/2)-(t0)+txy,0,hSize)'; xn(end)=[];
             xp = linspace(0,(W0/2)+(t0)-txy,hSize)';
-            xc = ((W0/2)+(t0)-txy)*ones(1,2*hSize-1)';    
-            % y   = linspace(-L0/2,L0/2,cstSize)';  
+            xc = ((W0/2)+(t0)-txy)*ones(1,2*hSize-1)';     
             yn  = linspace( (-L0/2)-(t0)+txy,0,hSize)'; yn(end)=[];
             yp  = linspace(0,(L0/2)+(t0)-txy,hSize)';
             yc  = ((L0/2)+(t0)-txy)*ones(1,2*hSize-1)';    
@@ -159,4 +157,5 @@ function [xS,yS,zS] = constrRectWire(h,W0,L0,phi,N,O,wT,Nxy)
         end  
         % END: LOOP: NXY
     end      
+    
 end %% END: constrRectWire
