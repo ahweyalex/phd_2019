@@ -235,19 +235,26 @@ ZZ = get(S.ax,'children');  % The line object.
         
         %case S.tg(3) % IMPORT
         case S.tg(4) % RUN
-            gData.h   = str2num(char(S.ep_in(1).String))
-            gData.ra  = str2num(char(S.ep_in(2).String))
-            gData.ri  = str2num(char(S.ep_in(3).String))
-            gData.wT  = str2num(char(S.ep_in(4).String))
-            gData.N   = str2num(char(S.ep_in(5).String))
-            gData.O   = str2num(char(S.ep_in(6).String))
-            gData.phi = str2num(char(S.ep_in(7).String))
-            gData.W   = str2num(char(S.ep_in(8).String))
-            gData.L   = str2num(char(S.ep_in(9).String))
-            gData.Nxy = str2num(char(S.ep_in(10).String))
+            gData.h   = str2num(char(S.ep_in(1).String));
+            gData.ra  = str2num(char(S.ep_in(2).String));
+            gData.ri  = str2num(char(S.ep_in(3).String));
+            gData.wT  = str2num(char(S.ep_in(4).String));
+            gData.N   = str2num(char(S.ep_in(5).String));
+            gData.O   = str2num(char(S.ep_in(6).String));
+            gData.phi = str2num(char(S.ep_in(7).String));
+            gData.W   = str2num(char(S.ep_in(8).String));
+            gData.L   = str2num(char(S.ep_in(9).String));
+            gData.Nxy = str2num(char(S.ep_in(10).String));
+            % start:working in progress
+            [gAnt.xS,gAnt.yS,gAnt.zS] = constrWireAnt(gData.h,gData.ra,gData.ri,gData.phi,gData.N,gData.O,gData.wT,gData.Nxy);
             
-            % evalin(gData.h)
+            dataM = [gAnt.xS',gAnt.yS',gAnt.zS'];
+            T = array2table(dataM);
+            %T.Properties.VariableNames(1,1:6) = {'x','y','z'};
+            writetable(T,'antenna_wire_data.csv')
+            % end:working in progress
         %case S.tg(5) % EXPORT
+        
         %case S.tg(6) % ABOUT
         %}
         otherwise       % IMPORT

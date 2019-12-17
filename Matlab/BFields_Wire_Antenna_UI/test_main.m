@@ -11,10 +11,9 @@ tic;
 %% Construct Wire Antenna
 % h=10; 
 % ra=0.3; ri=0.3; phi=2; N=4; O=1; wT=0.2546e-3; h=(1.1)*(2*wT*N);
-ra=0.3; ri=0.3; phi=2; N=2; O=1; wT=0.1; h=(1.1)*(2*wT*N);
+ra=0.3; ri=0.3; phi=2; N=2; O=1; wT=0.1; h=(1.1)*(2*wT*N); Nxy=2;
 %[xS,yS,zS] = constrWireAnt(h,ra,ri,phi,N,O,wT);
-
-[xS0,yS0,zS0] = constrWireAnt(h,ra,ri,phi,N,O,wT,Nxy)
+[xS,yS,zS] = constrWireAnt(h,ra,ri,phi,N,O,wT,Nxy);
 %%
 plot3(xS,yS,zS);
 xlabel('x'); ylabel('y'); zlabel('z');
@@ -31,6 +30,7 @@ nBX = BX./normB;
 nBY = BY./normB;
 nBZ = BZ./normB;
 
+
 %{
 %% Inductance 
 % tag stuff
@@ -46,8 +46,9 @@ w = 2*pi*freq;
 % u2 = (1j.*w.*M.*I1)./(1 +((1j.*w.*L22+R2)./RL));
 u2 = (1j.*w.*M.*I1)./(1 +(1j.*w.*L22+R2));
 %}
-toc;
+%toc;
 %% Plot
+%
 % antenna structure
 hold all;
 figure(1)
@@ -75,3 +76,4 @@ zlabel('z[m]','FontWeight','bold','FontSize', 24);
 title('Coiled Wire Antenna:B-Fields (Model)','FontSize', 16);
 view(0,90)
 ylim([-0.4 1.2]); xlim([-0.9 0.9]);
+%}
