@@ -17,18 +17,15 @@ function testGUI_dropList
     % drop list
     typeVal = 'Elliptical';
     % uf = uifigure('units','pixels','position', [300, 300, 300, 300]);
-    dd = uidropdown(fig,...
+    dd(1) = uidropdown(fig,...
         'Editable','on',...
         'InnerPosition',[100,100,10,10],...
         'Position',[430 210 100 22],...
         'Items',{'Elliptical','Circular','Rectangular','Custom'},...
         'ValueChangedFcn',@(dd,event) optionSelected(dd,typeVal));
     setappdata(dd,'ddParent',fig);
-    % plot
     
 end
-
-
 
 function optionSelected(dd,typeVal)
     gData.h = dd.Value

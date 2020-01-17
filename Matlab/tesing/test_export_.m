@@ -1,6 +1,4 @@
 % testing export function
-%
-%
 
 clear all; close all; clc;
 % construct wire antenna

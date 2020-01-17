@@ -1,4 +1,4 @@
-function [] = GUI_EX()
+function [] = GUI_EX_EX()
 
 SCR = get(0,'Screensize');  % Get screensize.
 S.fh = figure('numbertitle','off',...
