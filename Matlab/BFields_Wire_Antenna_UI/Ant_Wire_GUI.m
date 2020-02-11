@@ -453,7 +453,26 @@ end
                     S.BX(nn,:,:),S.BZ(nn,:,:),S.BY(nn,:,:));
               
             case S.tg(5) % EXPORT
-                a='x'
+                % location of bfields
+                newX = reshape(S.fh.UserData.BFields.X,...
+                    numel(S.fh.UserData.BFields.BX),1);
+                newY = reshape(S.fh.UserData.BFields.Y,...
+                    numel(S.fh.UserData.BFields.Y),1);
+                newZ = reshape(S.fh.UserData.BFields.Z,...
+                    numel(S.fh.UserData.BFields.Z),1);
+                % bfields
+                newBX = reshape(S.fh.UserData.BFields.BX,...
+                    numel(S.fh.UserData.BFields.BX),1);
+                newBY = reshape(S.fh.UserData.BFields.BY,...
+                    numel(S.fh.UserData.BFields.BY),1);
+                newBZ = reshape(S.fh.UserData.BFields.BZ,...
+                    numel(S.fh.UserData.BFields.BZ),1);
+                dataM = [newX,newY,newZ,newBX,newBY,newBZ];
+                T.Properties.VariableNames(1,1:3) = {'x','y','z',...
+                    'BX','BY','BZ'};
+                writetable(T,'antenna_wire_coordinates.csv');
+                
+                % antenna spatial coordinates [xyz]
                 dataM = [S.fh.UserData.wireAnt.X,...
                     S.fh.UserData.wireAnt.Y,S.fh.UserData.wireAnt.Z];
                 T = array2table(dataM);
