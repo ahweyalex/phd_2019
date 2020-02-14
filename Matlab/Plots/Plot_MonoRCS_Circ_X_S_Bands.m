@@ -219,7 +219,7 @@ title('Monostatic RCS: SBand(3.46GHz) pol:\theta \phi:90^\circ');
 legend({'open','500\Omega','short'},'Location','northwest');
 %}
 %% xband, pol:ph&th
-%{
+%
 % pol_phi
 figure(11)
 H = mmpolar(a,xP_ph0,a,x50_P_ph0,a,xSh_P_ph0,...
