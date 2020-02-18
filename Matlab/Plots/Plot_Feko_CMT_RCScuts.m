@@ -70,8 +70,6 @@ for n=1:size(data,2)/2
     title({
     %[strcat('Monostatic RCS (Plate:\lambda_0 by \lambda_0)',pStr{n})] 
     [strcat('Monostatic RCS (Plate:2\lambda_0 by 2\lambda_0)',pStr{n})] 
-    
     [' '] 
     });
-    
 end
