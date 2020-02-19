@@ -11,7 +11,7 @@ tic;
 %% Construct Wire Antenna
 % h=10; 
 % ra=0.3; ri=0.3; phi=2; N=4; O=1; wT=0.2546e-3; h=(1.1)*(2*wT*N);
-ra=0.3; ri=0.3; phi=2; N=2; O=1; wT=0.1; h=(1.1)*(2*wT*N); Nxy=2;
+ra=0.3; ri=0.3; phi=2; N=2; O=1; wT=0.1; h=(1.1)*(2*wT*N); Nxy=1;
 %[xS,yS,zS] = constrWireAnt(h,ra,ri,phi,N,O,wT);
 [xS,yS,zS] = constrWireAnt(h,ra,ri,phi,N,O,wT,Nxy);
 %%
@@ -29,6 +29,12 @@ normB=sqrt(BX.^2+BY.^2+BZ.^2);
 nBX = BX./normB;
 nBY = BY./normB;
 nBZ = BZ./normB;
+%% Tag
+f=125e3;
+tag.N=250; tag.r=0.5e-3; tag.h=7e-3; tag.ur=2102;
+[M12] = Calc_Mutual_Ind(B0,I0,tag);
+[tagV,tagRes,tag_selfL] = induced_tagV(M,I0,f,tag);
+% min tagV is 1.5 [V]
 
 
 %{
@@ -46,17 +52,17 @@ w = 2*pi*freq;
 % u2 = (1j.*w.*M.*I1)./(1 +((1j.*w.*L22+R2)./RL));
 u2 = (1j.*w.*M.*I1)./(1 +(1j.*w.*L22+R2));
 %}
-%toc;
+toc;
 %% Plot
-%
 % antenna structure
 hold all;
 figure(1)
-H=plot3(xS(1:721),zS(1:721),yS(1:721),'-');
+H=plot3(xS(1:361),zS(1:361),yS(1:361),'-');
 xlabel('x [m]'); ylabel('y [m]'); zlabel('z [m]'); 
 set(H,'linewidth',5); set(H,'color','r');
 title('Antenna Structure');
 grid on; axis equal; %axis tight;
+%%
 % B-Fields Quiver
 nn=ceil(Nx)/2; nn=25;
 BXn=BX./normB; BYn=BY./normB; BZn=BZ./normB;
@@ -75,5 +81,5 @@ ylabel('z[m]','FontWeight','bold','FontSize', 24);
 zlabel('z[m]','FontWeight','bold','FontSize', 24);
 title('Coiled Wire Antenna:B-Fields (Model)','FontSize', 16);
 view(0,90)
-ylim([-0.4 1.2]); xlim([-0.9 0.9]);
+ylim([-0.5 0.9]); xlim([-0.9 0.9]);
 %}

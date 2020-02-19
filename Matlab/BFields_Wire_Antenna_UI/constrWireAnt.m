@@ -57,6 +57,7 @@ function [xS0,yS0,zS0] = constrWireAnt(h,ra,ri,phi,N,O,wT,Nxy)
     helixSTEP = phi*(pi/180);
     start=0; fin = N*(2*pi) + helixSTEP/2;
     cst_xxx = start:helixSTEP:fin;
+    size(cst_xxx)
     xS0=[];yS0=[];zS0=[];
     if(O==1) % clock wise
         for nx=1:Nxy
