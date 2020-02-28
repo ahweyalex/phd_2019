@@ -4,7 +4,9 @@
 % 
 clear all; close all; clc;
 %% CTM
-fn = 'FEKO_mIndx_vs_modSig_lam_lam.dat';
+%fn = 'FEKO_mIndx_vs_modSig_lam_lam.dat';
+%fn = 'modSigvs_ModIndx_2lam2lam3Q_GND_only.dat';
+fn = 'modSigvs_ModIndx_2lam2lam_GND_only.dat';
 A = importdata(fn);
 
 modeIndx = A.data(:,1);
@@ -13,7 +15,8 @@ charMode = A.data(:,2);
 figure(1)
 H=plot(modeIndx,charMode,'-');
 set(H,'color','b'); set(H,'linewidth',3); set(H,'marker','o');
-title('Characterstic Mode','FontSize',12);
+% title('Characterstic Mode (2\lambda by 2.75\lambda)','FontSize',12);
+title('Characterstic Mode (2\lambda by 2\lambda)','FontSize',12);
 xlabel('Modal Significance'); ylabel('Mode Index');
 grid on;
 %% 

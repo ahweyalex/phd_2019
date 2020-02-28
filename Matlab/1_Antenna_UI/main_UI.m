@@ -90,7 +90,7 @@
 % =========================================================================
 % =========================================================================
 
-function [A,B] =  main_UI(Units,AntDim,Bdim)
+function [A,B,M,RR] =  main_UI(Units,AntDim,Bdim,Tag)
 %% Conversion
 %  Description:
 %  Checks the user's input droplist. The units will convert into meters.
@@ -173,7 +173,6 @@ switch Units.phi
         % convert 'deg' into 'rad'
         AntDim.phi = AntDim.phi*(180/pi);
 end
-
 % conversion for current (I)
 switch Units.dimI
     case 'A'
@@ -185,7 +184,6 @@ switch Units.dimI
     case 'nA'
         AntDim.I = AntDim.I*1e-9;
 end
-
 % conversion for x-dim (B-Fields calc)
 switch Units.dimx
     case 'm'
@@ -231,11 +229,51 @@ switch Units.dimz
         Bdim.zmin = Bdim.zmin*0.0254;
         Bdim.zmax = Bdim.zmax*0.0254;
 end
+% conversion for  tag (solenoid)'s radius
+switch Units.tagR
+    case 'm'
+        Tag.r;
+    case 'cm' % converting 'cm' to 'm'
+        Tag.r = Tag.r*1e-2;
+    case 'mm' % converting 'mm' to 'm'
+        Tag.r = Tag.r*1e-3;
+    case 'in' % converting 'in' to 'm' 
+        Tag.r = Tag.r*0.0254;
+end
+% conversion for tag (solenoid)'s length(height)
+switch Units.tagL
+    case 'm'
+        Tag.L;
+    case 'cm' % converting 'cm' to 'm'
+        Tag.L = Tag.r*1e-2;
+    case 'mm' % converting 'mm' to 'm'
+        Tag.L = Tag.r*1e-3;
+    case 'in' % converting 'in' to 'm' 
+        Tag.L = Tag.r*0.0254;
+end
+% conversion for tag (solenoid)'s az
+switch Tag.AZ
+    % convert deg into rad
+    case 'deg'
+        Tag.AZ = Tag.AZ(180/pi);
+    case 'rad'
+        % convert 'deg' into 'rad'
+        Tag.AZ = Tag.AZ;
+end
+% conversion for tag (solenoid)'s el
+switch Tag.EL
+    % convert deg into rad
+    case 'deg'
+        Tag.EL = Tag.EL(180/pi);
+    case 'rad'
+        % convert 'deg' into 'rad'
+        Tag.EL = Tag.EL;
+end
 %% Initialize variables 
 bBox = [Bdim.xmin,Bdim.ymin,Bdim.zmin;Bdim.xmax,Bdim.ymax,Bdim.zmax];
 Ns = [Bdim.Nx;Bdim.Ny;Bdim.Nz];
-
 % END: Conversion 
+
 %% Construction
 %  Description:
 %  Constructs:
@@ -243,14 +281,14 @@ Ns = [Bdim.Nx;Bdim.Ny;Bdim.Nz];
 %  2) multi-coiled rectangular wire antenna from GUI parameters
 %  3) import (user custom) x,y,z points of user's wire antenna 
 %  Returns 1D arrays
-
-    if(AntDim.v == 'e') % elliptical/circular 
+    % AntDim.v
+    if(AntDim.v == 2) % elliptical/circular 
         [Sx,Sy,Sz] = constrCircWire(AntDim.h,AntDim.ra,AntDim.ri,...
         AntDim.phi,AntDim.N,AntDim.O,AntDim.wT,AntDim.Nxy);
-    elseif(AntDim.v == 'r') % rectangular
+    elseif(AntDim.v == 1) % rectangularW
         [Sx,Sy,Sz] = constrRectWire(AntDim.h,AntDim.W,AntDim.L,...
             AntDim.phi,AntDim.N,AntDim.O,AntDim.wT,AntDim.Nxy);
-    elseif(AntDim.v == 'k') % custom
+    else(AntDim.v == 3) % custom
         % custom stuff
     end
     A = struct('X',Sx,'Y',Sy,'Z',Sz);
@@ -270,9 +308,10 @@ Ns = [Bdim.Nx;Bdim.Ny;Bdim.Nz];
 % END: Calculate B-Fields
 %% Mutual Inductance
 %  Description:
-
+    [M] = Calc_Mutual_Ind(B,AntDim,Tag);
 %% Read-Range
 %  Description:
-
-
+    f = 125e3;
+    [tagV,tagRes,tag_selfL] = induced_tagV(M,AntDim,f,Tag);
+    RR = struct('ReadRange',tagV,'X',bX,'Y',bY,'Z',bZ);
 end

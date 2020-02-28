@@ -41,9 +41,9 @@ function [M12] = Calc_Mutual_Ind(B0,I0,tag)
    B = [BX,BY,BZ];
    % tag
    Area  = pi*(tag.r)^2;
-   coeff = Area*((tag.N*tag.ur)/(tag.L*I0));
+   coeff = Area*((tag.N*tag.ur)/(tag.L*I0.I));
    M12 = zeros(nT,1);
-   [x,y,z] = sph2cart(tag.az,tag.el,L);
+   [x,y,z] = sph2cart(tag.AZ,tag.EL,tag.L);
    tag_o = [x,y,z];
    % calc mutual indutcance  
    for idx=1:nT 

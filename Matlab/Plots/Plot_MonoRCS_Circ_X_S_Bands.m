@@ -167,7 +167,7 @@ set(H(1),'LineStyle','-'); set(H(2),'LineStyle','--');
 fig=gcf; set(findall(fig,'-property','Fontsize'),'Fontsize',14); grid off;
 %}
 %% sband, pol:ph&th
-%{
+%
 % pol_phi
 figure(7)
 H = mmpolar(a,sP_ph0,a,s50_P_ph0,a,sSh_P_ph0,...
@@ -193,7 +193,7 @@ fig=gcf; set(findall(fig,'-property','Fontsize'),'Fontsize',14); grid off;
 title('Monostatic RCS: SBand(3.46GHz) pol:\phi \phi:90^\circ');
 legend({'open','500\Omega','short'},'Location','northwest');
 
-% pol_th
+%% pol_th
 figure(9)
 H = mmpolar(a,sT_ph0,a,s50_T_ph0,a,sSh_T_ph0,...
     'Style','compass','TGridVisible','off',...
@@ -219,7 +219,7 @@ title('Monostatic RCS: SBand(3.46GHz) pol:\theta \phi:90^\circ');
 legend({'open','500\Omega','short'},'Location','northwest');
 %}
 %% xband, pol:ph&th
-%
+%{
 % pol_phi
 figure(11)
 H = mmpolar(a,xP_ph0,a,x50_P_ph0,a,xSh_P_ph0,...
