@@ -13,6 +13,9 @@ tic;
 % ra=0.3; ri=0.3; phi=2; N=4; O=1; wT=0.2546e-3; h=(1.1)*(2*wT*N);
 %ra=0.3; ri=0.3; phi=2; N=2; O=1; wT=0.1; h=(1.1)*(2*wT*N); Nxy=1;
 global I0
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% input parameters
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 I0  = struct('I',1);
 h   = 3.15e-3;      % 3.15mm
 ra  = 68.38e-3;     % 68mm      % x
@@ -22,6 +25,7 @@ wT  = 0.2546e-3;    % 30a AWG68
 O   = 1; 
 N   = 14; 
 Nxy = 14;
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %[xS,yS,zS] = constrWireAnt(h,ra,ri,phi,N,O,wT,Nxy);
 [Sx,Sy,Sz] = constrCircWire(h,ra,ri,...
         phi,N,O,wT,Nxy);
@@ -32,13 +36,17 @@ xlabel('x'); ylabel('y'); zlabel('z');
 view(0,90);
 %% Calc B-Fields
 % I0.I = 1; 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% input parameters
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 Nx = 50; Ny = 50; Nz = 50; Ns = [Nx,Ny,Nz];
 %xminb=-(h+ra); yminb=-(h+ra); zminb=-(h+ra);
 %xmaxb=h+ra;    ymaxb=h+ra;    zmaxb= h+ra;
 xminb=-70e-3; yminb=-50e-3; zminb=-2e-3;
 xmaxb= 70e-3; ymaxb= 50e-3; zmaxb= 5e-3;
-
 bBox = [xminb,yminb,zminb; xmaxb,ymaxb,zmaxb];
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 % [X,Y,Z,BX,BY,BZ,normB]   = CalcBFields_Wire_Antenna_v2(I,xS,yS,zS,bBox,Ns);
 %[X,Y,Z,BX,BY,BZ] = CalcB_WireAnt(I,xS,yS,zS,bBox,Ns);
     [bX,bY,bZ, BX,BY,BZ, normB,R] = ...
@@ -49,9 +57,13 @@ nBY   = BY./normB;
 nBZ   = BZ./normB;
 B0 = struct('BX',BX,'BY',BY,'BZ',BZ,'X',bX,'Y',bY,'Z',bZ);
 %% Tag
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% input parameters
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 f=125e3;
 tag.N=250; tag.r=0.5e-3; tag.L=7e-3; tag.ur=2102;
 tag.AZ=45; tag.EL=45;
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% Mutual Inductance
 %  Description:
     [M] = Calc_Mutual_Ind(B0,I0,tag);
