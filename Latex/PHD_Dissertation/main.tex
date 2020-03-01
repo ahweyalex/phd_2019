@@ -1,0 +1,213 @@
+\documentclass[12pt,onecolumn]{report}
+
+\usepackage[utf8]{inputenc}
+\usepackage{times}
+\usepackage[margin=1.25in,lmargin=1.75in,footskip=.5in]{geometry}
+\usepackage{ragged2e}
+\usepackage{setspace}
+\usepackage{graphicx}
+\graphicspath{{Pics/}}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{esint}
+\usepackage{array}
+\usepackage{epsfig}
+\usepackage[tight,footnotesize]{subfigure}
+\usepackage{multirow}
+\usepackage[english]{babel}
+\usepackage{csquotes}
+\usepackage[backend=biber,style=ieee]{biblatex}
+\usepackage{lscape}  % Useful for wide tables or figures.
+\graphicspath{{Aimee_Figs/}}
+\usepackage{longtable}
+\usepackage{caption}
+\usepackage{subfigure}
+\usepackage{setspace} 
+\usepackage[titletoc]{appendix}
+
+\addbibresource{thesis.bib}
+\setlength\bibitemsep{\baselineskip}
+
+\pagenumbering{gobble}
+\renewcommand{\baselinestretch}{1.5} % double spaced
+\renewcommand{\Large}{\large}
+\renewcommand{\LARGE}{\large}
+\renewcommand{\huge}{\large}
+\renewcommand{\Huge}{\large}
+\linespread{1.5}
+
+
+\begin{document}
+
+% title page
+\centering
+UNIVERSITY OF OKLAHOMA \\
+GRADUATE COLLEGE \\
+\vspace{5\baselineskip}
+Improvements and Modeling of RFID Technology \\
+\vspace{4\baselineskip}
+A DISSERTATION \\
+SUBMITTED TO THE GRADUATE FACULTY \\
+in partial fulfillment of the requirements for the \\
+Degree of \\
+DOCTOR OF PHILOSOPHY\\
+\vspace{5\baselineskip}
+By \\
+ALEXANDER MORENO \\
+\setstretch{1.0}
+Norman, Oklahoma \\
+2019 \\
+
+% signature page
+\clearpage
+~ \\ \vspace{.5in}
+Improvements and Modeling of RFID Technology  \\
+\vspace{2\baselineskip}
+A DISSERTATION APPROVED FOR THE \\
+SCHOOL OF ELECTRICAL AND COMPUTER ENGINEERING \\
+\vspace{5\baselineskip}
+BY \\
+\vspace{6\baselineskip}
+\raggedleft
+\hspace*{3in}\hrulefill \\
+Dr. Jessica Ruyle, Chair \\
+\vspace{3\baselineskip}
+\hspace*{3in}\hrulefill \\
+Dr. Caleb Fulton \\
+\vspace{3\baselineskip}
+\hspace*{3in}\hrulefill \\
+Dr. Hjalti Sigmarsson \\
+\vspace{3\baselineskip}
+\hspace*{3in}\hrulefill \\
+Dr. Eli Bridge \\
+\vspace{3\baselineskip}
+\hspace*{3in}\hrulefill \\
+Dr. Jay McDaniel\\
+
+
+\newpage
+% copyright page
+\centering
+\clearpage
+~ \\
+\vfill
+\copyright~Copyright by ALEXANDER MORENO 2019 \\
+All Rights Reserved.
+
+% dedication
+%\setstretch{1.6}
+%\clearpage
+%\vspace*{\fill}
+%\textit{Dedicated to my parents, who encouraged some rather atypical dinner \\ conversations stemming from the question, ``Why?"}
+%\vspace*{\fill}
+
+\pagebreak
+%\clearpage
+\justify
+\pagenumbering{roman}
+\setcounter{page}{3}
+\renewcommand{\contentsname}{Table of Contents}
+
+
+% acknowledgements
+\tableofcontents
+%\listoftables
+\listoffigures
+
+\newpage
+\begin{abstract}
+\thispagestyle{plain}
+\pagenumbering{roman}
+\setcounter{page}{9}
+\doublespacing
+    [abstract stuff]
+\end{abstract}
+
+\clearpage
+\pagenumbering{arabic}
+\doublespacing
+
+\chapter{Introduction}
+    \section{Motivation and Background}
+        \input{CH1_Intro/1.1_Motivation}
+    \section{Background of RFID}
+        \input{CH1_Intro/1.2_Background_of_RFID}
+    \section{Background of RCS}
+        \input{CH1_Intro/1.3_Background_of_RCS}
+    \section{Research Objectives}
+        \input{CH1_Intro/1.4_Reasearch_Objective}
+%    \section{Outline of the Dissertation}
+%        \input{CH1_Intro/1.5_Outline}
+        
+\chapter{Investigation of Metallic Backing Upon  Insensitive Placement RFID Tag}
+    \section{Introduction}
+    \section{Overview of Method of Moments and Characteristics Mode Analysis}
+        \subsection{Method of Moments}
+        \subsection{Characteristics Mode Analysis}
+    %\section{Investigation of RFID Placement via Characteristics Mode Analysis}
+    \section{Investigation of Impact on Realized Gain of Metallic Object with Placement of RFID Tag}
+        \subsection{Realized Gain for Plate}
+        \subsection{Realized Gain for Cuboid}
+    \section{Investigation of Impact on RCS of Metallic Object with Placement of RFID Tag}
+        \subsection{RCS for Plate}
+        \subsection{RCS for Cuboid}
+    \section{Conclusions}
+    \section{Future Work}
+
+%\chapter{Investigation of Via Fence Reflector}
+%    \section{Introduction}
+%    \section{Background}
+%    \section{}
+
+\chapter{RFID Applications for Biological Research}
+    \section{Introduction}
+        \include{CH1_Intro/1.0_Introduction}
+    \section{Modeling Wire Antennas}
+        \subsection{Overview of Biot-Savart Law and Applications}
+        \subsection{Mutual Inductance}
+        \subsection{Read-Range Modeling} 
+    \section{Construction of Multi-Coiled Wire Antennas}
+        \subsection{Elliptical Multi-Coiled Wire Antennas}
+        \subsection{Rectangular Multi-Coiled Wire Antennas}
+    \section{Test Setup}
+    \section{Measurements Results}
+    \section{Software Application}
+    \section{Software User Guide} 
+    \section{Conclusions}
+    \section{Future Work}
+    
+\chapter{Conclusions, Scientific Impact, and Future Work}
+    \section{Summary}
+    \section{Scientific Impact}
+    \section{Future Work}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\clearpage
+\setstretch{1.0}
+\nocite{*}
+\printbibliography
+%\bibliographystyle{IEEEtran}
+%\bibliography{thesis}
+
+% Any appendices will go here
+\begin{appendices}
+
+\chapter{Fabrication Process} \label{Fabrication}
+% \subfile{Chapters/App1}
+
+\setstretch{1.0}
+\chapter{List of Acronyms and Abbreviations}
+% \subfile{Chapters/App2}
+
+\chapter{Summary of Contributions}
+% \subfile{Chapters/App3}
+
+\chapter{}
+
+\end{appendices}
+
+
+\end{document}
+
