@@ -17,9 +17,9 @@ global I0
 % input parameters
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 I0  = struct('I',1);
-h   = 3.15e-3;      % 3.15mm
-ra  = 68.38e-3;     % 68mm      % x
-ri  = 48.88e-3;     % 48mm      % y
+h   = 3.15e-3;      % [m] 3.15mm
+ra  = 68.38e-3;     % [m] 68mm      % x
+ri  = 48.88e-3;     % [m] 48mm      % y
 phi = 10;           % 10[deg]
 wT  = 0.2546e-3;    % [m] 30AWG
 O   = 1; 
@@ -42,8 +42,8 @@ view(45,30);
 Nx = 50; Ny = 50; Nz = 50; Ns = [Nx,Ny,Nz];
 %xminb=-(h+ra); yminb=-(h+ra); zminb=-(h+ra);
 %xmaxb=h+ra;    ymaxb=h+ra;    zmaxb= h+ra;
-xminb=-70e-3; yminb=-50e-3; zminb=-2e-3;
-xmaxb= 70e-3; ymaxb= 50e-3; zmaxb= 5e-3;
+xminb=-70e-3; yminb=-50e-3; zminb=-2e-3;    % [m]
+xmaxb= 70e-3; ymaxb= 50e-3; zmaxb= 5e-3;    % [m]
 bBox = [xminb,yminb,zminb; xmaxb,ymaxb,zmaxb];
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% compute B-Fields
@@ -60,9 +60,13 @@ B0 = struct('BX',BX,'BY',BY,'BZ',BZ,'X',bX,'Y',bY,'Z',bZ);
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % input parameters
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-f=125e3;
-tag.N=250; tag.r=0.5e-3; tag.L=7e-3; tag.ur=2102;
-tag.AZ=45; tag.EL=45;
+f=125e3;        % [Hz] 125 KHz
+tag.N=250;      %
+tag.r=0.5e-3;   % [m] 0.5mm
+tag.L=7e-3;     % [m] 7mm
+tag.ur=2102;    %
+tag.AZ=45;      % [deg] 
+tag.EL=45;      % [deg]
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% Mutual Inductance
 %  Description:
