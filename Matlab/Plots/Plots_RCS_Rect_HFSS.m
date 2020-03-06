@@ -1,16 +1,16 @@
 clear all; close all; clc;
 % file names
-fn1 = 'Mono_RCS_Rect_Sband_2lam2lam_GND.csv';
-fn2 = 'Mono_RCS_Rect_Sband_2lam2lam_GND_polPhTh.csv';
-fn3 = 'Mono_RCS_Rect_Sband_2lam2lam_GND_FlipV.csv';
-fn4 = 'Mono_RCS_Rect_Sband_2lam2lam_GND_FlipV_polPhTh.csv';
-fn9 = 'Mono_RCS_Rect_Sband_2lam2lam_GND_F45.csv';
+fn1  = 'Mono_RCS_Rect_Sband_2lam2lam_GND.csv';
+fn2  = 'Mono_RCS_Rect_Sband_2lam2lam_GND_polPhTh.csv';
+fn3  = 'Mono_RCS_Rect_Sband_2lam2lam_GND_FlipV.csv';
+fn4  = 'Mono_RCS_Rect_Sband_2lam2lam_GND_FlipV_polPhTh.csv';
+fn9  = 'Mono_RCS_Rect_Sband_2lam2lam_GND_F45.csv';
 fn10 = 'Mono_RCS_Rect_Sband_2lam2lam_GND_F45_polPhTh.csv';
 
-fn5 = 'Mono_RCS_Rect_Sband_2lam2lam3Q_GND.csv';
-fn6 = 'Mono_RCS_Rect_Sband_2lam2lam3Q_GND_polPhTh.csv';
-fn7 = 'Mono_RCS_Rect_Sband_2lam2lam3Q_GND_FlipV.csv';
-fn8 = 'Mono_RCS_Rect_Sband_2lam2lam3Q_GND_FlipV_polPhTh.csv';
+fn5  = 'Mono_RCS_Rect_Sband_2lam2lam3Q_GND.csv';
+fn6  = 'Mono_RCS_Rect_Sband_2lam2lam3Q_GND_polPhTh.csv';
+fn7  = 'Mono_RCS_Rect_Sband_2lam2lam3Q_GND_FlipV.csv';
+fn8  = 'Mono_RCS_Rect_Sband_2lam2lam3Q_GND_FlipV_polPhTh.csv';
 fn11 = 'Mono_RCS_Rect_Sband_2lam2lam3Q_GND_F45.csv';
 fn12 = 'Mono_RCS_Rect_Sband_2lam2lam3Q_GND_F45_polPhTh.csv';
 
@@ -174,6 +174,7 @@ title({
 [' ']});
 % legend({'pos:horizontal','pos:vertical'},'Location','northwest');
 legend({'pos:horizontal','pos:vertical','pos:45^\circ'},'Location','northwest');
+
 figure(2)
 H = mmpolar(a,tLam3Q_p90,a,tLam3Qv_p90,a,tLam45_p90,...
     'Style','compass','TGridVisible','off',...

@@ -21,7 +21,7 @@ h   = 3.15e-3;      % 3.15mm
 ra  = 68.38e-3;     % 68mm      % x
 ri  = 48.88e-3;     % 48mm      % y
 phi = 10;           % 10[deg]
-wT  = 0.2546e-3;    % 30a AWG68
+wT  = 0.2546e-3;    % [m] 30AWG
 O   = 1; 
 N   = 14; 
 Nxy = 14;
@@ -29,11 +29,11 @@ Nxy = 14;
 %[xS,yS,zS] = constrWireAnt(h,ra,ri,phi,N,O,wT,Nxy);
 [Sx,Sy,Sz] = constrCircWire(h,ra,ri,...
         phi,N,O,wT,Nxy);
-%%
+%% plot antenna wire 
 figure(1)
 plot3(Sx,Sy,Sz);
 xlabel('x'); ylabel('y'); zlabel('z');
-view(0,90);
+view(45,30);
 %% Calc B-Fields
 % I0.I = 1; 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -46,7 +46,7 @@ xminb=-70e-3; yminb=-50e-3; zminb=-2e-3;
 xmaxb= 70e-3; ymaxb= 50e-3; zmaxb= 5e-3;
 bBox = [xminb,yminb,zminb; xmaxb,ymaxb,zmaxb];
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
+%% compute B-Fields
 % [X,Y,Z,BX,BY,BZ,normB]   = CalcBFields_Wire_Antenna_v2(I,xS,yS,zS,bBox,Ns);
 %[X,Y,Z,BX,BY,BZ] = CalcB_WireAnt(I,xS,yS,zS,bBox,Ns);
     [bX,bY,bZ, BX,BY,BZ, normB,R] = ...

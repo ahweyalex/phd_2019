@@ -54,7 +54,7 @@
 % ------------------------------------------------------------------------
 
 
-function [xS0,yS0,zS0] = constrCircWire(h,ra,ri,phi,N,O,wT,Nxy)
+function [xS0,yS0,zSn] = constrCircWire(h,ra,ri,phi,N,O,wT,Nxy)
     helixSTEP = phi*(pi/180);
     start=0; fin = N*(2*pi) + helixSTEP/2;
     cst_xxx = start:helixSTEP:fin;
@@ -92,14 +92,14 @@ function [xS0,yS0,zS0] = constrCircWire(h,ra,ri,phi,N,O,wT,Nxy)
             if(mod(nx,2)~=0) 
                 xS0 = [xS0,(ra+txy).*sin(cst_xxx)];
                 yS0 = [yS0,(ri+txy).*cos(cst_xxx)];
-                zS0 = [zS0,((h).*cst_xxx)./(2*pi*N)];
-                %zSn = [zSn,zS0];
+                %zS0 = [zS0,((h).*cst_xxx)./(2*pi*N)];
+                zSn = [zSn,zS0];
                 %a='1'
             else
                 xS0 = [xS0,-(ra+txy).*sin(cst_xxx)];
                 yS0 = [yS0, (ri+txy).*cos(cst_xxx)];
-                zS0 = [zS0, ((h).*cst_xxx)./(2*pi*N)];
-                %zSn = [zSn,zS0];
+                %zS0 = [zS0, ((h).*cst_xxx)./(2*pi*N)];
+                zSn = [zSn,zS0];
                 %a='1'
             end % END: IF
         end %END: FOR
