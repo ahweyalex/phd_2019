@@ -1,5 +1,5 @@
 \documentclass[12pt,onecolumn]{report}
-
+% use packages
 \usepackage[utf8]{inputenc}
 \usepackage{times}
 \usepackage[margin=1.25in,lmargin=1.75in,footskip=.5in]{geometry}
@@ -24,21 +24,24 @@
 \usepackage{subfigure}
 \usepackage{setspace} 
 \usepackage[titletoc]{appendix}
-
+% references/bib
 \addbibresource{thesis.bib}
 \setlength\bibitemsep{\baselineskip}
-
+% numbering 
 \pagenumbering{gobble}
+% spacing 
 \renewcommand{\baselinestretch}{1.5} % double spaced
 \renewcommand{\Large}{\large}
 \renewcommand{\LARGE}{\large}
 \renewcommand{\huge}{\large}
 \renewcommand{\Huge}{\large}
 \linespread{1.5}
+% enables sub-subsections in the table of contents
+\setcounter{tocdepth}{3}
+\setcounter{secnumdepth}{3}
 
 
 \begin{document}
-
 % title page
 \centering
 UNIVERSITY OF OKLAHOMA \\
@@ -56,7 +59,7 @@ By \\
 ALEXANDER MORENO \\
 \setstretch{1.0}
 Norman, Oklahoma \\
-2019 \\
+2020 \\
 
 % signature page
 \clearpage
@@ -91,7 +94,7 @@ Dr. Jay McDaniel\\
 \clearpage
 ~ \\
 \vfill
-\copyright~Copyright by ALEXANDER MORENO 2019 \\
+\copyright~Copyright by ALEXANDER MORENO 2020 \\
 All Rights Reserved.
 
 % dedication
@@ -126,61 +129,108 @@ All Rights Reserved.
 \clearpage
 \pagenumbering{arabic}
 \doublespacing
-
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%   CH1: Introduction
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \chapter{Introduction}
-    \section{Motivation and Background}
-        \input{CH1_Intro/1.1_Motivation}
-    \section{Background of RFID}
-        \input{CH1_Intro/1.2_Background_of_RFID}
-    \section{Background of RCS}
-        \input{CH1_Intro/1.3_Background_of_RCS}
+%%%% Motivation
+    \section{Motivation}
+        \input{CH1/Motivation}
+%%%% Overview of RFID    
+    \section{Overview of RFID}
+        \subsection{Core Components of RFID System}
+            \input{CH1/RFIDComponents}
+        \subsection{Near-Field Based RFID Design}
+            \input{CH1/NearField}
+        \subsection{Far-Field Based RFID Design}
+            \input{CH1/FarField}
+        \subsection{Modulation Techniques}
+            \input{CH1/ModTech}
+%%%% Research Objetives            
     \section{Research Objectives}
-        \input{CH1_Intro/1.4_Reasearch_Objective}
-%    \section{Outline of the Dissertation}
-%        \input{CH1_Intro/1.5_Outline}
+        \input{CH1/Rsearch_Obj}
+%%%% Disseration Outline
+    \section{Dissertation Outline}
+        \input{CH1/Outline}
         
-\chapter{Investigation of Metallic Backing Upon  Insensitive Placement RFID Tag}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%   CH2: Investigation of Canonical Metallic Backing Upon  Insensitive Placement RFID Tag
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%   
+\chapter{Investigation of Canonical Metallic Backing Upon  Insensitive Placement RFID Tag}
+%%%%% Introduction
     \section{Introduction}
+%%%%% MOM    
     \section{Overview of Method of Moments and Characteristics Mode Analysis}
         \subsection{Method of Moments}
         \subsection{Characteristics Mode Analysis}
-    %\section{Investigation of RFID Placement via Characteristics Mode Analysis}
-    \section{Investigation of Impact on Realized Gain of Metallic Object with Placement of RFID Tag}
-        \subsection{Realized Gain for Plate}
-        \subsection{Realized Gain for Cuboid}
-    \section{Investigation of Impact on RCS of Metallic Object with Placement of RFID Tag}
-        \subsection{RCS for Plate}
-        \subsection{RCS for Cuboid}
+%%%% Background of Placement Insensitive  RFID Tag     
+    \section{Background of Placement Insensitive  RFID Tag}
+        \subsection{Background}
+        \subsection{Input Impedance}
+        \subsection{Realized Gain}
+        \subsection{Far-Field Back-Scatter}
+            % \subsubsection{}
+    %\section{Investigation of  Metallic Plate Upon  Insensitive Placement RFID Tag}
+%%%% Impact of Placement of RFID Tag on Metallic Plate
+    \section{Impact of Placement of RFID Tag on Metallic Plate}
+        \subsection{Applying CMA to Metallic Plate}
+        \subsection{Realized Gain for RFID Tag Placed on Metallic Plate}
+            \subsubsection{Simulation Results}
+        \subsection{Far-Field Back-Scattering for RFID Tag Placed on Metallic Plate}
+            \subsubsection{Simulation Results}
+            \subsubsection{Measured Results}
+%    \section{Investigation of  Metallic Cuboid Upon  Insensitive Placement RFID Tag}    
+%%%% Impact of Placement of RFID Tag on Metallic Cuboid
+    \section{Impact of Placement of RFID Tag on Metallic Cuboid}
+        \subsection{Applying CMA to Metallic Cuboid}
+        \subsection{Realized Gain for RFID Tag Placed on Metallic Cuboid}
+            \subsubsection{Simulation Results}
+        \subsection{Far-Field Back-Scattering for for RFID Tag Placed on Metallic Cuboid}
+            \subsubsection{Simulation Results}
+%%% Conclusions
     \section{Conclusions}
+%%% Future Work
     \section{Future Work}
-
-%\chapter{Investigation of Via Fence Reflector}
-%    \section{Introduction}
-%    \section{Background}
-%    \section{}
-
+    
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%   CH2: RFID Applications for Biological Research
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
 \chapter{RFID Applications for Biological Research}
+%%%% Introduction
     \section{Introduction}
         \include{CH1_Intro/1.0_Introduction}
+%%%% Modeling Wire Antennas
     \section{Modeling Wire Antennas}
         \subsection{Overview of Biot-Savart Law and Applications}
-        \subsection{Mutual Inductance}
-        \subsection{Read-Range Modeling} 
+        \subsection{Overview of Mutual Inductance}
+        \subsection{Implementation Read-Range Modeling} 
+%%%% Constriction of Multi-Coiled Wire Antennas
     \section{Construction of Multi-Coiled Wire Antennas}
         \subsection{Elliptical Multi-Coiled Wire Antennas}
         \subsection{Rectangular Multi-Coiled Wire Antennas}
+%%%% Test Setup    
     \section{Test Setup}
+%%%% Measurements Results
     \section{Measurements Results}
+%%%% Software Application    
     \section{Software Application}
+%%%% Software User GUide
     \section{Software User Guide} 
+%%%% Conclusions
     \section{Conclusions}
+%%%% Future Work
     \section{Future Work}
     
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%   CH4: Conclusion, Scientific Impact, and Future Work
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%     
 \chapter{Conclusions, Scientific Impact, and Future Work}
+%%%% Summary    
     \section{Summary}
+%%%% Scientific Impact
     \section{Scientific Impact}
+%%%% Future Work    
     \section{Future Work}
-
 %%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%
 
