@@ -93,6 +93,7 @@ function [xS0,yS0,zS0] = constrCircWire(h,ra,ri,phi,N,O,wT,Nxy)
                 xS0 = [xS0,(ra+txy).*sin(cst_xxx)];
                 yS0 = [yS0,(ri+txy).*cos(cst_xxx)];
                 zS0 = [zS0,((h).*cst_xxx)./(2*pi*N)];
+                numel(xS0)
                 %zSn = [zSn,zS0];
                 %a='1'
             else

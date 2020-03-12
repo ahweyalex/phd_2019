@@ -20,20 +20,35 @@ I0  = struct('I',1);
 h   = 3.15e-3;      % [m] 3.15mm
 ra  = 68.38e-3;     % [m] 68mm      % x
 ri  = 48.88e-3;     % [m] 48mm      % y
+%ra = 2; % for ex fig
+%ri = 1; % for ex fig
 phi = 10;           % 10[deg]
 wT  = 0.2546e-3;    % [m] 30AWG
+%wT = 1; % for ex fig
 O   = 1; 
-N   = 14; 
-Nxy = 14;
+N   = 10; 
+Nxy = 3;
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %[xS,yS,zS] = constrWireAnt(h,ra,ri,phi,N,O,wT,Nxy);
 [Sx,Sy,Sz] = constrCircWire(h,ra,ri,...
         phi,N,O,wT,Nxy);
 %% plot antenna wire 
 figure(1)
-plot3(Sx,Sy,Sz);
-xlabel('x'); ylabel('y'); zlabel('z');
+% H=plot3(Sx,Sy,Sz,'o-');
+ns=361;
+H=plot3(Sx(1:ns),Sy(1:ns),Sz(1:ns),Sx(ns+1:2*ns),Sy(ns+1:2*ns),...
+    Sz(ns+1:2*ns),Sx((2*ns)+1:end),Sy((2*ns)+1:end),Sz((2*ns)+1:end));
+set(H,'LineStyle','-'); %set(H,'marker','o');
+set(H,'color','b');
+%set(H(1),'color','b'); set(H(2),'color','r'); set(H(3),'color','g');
+xlabel('x','fontSize',12,'fontweight','bold');
+ylabel('y','fontSize',12,'fontweight','bold');
+zlabel('z','fontSize',12,'fontweight','bold');
+tcks = [-5 -3 0 3 5];
+xticks(tcks);
+%legend('Nxy:1','Nxy:2','Nxy:3','location','northwest');
 view(45,30);
+grid on;
 %% Calc B-Fields
 % I0.I = 1; 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
