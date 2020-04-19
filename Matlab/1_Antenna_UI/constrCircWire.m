@@ -93,7 +93,6 @@ function [xS0,yS0,zS0] = constrCircWire(h,ra,ri,phi,N,O,wT,Nxy)
                 xS0 = [xS0,(ra+txy).*sin(cst_xxx)];
                 yS0 = [yS0,(ri+txy).*cos(cst_xxx)];
                 zS0 = [zS0,((h).*cst_xxx)./(2*pi*N)];
-                numel(xS0)
                 %zSn = [zSn,zS0];
                 %a='1'
             else
@@ -109,7 +108,6 @@ function [xS0,yS0,zS0] = constrCircWire(h,ra,ri,phi,N,O,wT,Nxy)
             for nx=1:Nxy
                 t   = wT/2;
                 txy = (3/2)*wT*(nx-1);
-                
                 if(mod(nx,2)~=0)
                     xS0 = [xS0,-(ra+txy).*sin(cst_xxx)];
                     yS0 = [yS0,(ri+txy).*cos(cst_xxx)];

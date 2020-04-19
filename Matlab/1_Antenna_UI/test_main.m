@@ -19,27 +19,36 @@ global I0
 I0  = struct('I',1);
 h   = 3.15e-3;      % [m] 3.15mm
 ra  = 68.38e-3;     % [m] 68mm      % x
+W0  = ra;
 ri  = 48.88e-3;     % [m] 48mm      % y
+L0  = ri;
 %ra = 2; % for ex fig
 %ri = 1; % for ex fig
 phi = 10;           % 10[deg]
 wT  = 0.2546e-3;    % [m] 30AWG
 %wT = 1; % for ex fig
 O   = 1; 
-N   = 10; 
+N   = 3; 
 Nxy = 3;
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%[xS,yS,zS] = constrWireAnt(h,ra,ri,phi,N,O,wT,Nxy);
-[Sx,Sy,Sz] = constrCircWire(h,ra,ri,...
-        phi,N,O,wT,Nxy);
+%[Sx,Sy,Sz] = constrCircWire(h,ra,ri,phi,N,O,wT,Nxy);
+[Sx,Sy,Sz] = constrRectWire(h,W0,L0,phi,N,O,wT,Nxy);   
 %% plot antenna wire 
 figure(1)
-% H=plot3(Sx,Sy,Sz,'o-');
-ns=361;
-H=plot3(Sx(1:ns),Sy(1:ns),Sz(1:ns),Sx(ns+1:2*ns),Sy(ns+1:2*ns),...
-    Sz(ns+1:2*ns),Sx((2*ns)+1:end),Sy((2*ns)+1:end),Sz((2*ns)+1:end));
-set(H,'LineStyle','-'); %set(H,'marker','o');
-set(H,'color','b');
+%H = plot3(Sx,Sy,Sz,'-');
+n=202;
+H = plot3(Sx(1:n),Sy(1:n),Sz(1:n),Sx(n:2*n),Sy(n:2*n),Sz(n:2*n),...
+    Sx(2*n:end),Sy(2*n:end),Sz(2*n:end));
+set(H(1),'color','b');
+set(H(2),'color','r');
+set(H(3),'color','g');
+%set(H,'linewidth',3);
+%ns=361;
+%H=plot3(Sx(1:ns),Sy(1:ns),Sz(1:ns),Sx(ns+1:2*ns),Sy(ns+1:2*ns),...
+%    Sz(ns+1:2*ns),Sx((2*ns)+1:end),Sy((2*ns)+1:end),Sz((2*ns)+1:end));
+%set(H,'LineStyle','-'); %set(H,'marker','o');
+%set(H,'color','b');
+
 %set(H(1),'color','b'); set(H(2),'color','r'); set(H(3),'color','g');
 xlabel('x','fontSize',12,'fontweight','bold');
 ylabel('y','fontSize',12,'fontweight','bold');

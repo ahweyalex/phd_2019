@@ -271,7 +271,7 @@ switch Tag.EL
 end
 %% Initialize variables 
 bBox = [Bdim.xmin,Bdim.ymin,Bdim.zmin;Bdim.xmax,Bdim.ymax,Bdim.zmax];
-Ns = [Bdim.Nx;Bdim.Ny;Bdim.Nz];
+Ns   = [Bdim.Nx;Bdim.Ny;Bdim.Nz];
 % END: Conversion 
 
 %% Construction

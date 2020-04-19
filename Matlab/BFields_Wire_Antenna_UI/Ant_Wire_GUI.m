@@ -42,6 +42,8 @@ function [] = Ant_Wire_GUI()
                   'name','Wire Antenna Design Tool',...
                   'resize','off');
     set(S.fh,'UserData',struct('v',1));
+    set(S.fh,'UserData',struct('wireAnt',A,'BFields',B,...
+                    'readRange',RR))
     % creates empty plot
     px=50; py=100; pdx=300; pdy=230;
     S.axB = axes('units','pixels','position',[50 100 300 230]);  
@@ -106,7 +108,7 @@ function [] = Ant_Wire_GUI()
                         'string','Plot:B-Fields',...
                         'value',1,...
                         'enable','on');
-    S.tg(9) = uicontrol('style','toggle',...
+    S.tg(10) = uicontrol('style','toggle',...
                         'units','pixels',...
                         'position',[tg_x+tg_px*2.6, tg_y*0.1,tg_px, tg_py],...
                         'string','Plot:Read-Range',...
@@ -522,7 +524,7 @@ function [] = Ant_Wire_GUI()
 end
 
 % Callback for togglebuttons
-    function [] = tg_call(varargin)
+function [] = tg_call(varargin)
     ddList = {'m','cm','mm','in'};
     hList  = {'mil','m','cm','mm','in'};
     wtList = {'AWG','m','cm','mm','in'};
@@ -535,25 +537,32 @@ end
     
     % ZZ = get(S.ax,'children');  % The line object.
         switch h
-            case S.tg(1)    %RECTANGULAR
+            %RECTANGULAR
+            case S.tg(1)    
                 %set([S.axB,S.dd],{'visible'},{'on'});
                 set([S.ep_in(2),S.ep_in(3),S.ep_txt(2),S.ep_txt(3),S.dd],{'visible'},{'off'});
                 set([S.ep_in(8),S.ep_in(9),S.ep_txt(8),S.ep_txt(9),S.dd],{'visible'},{'on'});
                 % AntDim.v = 'r';
                 % r-->1
                 set(S.fh,'UserData',struct('v',1));
-            case S.tg(2)    % ELLIPTICAL
+            
+            % ELLIPTICAL
+            case S.tg(2)   
                 % e--> 2
                 %set([S.axB],{'visible'},{'off'});
                 set([S.ep_in(2),S.ep_in(3),S.ep_txt(2),S.ep_txt(3),S.dd],{'visible'},{'on'});
                 set([S.ep_in(8),S.ep_in(9),S.ep_txt(8),S.ep_txt(9)],{'visible'},{'off'});
                 %AntDim.v = 'e';
                 set(S.fh,'UserData',struct('v',2));
-            case S.tg(3) % IMPORT
+            
+            % IMPORT
+            case S.tg(3) 
                 % k-->3
                 %AntDim.v = 'k';
                 set(S.fh,'UserData',struct('v',3));
-            case S.tg(4) % RUN
+            
+            % RUN
+            case S.tg(4) 
                 % Update Units
                 Units.h     = hList{S.dd(1).Value};
                 Units.W     = ddList{S.dd(2).Value};
@@ -593,6 +602,7 @@ end
                 Bdim.zmin = str2double(char(S.dim_ep(8).String)); 
                 Bdim.zmax = str2double(char(S.dim_ep(9).String));
                 Bdim.v    = sList{S.dim_dd(5).Value};
+                
                 % tag (solenoid)
                 Tag.r  = str2double(char(S.dim_tag(1).String));
                 Tag.L  = str2double(char(S.dim_tag(2).String));
@@ -600,6 +610,7 @@ end
                 Tag.AZ = str2double(char(S.dim_tag(4).String));
                 Tag.EL = str2double(char(S.dim_tag(5).String));
                 Tag.ur = 2099;
+                
                 % plots tag (solenoid)
                 [Tx,Ty,Tz] = sph2cart(Tag.AZ,Tag.EL,Tag.L);
                 Tx=[0,Tx]; Ty=[0,Ty]; Tz=[0,Tz];
@@ -614,7 +625,9 @@ end
                     'readRange',RR));
                 
                 % plots
-                nn=25; 
+                nx = round(Bdim.Nx/2);
+                ny = round(Bdim.Ny/2);
+                nz = round(Bdim.Nz/2);
                 %HH = quiver3(S.bX(nn,:,:),S.bZ(nn,:,:),S.bY(nn,:,:),...
                 %    S.BX(nn,:,:),S.BZ(nn,:,:),S.BY(nn,:,:));
                 
@@ -633,17 +646,20 @@ end
                 % set(S.axB,'contourcbar');
                 view(0,-90); grid on; axis tight;
                 set(S.axB.YLabel,'String','z[m]','FontWeight','bold',...
-                    'FontSize',24);
+                    'FontSize',12);
                 set(S.axB.XLabel,'String','x[m]','FontWeight','bold',...
-                    'FontSize',24); 
+                    'FontSize',12); 
                 set(S.axB.Title,'String',...
                     'Coiled Wire Antenna:B-Fields (Model)',...
                     'FontWeight','bold','FontSize', 16);
-                set(S.axB,'xlim',[-0.2 0.2]);
-                set(S.axB,'ylim',[-0.5 0.9]);
+                %set(S.axB,'xlim',[-0.2 0.2]);
+                %set(S.axB,'ylim',[-0.5 0.9]);
                 view(0,90)
                 %d = 'done'
-            case S.tg(5) % EXPORT
+                % END: quiver
+                
+            % EXPORT
+            case S.tg(5) 
                 % location of bfields
                 newX = reshape(S.fh.UserData.BFields.X,...
                     numel(S.fh.UserData.BFields.BX),1);
@@ -659,16 +675,19 @@ end
                 newBZ = reshape(S.fh.UserData.BFields.BZ,...
                     numel(S.fh.UserData.BFields.BZ),1);
                 dataM = [newX,newY,newZ,newBX,newBY,newBZ];
-                T.Properties.VariableNames(1,1:3) = {'x','y','z',...
+                T = array2table(dataM);
+                T.Properties.VariableNames(1,1:6) = {'x','y','z',...
                     'BX','BY','BZ'};
-                writetable(T,'antenna_wire_coordinates.csv');
+                writetable(T,'BFields.csv');
                 
                 % antenna spatial coordinates [xyz]
                 dataM = [S.fh.UserData.wireAnt.X,...
                     S.fh.UserData.wireAnt.Y,S.fh.UserData.wireAnt.Z];
                 T = array2table(dataM);
                 T.Properties.VariableNames(1,1:3) = {'x','y','z'};
-                writetable(T,'antenna_wire_coordinates.csv')
+                writetable(T,'Antenna_Wire_Coordinates.csv');
+                
+            % Tag    
             case S.tg(7)
                 % get data 
                 Units.tagR  = ddList{S.tag_dd(1).Value};
@@ -692,6 +711,61 @@ end
                 
             %case S.tg(6) % ABOUT
             %}
+            
+            % plot wire antenna
+            case S.tg(8)
+                if(numel(S.fh.UserData.wireAnt.X)>1)
+                    plot3(S.fh.UserData.wireAnt.X,...
+                        S.fh.UserData.wireAnt.Y,...
+                        S.fh.UserData.wireAnt.Z,...
+                        'Parent',S.axB);
+                else
+                    msbx = msgbox('No Antenna Wire Points. Run Code.');
+                end
+                
+            % plot B-Fileds
+            case S.tg(9)
+                if(numel(S.fh.UserData.BFields.BX)>2)
+                    % quiver
+                    B.X  = S.fh.UserData.BFields.X;
+                    B.Y  = S.fh.UserData.BFields.Y;
+                    B.Z  = S.fh.UserData.BFields.Z;
+                    B.BX = S.fh.UserData.BFields.BX;
+                    B.BY = S.fh.UserData.BFields.BY;
+                    B.BZ = S.fh.UserData.BFields.BZ;
+                    BQ=quiver3(B.X(nn,:,:),B.Z(nn,:,:),...
+                            B.Y(nn,:,:),B.BX(nn,:,:),B.BY(nn,:,:),...
+                            B.BZ(nn,:,:),'w','Parent',S.axB);
+                    hold all;
+                    % contour
+                    normB=sqrt(B.BX.^2+B.BY.^2+B.BZ.^2);
+                    X2 = squeeze(B.X(nn,:,:));
+                    Y2 = squeeze(B.Y(nn,:,:));
+                    Z2 = squeeze(B.Z(nn,:,:));
+                    B2 = squeeze(normB(nn,:,:)); 
+                    contourf(X2,Z2,B2,'Parent',S.axB);
+                    % set(S.axB,'contourcbar');
+                    view(0,-90); grid on; axis tight;
+                    set(S.axB.YLabel,'String','z[m]','FontWeight','bold',...
+                        'FontSize',12);
+                    set(S.axB.XLabel,'String','x[m]','FontWeight','bold',...
+                        'FontSize',12); 
+                    set(S.axB.Title,'String',...
+                        'Coiled Wire Antenna:B-Fields (Model)',...
+                        'FontWeight','bold','FontSize', 16);
+                    %set(S.axB,'xlim',[-0.2 0.2]);
+                    %set(S.axB,'ylim',[-0.5 0.9]);
+                    view(0,90)
+                    %d = 'done'
+                    % END: quiver
+                else
+                    msbx = msgbox('No BFields. Run Code.');
+                end
+                
+            % plot read-range
+            case S.tg(10)
+
+                
             otherwise       % IMPORT
                 set([S.ax],{'visible'},{'off'});
         end 
