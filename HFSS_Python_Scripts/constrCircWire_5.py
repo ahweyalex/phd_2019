@@ -18,8 +18,8 @@ for x in range(0,(nxySize)*2,2):
 	Nxy.append(str(x))
 	
 wT = "0.2546mm"
-ra = "0.5mm"
-ri = "0.5mm"
+ra = "30mm"
+ri = "30mm"
 N  = "3"
 numSeg = "200"
 O = 1
@@ -86,7 +86,7 @@ if O==1:
 						[
 							"NAME:PLPoint",
 							"X:="			, "0mm",
-							"Y:="			, "ri + wT*"+Nxy[n+1]+".2",
+							"Y:="			, "ri + wT*"+Nxy[n+1]+".0",
 							"Z:="			, "zEnd"
 						]
 					],
@@ -135,8 +135,8 @@ if O==1:
 				oEditor.CreateEquationCurve(
 					[
 						"NAME:EquationBasedCurveParameters",
-						"XtFunction:="		, "(ra + wT*"+Nxy[n]+".2) * cos(_t)",
-						"YtFunction:="		, "(ri + wT*"+Nxy[n]+".2) * sin(_t)",
+						"XtFunction:="		, "(ra + wT*"+Nxy[n]+") * cos(_t)",
+						"YtFunction:="		, "(ri + wT*"+Nxy[n]+") * sin(_t)",
 						"ZtFunction:="		, "h*(_t)",
 						"tStart:="		, "0",
 						"tEnd:="		, "N*2*pi",
@@ -192,13 +192,13 @@ if O==1:
 								[
 									"NAME:PLPoint",
 									"X:="			, "0mm",
-									"Y:="			, "ri + wT*"+Nxy[n]+".2",
+									"Y:="			, "ri + wT*"+Nxy[n]+".0",
 									"Z:="			, "0"
 								],
 								[
 									"NAME:PLPoint",
 									"X:="			, "0mm",
-									"Y:="			, "ri + wT*"+Nxy[n+1]+".2",
+									"Y:="			, "ri + wT*"+Nxy[n+1]+".0",
 									"Z:="			, "0"
 								]
 							],
@@ -245,8 +245,8 @@ if O==1:
 				oEditor.CreateEquationCurve(
 					[
 						"NAME:EquationBasedCurveParameters",
-						"XtFunction:="		, "(ra + wT*"+Nxy[n]+".2) * sin(_t)",
-						"YtFunction:="		, "(ri + wT*"+Nxy[n]+".2) * cos(_t)",
+						"XtFunction:="		, "(ra + wT*"+Nxy[n]+") * sin(_t)",
+						"YtFunction:="		, "(ri + wT*"+Nxy[n]+") * cos(_t)",
 						"ZtFunction:="		, "h*(_t)",
 						"tStart:="		, "0",
 						"tEnd:="		, "N*2*pi",
@@ -290,13 +290,13 @@ if O==1:
 								[
 									"NAME:PLPoint",
 									"X:="			, "0mm",
-									"Y:="			, "ri + wT*"+Nxy[n]+".2",
+									"Y:="			, "ri + wT*"+Nxy[n]+".0",
 									"Z:="			, "zEnd"
 								],
 								[
 									"NAME:PLPoint",
 									"X:="			, "0mm",
-									"Y:="			, "ri + wT*"+Nxy[n+1]+".2",
+									"Y:="			, "ri + wT*"+Nxy[n+1]+".0",
 									"Z:="			, "zEnd"
 								]
 							],
@@ -343,32 +343,32 @@ else:
 ########################################################################
 #### END: Combine lines and sweep circle to create 3D object
 #######################################################################
-# oEditor.CreateCircle(
-	# [
-		# "NAME:CircleParameters",
-		# "IsCovered:="		, True,
-		# "XCenter:="		, "0mm",
-		# "YCenter:="		, ri,
-		# "ZCenter:="		, "0mm",
-		# "Radius:="		, wT,
-		# "WhichAxis:="		, "X",
-		# "NumSegments:="		, "0"
-	# ], 
-	# [
-		# "NAME:Attributes",
-		# "Name:="		, "Circle0",
-		# "Flags:="		, "",
-		# "Color:="		, "(143 175 143)",
-		# "Transparency:="	, 0,
-		# "PartCoordinateSystem:=", "Global",
-		# "UDMId:="		, "",
-		# "MaterialValue:="	, "\"vacuum\"",
-		# "SurfaceMaterialValue:=", "\"\"",
-		# "SolveInside:="		, True,
-		# "IsMaterialEditable:="	, True,
-		# "UseMaterialAppearance:=", False,
-		# "IsLightweight:="	, False
-	# ])
+oEditor.CreateCircle(
+	[
+		"NAME:CircleParameters",
+		"IsCovered:="		, True,
+		"XCenter:="		, "0mm",
+		"YCenter:="		, "ri",
+		"ZCenter:="		, "zEnd",
+		"Radius:="		, "wT",
+		"WhichAxis:="		, "X",
+		"NumSegments:="		, "0"
+	], 
+	[
+		"NAME:Attributes",
+		"Name:="		, "Circle0",
+		"Flags:="		, "",
+		"Color:="		, "(143 175 143)",
+		"Transparency:="	, 0,
+		"PartCoordinateSystem:=", "Global",
+		"UDMId:="		, "",
+		"MaterialValue:="	, "\"vacuum\"",
+		"SurfaceMaterialValue:=", "\"\"",
+		"SolveInside:="		, True,
+		"IsMaterialEditable:="	, True,
+		"UseMaterialAppearance:=", False,
+		"IsLightweight:="	, False
+	])
 
 cStr = "EquationCurve"
 pStr = "Polyline"
@@ -381,12 +381,15 @@ for n in range(nxySize):
 		eqC = eqC + cStr +str(n)
 	elif n==(nxySize-1):
 		eqC = eqC + cStr + str(n) + c
+		# poL = poL + pStr + str(n)
+	elif n==(nxySize-2):
+		eqC = eqC + cStr + str(n) + c
 		poL = poL + pStr + str(n)
 	else:
 		eqC = eqC + cStr + str(n) + c
-		poL = pStr + str(n) + c
+		poL = poL + pStr + str(n) + c
 
-selNames = q+ eqC + poL +q
+selNames = eqC + poL
 oEditor.Unite(
 	[
 		"NAME:Selections",
@@ -397,16 +400,16 @@ oEditor.Unite(
 		"KeepOriginals:="	, False
 	])
 	
-# oEditor.SweepAlongPath(
-	# [
-		# "NAME:Selections",
-		# "Selections:="		, "EquationCurve0,Circle0",
-		# "NewPartsModelFlag:="	, "Model"
-	# ], 
-	# [
-		# "NAME:PathSweepParameters",
-		# "DraftAngle:="		, "0deg",
-		# "DraftType:="		, "Round",
-		# "CheckFaceFaceIntersection:=", False,
-		# "TwistAngle:="		, "0deg"
-	# ])
+oEditor.SweepAlongPath(
+	[
+		"NAME:Selections",
+		"Selections:="		, "EquationCurve0,Circle0",
+		"NewPartsModelFlag:="	, "Model"
+	], 
+	[
+		"NAME:PathSweepParameters",
+		"DraftAngle:="		, "0deg",
+		"DraftType:="		, "Round",
+		"CheckFaceFaceIntersection:=", False,
+		"TwistAngle:="		, "0deg"
+	])
