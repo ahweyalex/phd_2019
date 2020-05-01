@@ -11,7 +11,7 @@ oEditor = oDesign.SetActiveEditor("3D Modeler")
 ############################################################################
 # define parameters within python script
 ############################################################################
-nxySize = 5
+nxySize = 3
 Nxy = []
 # starts at 0, step size is 2
 for x in range(0,(nxySize)*2,2):
@@ -22,12 +22,21 @@ ra = "30mm"
 ri = "30mm"
 N  = "3"
 numSeg = "200"
-O = 1
+O = 0
 u = "mm"
-########################################################################
+###########################################################################
 #### END:  define parameters within python script
-#######################################################################
+###########################################################################
+#-------------------------------------------------------------------------------
+#-------------------------------------------------------------------------------
+
+############################################################################
+# define create lines
+############################################################################
+
+# create circle lines
 if O==1:
+	#######################################################################
 	# start cw
 	for n in range(nxySize):
 		# first case
@@ -336,19 +345,332 @@ if O==1:
 							"IsLightweight:="	, False
 						])
 
-# start ccw	
 else:
-	a=1
+	#######################################################################
+	# start ccw	
+	for n in range(nxySize):
+		# first case
+		if n==0:
+			# create first circ 
+			oEditor.CreateEquationCurve(
+				[
+					"NAME:EquationBasedCurveParameters",
+					"XtFunction:="		, "(ra) * cos(_t)",
+					"YtFunction:="		, "(ri) * sin(_t)",
+					"ZtFunction:="		, "h*(_t)",
+					"tStart:="		, "0",
+					"tEnd:="		, "N*2*pi",
+					"NumOfPointsOnCurve:="	, "numSeg",
+					"Version:="		, 1,
+					[
+						"NAME:PolylineXSection",
+						"XSectionType:="	, "None",
+						"XSectionOrient:="	, "Auto",
+						"XSectionWidth:="	, "0",
+						"XSectionTopWidth:="	, "0",
+						"XSectionHeight:="	, "0",
+						"XSectionNumSegments:="	, "0",
+						"XSectionBendType:="	, "Corner"
+					]
+				], 
+				[
+					"NAME:Attributes",
+					"Name:="		, "EquationCurve"+Nxy[n],
+					"Flags:="		, "",
+					"Color:="		, "(143 175 143)",
+					"Transparency:="	, 0,
+					"PartCoordinateSystem:=", "Global",
+					"UDMId:="		, "",
+					"MaterialValue:="	, "\"copper\"",
+					"SurfaceMaterialValue:=", "\"\"",
+					"SolveInside:="		, True,
+					"IsMaterialEditable:="	, True,
+					"UseMaterialAppearance:=", False,
+					"IsLightweight:="	, False
+				])
+			# create connecting line between first and second circ
+			oEditor.CreatePolyline(
+				[
+					"NAME:PolylineParameters",
+					"IsPolylineCovered:="	, True,
+					"IsPolylineClosed:="	, False,
+					[
+						"NAME:PolylinePoints",
+						[
+							"NAME:PLPoint",
+							"X:="			, "0mm",
+							"Y:="			, "ri",
+							"Z:="			, "zEnd"
+						],
+						[
+							"NAME:PLPoint",
+							"X:="			, "0mm",
+							"Y:="			, "ri + wT*"+Nxy[n+1]+".0",
+							"Z:="			, "zEnd"
+						]
+					],
+					[
+						"NAME:PolylineSegments",
+						[
+							"NAME:PLSegment",
+							"SegmentType:="		, "Line",
+							"StartIndex:="		, 0,
+							"NoOfPoints:="		, 2
+						]
+					],
+					[
+						"NAME:PolylineXSection",
+						"XSectionType:="	, "None",
+						"XSectionOrient:="	, "Auto",
+						"XSectionWidth:="	, "0mm",
+						"XSectionTopWidth:="	, "0mm",
+						"XSectionHeight:="	, "0mm",
+						"XSectionNumSegments:="	, "0",
+						"XSectionBendType:="	, "Corner"
+					]
+				], 
+				[
+					"NAME:Attributes",
+					"Name:="		, "Polyline"+str(n),
+					"Flags:="		, "",
+					"Color:="		, "(143 175 143)",
+					"Transparency:="	, 0,
+					"PartCoordinateSystem:=", "Global",
+					"UDMId:="		, "",
+					"MaterialValue:="	, "\"vacuum\"",
+					"SurfaceMaterialValue:=", "\"\"",
+					"SolveInside:="		, True,
+					"IsMaterialEditable:="	, True,
+					"UseMaterialAppearance:=", False,
+					"IsLightweight:="	, False
+				])		
+			# rotate
+			oEditor.Rotate(
+				[
+					"NAME:Selections",
+					"Selections:="		, "EquationCurve"+str(n),
+					"NewPartsModelFlag:="	, "Model"
+				], 
+				[
+					"NAME:RotateParameters",
+					"RotateAxis:="		, "Z",
+					"RotateAngle:="		, "90deg"
+				])				
+		# all other cases
+		#n==len(Nxy):
+		else: 
+			# flip circ
+			# odd
+			if n%2==1:
+				# create circ line
+				oEditor.CreateEquationCurve(
+					[
+						"NAME:EquationBasedCurveParameters",
+						"XtFunction:="		, "(ra + wT*"+Nxy[n]+") * sin(_t)",
+						"YtFunction:="		, "(ri + wT*"+Nxy[n]+") * cos(_t)",
+						"ZtFunction:="		, "h*(_t)",
+						"tStart:="		, "0",
+						"tEnd:="		, "N*2*pi",
+						"NumOfPointsOnCurve:="	, "numSeg",
+						"Version:="		, 1,
+						[
+							"NAME:PolylineXSection",
+							"XSectionType:="	, "None",
+							"XSectionOrient:="	, "Auto",
+							"XSectionWidth:="	, "0",
+							"XSectionTopWidth:="	, "0",
+							"XSectionHeight:="	, "0",
+							"XSectionNumSegments:="	, "0",
+							"XSectionBendType:="	, "Corner"
+						]
+					], 
+					[
+						"NAME:Attributes",
+						"Name:="		, "EquationCurve"+str(n),
+						"Flags:="		, "",
+						"Color:="		, "(143 175 143)",
+						"Transparency:="	, 0,
+						"PartCoordinateSystem:=", "Global",
+						"UDMId:="		, "",
+						"MaterialValue:="	, "\"copper\"",
+						"SurfaceMaterialValue:=", "\"\"",
+						"SolveInside:="		, True,
+						"IsMaterialEditable:="	, True,
+						"UseMaterialAppearance:=", False,
+						"IsLightweight:="	, False
+					])
+				# create connecting line
+				if n!=(nxySize-1):
+					oEditor.CreatePolyline(
+						[
+							"NAME:PolylineParameters",
+							"IsPolylineCovered:="	, True,
+							"IsPolylineClosed:="	, False,
+							[
+								"NAME:PolylinePoints",
+								[
+									"NAME:PLPoint",
+									"X:="			, "0mm",
+									"Y:="			, "ri + wT*"+Nxy[n]+".0",
+									"Z:="			, "0"
+								],
+								[
+									"NAME:PLPoint",
+									"X:="			, "0mm",
+									"Y:="			, "ri + wT*"+Nxy[n+1]+".0",
+									"Z:="			, "0"
+								]
+							],
+							[
+								"NAME:PolylineSegments",
+								[
+									"NAME:PLSegment",
+									"SegmentType:="		, "Line",
+									"StartIndex:="		, 0,
+									"NoOfPoints:="		, 2
+								]
+							],
+							[
+								"NAME:PolylineXSection",
+								"XSectionType:="	, "None",
+								"XSectionOrient:="	, "Auto",
+								"XSectionWidth:="	, "0mm",
+								"XSectionTopWidth:="	, "0mm",
+								"XSectionHeight:="	, "0mm",
+								"XSectionNumSegments:="	, "0",
+								"XSectionBendType:="	, "Corner"
+							]
+						], 
+						[
+							"NAME:Attributes",
+							"Name:="		, "Polyline"+str(n),
+							"Flags:="		, "",
+							"Color:="		, "(143 175 143)",
+							"Transparency:="	, 0,
+							"PartCoordinateSystem:=", "Global",
+							"UDMId:="		, "",
+							"MaterialValue:="	, "\"vacuum\"",
+							"SurfaceMaterialValue:=", "\"\"",
+							"SolveInside:="		, True,
+							"IsMaterialEditable:="	, True,
+							"UseMaterialAppearance:=", False,
+							"IsLightweight:="	, False
+						])
+
+			# no flip
+			# even			
+			else:
+				# create circ line
+				oEditor.CreateEquationCurve(
+					[
+						"NAME:EquationBasedCurveParameters",
+						"XtFunction:="		, "(ra + wT*"+Nxy[n]+") * cos(_t)",
+						"YtFunction:="		, "(ri + wT*"+Nxy[n]+") * sin(_t)",
+						"ZtFunction:="		, "h*(_t)",
+						"tStart:="		, "0",
+						"tEnd:="		, "N*2*pi",
+						"NumOfPointsOnCurve:="	, "numSeg",
+						"Version:="		, 1,
+						[
+							"NAME:PolylineXSection",
+							"XSectionType:="	, "None",
+							"XSectionOrient:="	, "Auto",
+							"XSectionWidth:="	, "0",
+							"XSectionTopWidth:="	, "0",
+							"XSectionHeight:="	, "0",
+							"XSectionNumSegments:="	, "0",
+							"XSectionBendType:="	, "Corner"
+						]
+					], 
+					[
+						"NAME:Attributes",
+						"Name:="		, "EquationCurve"+str(n),
+						"Flags:="		, "",
+						"Color:="		, "(143 175 143)",
+						"Transparency:="	, 0,
+						"PartCoordinateSystem:=", "Global",
+						"UDMId:="		, "",
+						"MaterialValue:="	, "\"copper\"",
+						"SurfaceMaterialValue:=", "\"\"",
+						"SolveInside:="		, True,
+						"IsMaterialEditable:="	, True,
+						"UseMaterialAppearance:=", False,
+						"IsLightweight:="	, False
+					])
+				# rotate
+				oEditor.Rotate(
+					[
+						"NAME:Selections",
+						"Selections:="		, "EquationCurve"+str(n),
+						"NewPartsModelFlag:="	, "Model"
+					], 
+					[
+						"NAME:RotateParameters",
+						"RotateAxis:="		, "Z",
+						"RotateAngle:="		, "90deg"
+					])
+
+				# create connecting line
+				if n!=(nxySize-1):
+					oEditor.CreatePolyline(
+						[
+							"NAME:PolylineParameters",
+							"IsPolylineCovered:="	, True,
+							"IsPolylineClosed:="	, False,
+							[
+								"NAME:PolylinePoints",
+								[
+									"NAME:PLPoint",
+									"X:="			, "0mm",
+									"Y:="			, "ri + wT*"+Nxy[n]+".0",
+									"Z:="			, "zEnd"
+								],
+								[
+									"NAME:PLPoint",
+									"X:="			, "0mm",
+									"Y:="			, "ri + wT*"+Nxy[n+1]+".0",
+									"Z:="			, "zEnd"
+								]
+							],
+							[
+								"NAME:PolylineSegments",
+								[
+									"NAME:PLSegment",
+									"SegmentType:="		, "Line",
+									"StartIndex:="		, 0,
+									"NoOfPoints:="		, 2
+								]
+							],
+							[
+								"NAME:PolylineXSection",
+								"XSectionType:="	, "None",
+								"XSectionOrient:="	, "Auto",
+								"XSectionWidth:="	, "0mm",
+								"XSectionTopWidth:="	, "0mm",
+								"XSectionHeight:="	, "0mm",
+								"XSectionNumSegments:="	, "0",
+								"XSectionBendType:="	, "Corner"
+							]
+						], 
+						[
+							"NAME:Attributes",
+							"Name:="		, "Polyline"+str(n),
+							"Flags:="		, "",
+							"Color:="		, "(143 175 143)",
+							"Transparency:="	, 0,
+							"PartCoordinateSystem:=", "Global",
+							"UDMId:="		, "",
+							"MaterialValue:="	, "\"vacuum\"",
+							"SurfaceMaterialValue:=", "\"\"",
+							"SolveInside:="		, True,
+							"IsMaterialEditable:="	, True,
+							"UseMaterialAppearance:=", False,
+							"IsLightweight:="	, False
+						])
 
 
 
 
-
-
-	
-########################################################################
-#### END: Combine lines and sweep circle to create 3D object
-#######################################################################
 # create circle to sweep along mutli-coil lines
 oEditor.CreateCircle(
 	[
@@ -424,6 +746,9 @@ oEditor.SweepAlongPath(
 # create feed lines
 # check start orientation of wire
 if O==1:
+	#######################################################################
+	# start cw
+	#######################################################################
 	# check if total turns along xy-plane
 	# even:
 	if nxySize%2==0:
@@ -598,6 +923,7 @@ if O==1:
 				"UseMaterialAppearance:=", False,
 				"IsLightweight:="	, False
 			])			
+		
 		# frontLine
 		# line goes out to the side
 		oEditor.CreatePolyline(
@@ -884,6 +1210,7 @@ if O==1:
 				"UseMaterialAppearance:=", False,
 				"IsLightweight:="	, False
 			])			
+		
 		# frontLine
 		# line goes out to the side
 		oEditor.CreatePolyline(
@@ -999,4 +1326,583 @@ if O==1:
 			])			
 	
 else:
-	a=1
+	#######################################################################
+	# start ccw
+	#######################################################################
+	# check if total turns along xy-plane
+	# even:	
+	if nxySize%2==0:
+		# create poly lines 
+		# backLine
+		# line goes out to the side
+		oEditor.CreatePolyline(
+			[
+				"NAME:PolylineParameters",
+				"IsPolylineCovered:="	, True,
+				"IsPolylineClosed:="	, False,
+				[
+					"NAME:PolylinePoints",
+					[
+						"NAME:PLPoint",
+						"X:="			, "0mm",
+						"Y:="			, "ri",
+						"Z:="			, "0"
+					],
+					[
+						"NAME:PLPoint",
+						"X:="			, "(ra*0.2)",
+						"Y:="			, "ri",
+						"Z:="			, "0"
+					]
+				],
+				[
+					"NAME:PolylineSegments",
+					[
+						"NAME:PLSegment",
+						"SegmentType:="		, "Line",
+						"StartIndex:="		, 0,
+						"NoOfPoints:="		, 2
+					]
+				],
+				[
+					"NAME:PolylineXSection",
+					"XSectionType:="	, "None",
+					"XSectionOrient:="	, "Auto",
+					"XSectionWidth:="	, "0mm",
+					"XSectionTopWidth:="	, "0mm",
+					"XSectionHeight:="	, "0mm",
+					"XSectionNumSegments:="	, "0",
+					"XSectionBendType:="	, "Corner"
+				]
+			], 
+			[
+				"NAME:Attributes",
+				"Name:="		, "BackLine0",
+				"Flags:="		, "",
+				"Color:="		, "(143 175 143)",
+				"Transparency:="	, 0,
+				"PartCoordinateSystem:=", "Global",
+				"UDMId:="		, "",
+				"MaterialValue:="	, "\"vacuum\"",
+				"SurfaceMaterialValue:=", "\"\"",
+				"SolveInside:="		, True,
+				"IsMaterialEditable:="	, True,
+				"UseMaterialAppearance:=", False,
+				"IsLightweight:="	, False
+			])
+		# line goes down in z
+		oEditor.CreatePolyline(
+			[
+				"NAME:PolylineParameters",
+				"IsPolylineCovered:="	, True,
+				"IsPolylineClosed:="	, False,
+				[
+					"NAME:PolylinePoints",
+					[
+						"NAME:PLPoint",
+						"X:="			, "(ra*0.2)",
+						"Y:="			, "ri",
+						"Z:="			, "0mm"
+					],
+					[
+						"NAME:PLPoint",
+						"X:="			, "(ra*0.2)",
+						"Y:="			, "ri",
+						"Z:="			, "-(ra*0.5)"
+					]
+				],
+				[
+					"NAME:PolylineSegments",
+					[
+						"NAME:PLSegment",
+						"SegmentType:="		, "Line",
+						"StartIndex:="		, 0,
+						"NoOfPoints:="		, 2
+					]
+				],
+				[
+					"NAME:PolylineXSection",
+					"XSectionType:="	, "None",
+					"XSectionOrient:="	, "Auto",
+					"XSectionWidth:="	, "0mm",
+					"XSectionTopWidth:="	, "0mm",
+					"XSectionHeight:="	, "0mm",
+					"XSectionNumSegments:="	, "0",
+					"XSectionBendType:="	, "Corner"
+				]
+			], 
+			[
+				"NAME:Attributes",
+				"Name:="		, "BackLine1",
+				"Flags:="		, "",
+				"Color:="		, "(143 175 143)",
+				"Transparency:="	, 0,
+				"PartCoordinateSystem:=", "Global",
+				"UDMId:="		, "",
+				"MaterialValue:="	, "\"vacuum\"",
+				"SurfaceMaterialValue:=", "\"\"",
+				"SolveInside:="		, True,
+				"IsMaterialEditable:="	, True,
+				"UseMaterialAppearance:=", False,
+				"IsLightweight:="	, False
+			])
+		# line goes out in y
+		oEditor.CreatePolyline(
+			[
+				"NAME:PolylineParameters",
+				"IsPolylineCovered:="	, True,
+				"IsPolylineClosed:="	, False,
+				[
+					"NAME:PolylinePoints",
+					[
+						"NAME:PLPoint",
+						"X:="			, "(ra*0.2)",
+						"Y:="			, "ri",
+						"Z:="			, "-(ra*0.5)"
+					],
+					[
+						"NAME:PLPoint",
+						"X:="			, "(ra*0.2)",
+						#"Y:="			, "(ri + wT*2*"+str(nxySize-1)+")",
+						"Y:="			, "(ri * Nxy)",
+						"Z:="			, "-(ra*0.5)"
+					]
+				],
+				[
+					"NAME:PolylineSegments",
+					[
+						"NAME:PLSegment",
+						"SegmentType:="		, "Line",
+						"StartIndex:="		, 0,
+						"NoOfPoints:="		, 2
+					]
+				],
+				[
+					"NAME:PolylineXSection",
+					"XSectionType:="	, "None",
+					"XSectionOrient:="	, "Auto",
+					"XSectionWidth:="	, "0mm",
+					"XSectionTopWidth:="	, "0mm",
+					"XSectionHeight:="	, "0mm",
+					"XSectionNumSegments:="	, "0",
+					"XSectionBendType:="	, "Corner"
+				]
+			], 
+			[
+				"NAME:Attributes",
+				"Name:="		, "BackLine2",
+				"Flags:="		, "",
+				"Color:="		, "(143 175 143)",
+				"Transparency:="	, 0,
+				"PartCoordinateSystem:=", "Global",
+				"UDMId:="		, "",
+				"MaterialValue:="	, "\"vacuum\"",
+				"SurfaceMaterialValue:=", "\"\"",
+				"SolveInside:="		, True,
+				"IsMaterialEditable:="	, True,
+				"UseMaterialAppearance:=", False,
+				"IsLightweight:="	, False
+			])			
+
+		# frontLine
+		# line goes out to the side
+		oEditor.CreatePolyline(
+			[
+				"NAME:PolylineParameters",
+				"IsPolylineCovered:="	, True,
+				"IsPolylineClosed:="	, False,
+				[
+					"NAME:PolylinePoints",
+					[
+						"NAME:PLPoint",
+						"X:="			, "0mm",
+						"Y:="			, "(ri + wT*2*"+str(nxySize-1)+")",
+						"Z:="			, "0mm"
+					],
+					[
+						"NAME:PLPoint",
+						"X:="			, "-(ra*0.2)",
+						"Y:="			, "(ri + wT*2*"+str(nxySize-1)+")",
+						"Z:="			, "0mm"
+					]
+				],
+				[
+					"NAME:PolylineSegments",
+					[
+						"NAME:PLSegment",
+						"SegmentType:="		, "Line",
+						"StartIndex:="		, 0,
+						"NoOfPoints:="		, 2
+					]
+				],
+				[
+					"NAME:PolylineXSection",
+					"XSectionType:="	, "None",
+					"XSectionOrient:="	, "Auto",
+					"XSectionWidth:="	, "0mm",
+					"XSectionTopWidth:="	, "0mm",
+					"XSectionHeight:="	, "0mm",
+					"XSectionNumSegments:="	, "0",
+					"XSectionBendType:="	, "Corner"
+				]
+			], 
+			[
+				"NAME:Attributes",
+				"Name:="		, "FrontLine0",
+				"Flags:="		, "",
+				"Color:="		, "(143 175 143)",
+				"Transparency:="	, 0,
+				"PartCoordinateSystem:=", "Global",
+				"UDMId:="		, "",
+				"MaterialValue:="	, "\"vacuum\"",
+				"SurfaceMaterialValue:=", "\"\"",
+				"SolveInside:="		, True,
+				"IsMaterialEditable:="	, True,
+				"UseMaterialAppearance:=", False,
+				"IsLightweight:="	, False
+			])		
+		# line goes out in y 
+		oEditor.CreatePolyline(
+			[
+				"NAME:PolylineParameters",
+				"IsPolylineCovered:="	, True,
+				"IsPolylineClosed:="	, False,
+				[
+					"NAME:PolylinePoints",
+					[
+						"NAME:PLPoint",
+						"X:="			,"-(ra*0.2)",
+						"Y:="			, "(ri + wT*2*"+str(nxySize-1)+")",
+						"Z:="			, "0mm"
+					],
+					[
+						"NAME:PLPoint",
+						"X:="			, "-(ra*0.2)",
+						"Y:="			, "(ri * Nxy)",
+						"Z:="			, "0mm"
+					]
+				],
+				[
+					"NAME:PolylineSegments",
+					[
+						"NAME:PLSegment",
+						"SegmentType:="		, "Line",
+						"StartIndex:="		, 0,
+						"NoOfPoints:="		, 2
+					]
+				],
+				[
+					"NAME:PolylineXSection",
+					"XSectionType:="	, "None",
+					"XSectionOrient:="	, "Auto",
+					"XSectionWidth:="	, "0mm",
+					"XSectionTopWidth:="	, "0mm",
+					"XSectionHeight:="	, "0mm",
+					"XSectionNumSegments:="	, "0",
+					"XSectionBendType:="	, "Corner"
+				]
+			], 
+			[
+				"NAME:Attributes",
+				"Name:="		, "FrontLine1",
+				"Flags:="		, "",
+				"Color:="		, "(143 175 143)",
+				"Transparency:="	, 0,
+				"PartCoordinateSystem:=", "Global",
+				"UDMId:="		, "",
+				"MaterialValue:="	, "\"vacuum\"",
+				"SurfaceMaterialValue:=", "\"\"",
+				"SolveInside:="		, True,
+				"IsMaterialEditable:="	, True,
+				"UseMaterialAppearance:=", False,
+				"IsLightweight:="	, False
+			])			
+			
+	# odd:
+	else:
+		# create poly lines 
+		# backLine
+		# line goes out to the side
+		oEditor.CreatePolyline(
+			[
+				"NAME:PolylineParameters",
+				"IsPolylineCovered:="	, True,
+				"IsPolylineClosed:="	, False,
+				[
+					"NAME:PolylinePoints",
+					[
+						"NAME:PLPoint",
+						"X:="			, "0mm",
+						"Y:="			, "ri",
+						"Z:="			, "0"
+					],
+					[
+						"NAME:PLPoint",
+						"X:="			, "(ra*0.2)",
+						"Y:="			, "ri",
+						"Z:="			, "0"
+					]
+				],
+				[
+					"NAME:PolylineSegments",
+					[
+						"NAME:PLSegment",
+						"SegmentType:="		, "Line",
+						"StartIndex:="		, 0,
+						"NoOfPoints:="		, 2
+					]
+				],
+				[
+					"NAME:PolylineXSection",
+					"XSectionType:="	, "None",
+					"XSectionOrient:="	, "Auto",
+					"XSectionWidth:="	, "0mm",
+					"XSectionTopWidth:="	, "0mm",
+					"XSectionHeight:="	, "0mm",
+					"XSectionNumSegments:="	, "0",
+					"XSectionBendType:="	, "Corner"
+				]
+			], 
+			[
+				"NAME:Attributes",
+				"Name:="		, "BackLine0",
+				"Flags:="		, "",
+				"Color:="		, "(143 175 143)",
+				"Transparency:="	, 0,
+				"PartCoordinateSystem:=", "Global",
+				"UDMId:="		, "",
+				"MaterialValue:="	, "\"vacuum\"",
+				"SurfaceMaterialValue:=", "\"\"",
+				"SolveInside:="		, True,
+				"IsMaterialEditable:="	, True,
+				"UseMaterialAppearance:=", False,
+				"IsLightweight:="	, False
+			])
+		# line goes down in z
+		oEditor.CreatePolyline(
+			[
+				"NAME:PolylineParameters",
+				"IsPolylineCovered:="	, True,
+				"IsPolylineClosed:="	, False,
+				[
+					"NAME:PolylinePoints",
+					[
+						"NAME:PLPoint",
+						"X:="			, "(ra*0.2)",
+						"Y:="			, "ri",
+						"Z:="			, "0mm"
+					],
+					[
+						"NAME:PLPoint",
+						"X:="			, "(ra*0.2)",
+						"Y:="			, "ri",
+						"Z:="			, "-(ra*0.5)"
+					]
+				],
+				[
+					"NAME:PolylineSegments",
+					[
+						"NAME:PLSegment",
+						"SegmentType:="		, "Line",
+						"StartIndex:="		, 0,
+						"NoOfPoints:="		, 2
+					]
+				],
+				[
+					"NAME:PolylineXSection",
+					"XSectionType:="	, "None",
+					"XSectionOrient:="	, "Auto",
+					"XSectionWidth:="	, "0mm",
+					"XSectionTopWidth:="	, "0mm",
+					"XSectionHeight:="	, "0mm",
+					"XSectionNumSegments:="	, "0",
+					"XSectionBendType:="	, "Corner"
+				]
+			], 
+			[
+				"NAME:Attributes",
+				"Name:="		, "BackLine1",
+				"Flags:="		, "",
+				"Color:="		, "(143 175 143)",
+				"Transparency:="	, 0,
+				"PartCoordinateSystem:=", "Global",
+				"UDMId:="		, "",
+				"MaterialValue:="	, "\"vacuum\"",
+				"SurfaceMaterialValue:=", "\"\"",
+				"SolveInside:="		, True,
+				"IsMaterialEditable:="	, True,
+				"UseMaterialAppearance:=", False,
+				"IsLightweight:="	, False
+			])
+		# line goes out in y
+		oEditor.CreatePolyline(
+			[
+				"NAME:PolylineParameters",
+				"IsPolylineCovered:="	, True,
+				"IsPolylineClosed:="	, False,
+				[
+					"NAME:PolylinePoints",
+					[
+						"NAME:PLPoint",
+						"X:="			, "(ra*0.2)",
+						"Y:="			, "ri",
+						"Z:="			, "-(ra*0.5)"
+					],
+					[
+						"NAME:PLPoint",
+						"X:="			, "(ra*0.2)",
+						#"Y:="			, "(ri + wT*2*"+str(nxySize-1)+")",
+						"Y:="			, "(ri * Nxy)",
+						"Z:="			, "-(ra*0.5)"
+					]
+				],
+				[
+					"NAME:PolylineSegments",
+					[
+						"NAME:PLSegment",
+						"SegmentType:="		, "Line",
+						"StartIndex:="		, 0,
+						"NoOfPoints:="		, 2
+					]
+				],
+				[
+					"NAME:PolylineXSection",
+					"XSectionType:="	, "None",
+					"XSectionOrient:="	, "Auto",
+					"XSectionWidth:="	, "0mm",
+					"XSectionTopWidth:="	, "0mm",
+					"XSectionHeight:="	, "0mm",
+					"XSectionNumSegments:="	, "0",
+					"XSectionBendType:="	, "Corner"
+				]
+			], 
+			[
+				"NAME:Attributes",
+				"Name:="		, "BackLine2",
+				"Flags:="		, "",
+				"Color:="		, "(143 175 143)",
+				"Transparency:="	, 0,
+				"PartCoordinateSystem:=", "Global",
+				"UDMId:="		, "",
+				"MaterialValue:="	, "\"vacuum\"",
+				"SurfaceMaterialValue:=", "\"\"",
+				"SolveInside:="		, True,
+				"IsMaterialEditable:="	, True,
+				"UseMaterialAppearance:=", False,
+				"IsLightweight:="	, False
+			])			
+
+		# frontLine
+		# line goes out to the side
+		oEditor.CreatePolyline(
+			[
+				"NAME:PolylineParameters",
+				"IsPolylineCovered:="	, True,
+				"IsPolylineClosed:="	, False,
+				[
+					"NAME:PolylinePoints",
+					[
+						"NAME:PLPoint",
+						"X:="			, "0mm",
+						"Y:="			, "(ri + wT*2*"+str(nxySize-1)+")",
+						"Z:="			, "zEnd"
+					],
+					[
+						"NAME:PLPoint",
+						"X:="			, "-(ra*0.2)",
+						"Y:="			, "(ri + wT*2*"+str(nxySize-1)+")",
+						"Z:="			, "zEnd"
+					]
+				],
+				[
+					"NAME:PolylineSegments",
+					[
+						"NAME:PLSegment",
+						"SegmentType:="		, "Line",
+						"StartIndex:="		, 0,
+						"NoOfPoints:="		, 2
+					]
+				],
+				[
+					"NAME:PolylineXSection",
+					"XSectionType:="	, "None",
+					"XSectionOrient:="	, "Auto",
+					"XSectionWidth:="	, "0mm",
+					"XSectionTopWidth:="	, "0mm",
+					"XSectionHeight:="	, "0mm",
+					"XSectionNumSegments:="	, "0",
+					"XSectionBendType:="	, "Corner"
+				]
+			], 
+			[
+				"NAME:Attributes",
+				"Name:="		, "FrontLine0",
+				"Flags:="		, "",
+				"Color:="		, "(143 175 143)",
+				"Transparency:="	, 0,
+				"PartCoordinateSystem:=", "Global",
+				"UDMId:="		, "",
+				"MaterialValue:="	, "\"vacuum\"",
+				"SurfaceMaterialValue:=", "\"\"",
+				"SolveInside:="		, True,
+				"IsMaterialEditable:="	, True,
+				"UseMaterialAppearance:=", False,
+				"IsLightweight:="	, False
+			])		
+		# line goes out in y 
+		oEditor.CreatePolyline(
+			[
+				"NAME:PolylineParameters",
+				"IsPolylineCovered:="	, True,
+				"IsPolylineClosed:="	, False,
+				[
+					"NAME:PolylinePoints",
+					[
+						"NAME:PLPoint",
+						"X:="			,"-(ra*0.2)",
+						"Y:="			, "(ri + wT*2*"+str(nxySize-1)+")",
+						"Z:="			, "zEnd"
+					],
+					[
+						"NAME:PLPoint",
+						"X:="			, "-(ra*0.2)",
+						"Y:="			, "(ri * Nxy)",
+						"Z:="			, "zEnd"
+					]
+				],
+				[
+					"NAME:PolylineSegments",
+					[
+						"NAME:PLSegment",
+						"SegmentType:="		, "Line",
+						"StartIndex:="		, 0,
+						"NoOfPoints:="		, 2
+					]
+				],
+				[
+					"NAME:PolylineXSection",
+					"XSectionType:="	, "None",
+					"XSectionOrient:="	, "Auto",
+					"XSectionWidth:="	, "0mm",
+					"XSectionTopWidth:="	, "0mm",
+					"XSectionHeight:="	, "0mm",
+					"XSectionNumSegments:="	, "0",
+					"XSectionBendType:="	, "Corner"
+				]
+			], 
+			[
+				"NAME:Attributes",
+				"Name:="		, "FrontLine1",
+				"Flags:="		, "",
+				"Color:="		, "(143 175 143)",
+				"Transparency:="	, 0,
+				"PartCoordinateSystem:=", "Global",
+				"UDMId:="		, "",
+				"MaterialValue:="	, "\"vacuum\"",
+				"SurfaceMaterialValue:=", "\"\"",
+				"SolveInside:="		, True,
+				"IsMaterialEditable:="	, True,
+				"UseMaterialAppearance:=", False,
+				"IsLightweight:="	, False
+			])			
+	
