@@ -11,19 +11,23 @@ oEditor = oDesign.SetActiveEditor("3D Modeler")
 ############################################################################
 # define parameters within python script
 ############################################################################
-nxySize = 3
+nxySize = 4
 Nxy = []
 # starts at 0, step size is 2
 for x in range(0,(nxySize)*2,2):
-	Nxy.append(str(x))
+	if(x==0):
+		Nxy.append(str(x))
+	else:
+		Nxy.append(str(x+1))
 	
 wT = "0.2546mm"
 ra = "30mm"
 ri = "30mm"
-N  = "3"
+N  = "4"
 numSeg = "200"
-O = 0
+O = 1
 u = "mm"
+nn = 0
 ###########################################################################
 #### END:  define parameters within python script
 ###########################################################################
@@ -39,14 +43,15 @@ if O==1:
 	#######################################################################
 	# start cw
 	for n in range(nxySize):
+		nn=nn+1
 		# first case
 		if n==0:
 			# create first circ 
 			oEditor.CreateEquationCurve(
 				[
 					"NAME:EquationBasedCurveParameters",
-					"XtFunction:="		, "(ra) * sin(_t)",
-					"YtFunction:="		, "(ri) * cos(_t)",
+					"XtFunction:="		, "(ra+wT) * sin(_t)",
+					"YtFunction:="		, "(ri+wT) * cos(_t)",
 					"ZtFunction:="		, "h*(_t)",
 					"tStart:="		, "0",
 					"tEnd:="		, "N*2*pi",
@@ -89,13 +94,13 @@ if O==1:
 						[
 							"NAME:PLPoint",
 							"X:="			, "0mm",
-							"Y:="			, "ri",
+							"Y:="			, "(ri+wT)",
 							"Z:="			, "zEnd"
 						],
 						[
 							"NAME:PLPoint",
 							"X:="			, "0mm",
-							"Y:="			, "ri + wT*"+Nxy[n+1]+".0",
+							"Y:="			, "(ri + wT*"+Nxy[n+1]+"."+str(nn+1)+")",
 							"Z:="			, "zEnd"
 						]
 					],
@@ -134,6 +139,7 @@ if O==1:
 					"UseMaterialAppearance:=", False,
 					"IsLightweight:="	, False
 				])		
+				
 		# all other cases
 		#n==len(Nxy):
 		else: 
@@ -144,8 +150,8 @@ if O==1:
 				oEditor.CreateEquationCurve(
 					[
 						"NAME:EquationBasedCurveParameters",
-						"XtFunction:="		, "(ra + wT*"+Nxy[n]+") * cos(_t)",
-						"YtFunction:="		, "(ri + wT*"+Nxy[n]+") * sin(_t)",
+						"XtFunction:="		, "(ra + wT*"+Nxy[n]+"."+str(nn)+") * cos(_t)",
+						"YtFunction:="		, "(ri + wT*"+Nxy[n]+"."+str(nn)+") * sin(_t)",
 						"ZtFunction:="		, "h*(_t)",
 						"tStart:="		, "0",
 						"tEnd:="		, "N*2*pi",
@@ -201,13 +207,13 @@ if O==1:
 								[
 									"NAME:PLPoint",
 									"X:="			, "0mm",
-									"Y:="			, "ri + wT*"+Nxy[n]+".0",
+									"Y:="			, "(ri + wT*"+Nxy[n]+"."+str(nn)+")",
 									"Z:="			, "0"
 								],
 								[
 									"NAME:PLPoint",
 									"X:="			, "0mm",
-									"Y:="			, "ri + wT*"+Nxy[n+1]+".0",
+									"Y:="			, "(ri + wT*"+Nxy[n+1]+"."+str(nn+1)+")",
 									"Z:="			, "0"
 								]
 							],
@@ -254,8 +260,8 @@ if O==1:
 				oEditor.CreateEquationCurve(
 					[
 						"NAME:EquationBasedCurveParameters",
-						"XtFunction:="		, "(ra + wT*"+Nxy[n]+") * sin(_t)",
-						"YtFunction:="		, "(ri + wT*"+Nxy[n]+") * cos(_t)",
+						"XtFunction:="		, "(ra + wT*"+Nxy[n]+"."+str(nn)+") * sin(_t)",
+						"YtFunction:="		, "(ri + wT*"+Nxy[n]+"."+str(nn)+") * cos(_t)",
 						"ZtFunction:="		, "h*(_t)",
 						"tStart:="		, "0",
 						"tEnd:="		, "N*2*pi",
@@ -299,13 +305,13 @@ if O==1:
 								[
 									"NAME:PLPoint",
 									"X:="			, "0mm",
-									"Y:="			, "ri + wT*"+Nxy[n]+".0",
+									"Y:="			, "(ri + wT*"+Nxy[n]+"."+str(nn)+")",
 									"Z:="			, "zEnd"
 								],
 								[
 									"NAME:PLPoint",
 									"X:="			, "0mm",
-									"Y:="			, "ri + wT*"+Nxy[n+1]+".0",
+									"Y:="			, "(ri + wT*"+Nxy[n+1]+"."+str(nn+1)+")",
 									"Z:="			, "zEnd"
 								]
 							],
@@ -349,14 +355,15 @@ else:
 	#######################################################################
 	# start ccw	
 	for n in range(nxySize):
+		nn=nn+1
 		# first case
 		if n==0:
 			# create first circ 
 			oEditor.CreateEquationCurve(
 				[
 					"NAME:EquationBasedCurveParameters",
-					"XtFunction:="		, "(ra) * cos(_t)",
-					"YtFunction:="		, "(ri) * sin(_t)",
+					"XtFunction:="		, "(ra+wT) * cos(_t)",
+					"YtFunction:="		, "(ri+wT) * sin(_t)",
 					"ZtFunction:="		, "h*(_t)",
 					"tStart:="		, "0",
 					"tEnd:="		, "N*2*pi",
@@ -399,13 +406,13 @@ else:
 						[
 							"NAME:PLPoint",
 							"X:="			, "0mm",
-							"Y:="			, "ri",
+							"Y:="			, "(ri+wT)",
 							"Z:="			, "zEnd"
 						],
 						[
 							"NAME:PLPoint",
 							"X:="			, "0mm",
-							"Y:="			, "ri + wT*"+Nxy[n+1]+".0",
+							"Y:="			, "ri + wT*"+Nxy[n+1]+"."+str(nn+1)+"",
 							"Z:="			, "zEnd"
 						]
 					],
@@ -466,8 +473,8 @@ else:
 				oEditor.CreateEquationCurve(
 					[
 						"NAME:EquationBasedCurveParameters",
-						"XtFunction:="		, "(ra + wT*"+Nxy[n]+") * sin(_t)",
-						"YtFunction:="		, "(ri + wT*"+Nxy[n]+") * cos(_t)",
+						"XtFunction:="		, "(ra + wT*"+Nxy[n]+"."+str(nn)+") * sin(_t)",
+						"YtFunction:="		, "(ri + wT*"+Nxy[n]+"."+str(nn)+") * cos(_t)",
 						"ZtFunction:="		, "h*(_t)",
 						"tStart:="		, "0",
 						"tEnd:="		, "N*2*pi",
@@ -511,13 +518,13 @@ else:
 								[
 									"NAME:PLPoint",
 									"X:="			, "0mm",
-									"Y:="			, "ri + wT*"+Nxy[n]+".0",
+									"Y:="			, "ri + wT*"+Nxy[n]+"."+str(nn)+"",
 									"Z:="			, "0"
 								],
 								[
 									"NAME:PLPoint",
 									"X:="			, "0mm",
-									"Y:="			, "ri + wT*"+Nxy[n+1]+".0",
+									"Y:="			, "ri + wT*"+Nxy[n+1]+"."+str(nn+1)+"",
 									"Z:="			, "0"
 								]
 							],
@@ -564,8 +571,8 @@ else:
 				oEditor.CreateEquationCurve(
 					[
 						"NAME:EquationBasedCurveParameters",
-						"XtFunction:="		, "(ra + wT*"+Nxy[n]+") * cos(_t)",
-						"YtFunction:="		, "(ri + wT*"+Nxy[n]+") * sin(_t)",
+						"XtFunction:="		, "(ra + wT*"+Nxy[n]+"."+str(nn)+") * cos(_t)",
+						"YtFunction:="		, "(ri + wT*"+Nxy[n]+"."+str(nn)+") * sin(_t)",
 						"ZtFunction:="		, "h*(_t)",
 						"tStart:="		, "0",
 						"tEnd:="		, "N*2*pi",
@@ -622,13 +629,13 @@ else:
 								[
 									"NAME:PLPoint",
 									"X:="			, "0mm",
-									"Y:="			, "ri + wT*"+Nxy[n]+".0",
+									"Y:="			, "ri + wT*"+Nxy[n]+"."+str(nn)+"",
 									"Z:="			, "zEnd"
 								],
 								[
 									"NAME:PLPoint",
 									"X:="			, "0mm",
-									"Y:="			, "ri + wT*"+Nxy[n+1]+".0",
+									"Y:="			, "ri + wT*"+Nxy[n+1]+"."+str(nn+1)+"",
 									"Z:="			, "zEnd"
 								]
 							],
@@ -670,14 +677,13 @@ else:
 
 
 
-
 # create circle to sweep along mutli-coil lines
 oEditor.CreateCircle(
 	[
 		"NAME:CircleParameters",
 		"IsCovered:="		, True,
 		"XCenter:="		, "0mm",
-		"YCenter:="		, "ri",
+		"YCenter:="		, "(ri+wT)",
 		"ZCenter:="		, "zEnd",
 		"Radius:="		, "wT",
 		"WhichAxis:="		, "X",
@@ -936,13 +942,13 @@ if O==1:
 					[
 						"NAME:PLPoint",
 						"X:="			, "0mm",
-						"Y:="			, "(ri + wT*2*"+str(nxySize-1)+")",
+						"Y:="			, "(ri + wT+ wT*2*"+str(nxySize-1)+")",
 						"Z:="			, "0mm"
 					],
 					[
 						"NAME:PLPoint",
 						"X:="			, "(ra*0.2)",
-						"Y:="			, "(ri + wT*2*"+str(nxySize-1)+")",
+						"Y:="			, "(ri + wT+ wT*2*"+str(nxySize-1)+")",
 						"Z:="			, "0mm"
 					]
 				],
@@ -1052,13 +1058,13 @@ if O==1:
 					[
 						"NAME:PLPoint",
 						"X:="			, "0mm",
-						"Y:="			, "ri",
+						"Y:="			, "(ri+wT)",
 						"Z:="			, "0"
 					],
 					[
 						"NAME:PLPoint",
 						"X:="			, "-(ra*0.2)",
-						"Y:="			, "ri",
+						"Y:="			, "(ri+wT)",
 						"Z:="			, "0"
 					]
 				],
@@ -1108,13 +1114,13 @@ if O==1:
 					[
 						"NAME:PLPoint",
 						"X:="			, "-(ra*0.2)",
-						"Y:="			, "ri",
+						"Y:="			, "(ri+wT)",
 						"Z:="			, "0mm"
 					],
 					[
 						"NAME:PLPoint",
 						"X:="			, "-(ra*0.2)",
-						"Y:="			, "ri",
+						"Y:="			, "(ri+wT)",
 						"Z:="			, "-(ra*0.5)"
 					]
 				],
@@ -1164,7 +1170,7 @@ if O==1:
 					[
 						"NAME:PLPoint",
 						"X:="			, "-(ra*0.2)",
-						"Y:="			, "ri",
+						"Y:="			, "(ri+wT)",
 						"Z:="			, "-(ra*0.5)"
 					],
 					[
@@ -1351,7 +1357,7 @@ else:
 					[
 						"NAME:PLPoint",
 						"X:="			, "(ra*0.2)",
-						"Y:="			, "ri",
+						"Y:="			, "(ri+wT)",
 						"Z:="			, "0"
 					]
 				],
@@ -1401,13 +1407,13 @@ else:
 					[
 						"NAME:PLPoint",
 						"X:="			, "(ra*0.2)",
-						"Y:="			, "ri",
+						"Y:="			, "(ri+wT)",
 						"Z:="			, "0mm"
 					],
 					[
 						"NAME:PLPoint",
 						"X:="			, "(ra*0.2)",
-						"Y:="			, "ri",
+						"Y:="			, "(ri+wT)",
 						"Z:="			, "-(ra*0.5)"
 					]
 				],
@@ -1457,7 +1463,7 @@ else:
 					[
 						"NAME:PLPoint",
 						"X:="			, "(ra*0.2)",
-						"Y:="			, "ri",
+						"Y:="			, "(ri+wT)",
 						"Z:="			, "-(ra*0.5)"
 					],
 					[
@@ -1633,13 +1639,13 @@ else:
 					[
 						"NAME:PLPoint",
 						"X:="			, "0mm",
-						"Y:="			, "ri",
+						"Y:="			, "(ri+wT)",
 						"Z:="			, "0"
 					],
 					[
 						"NAME:PLPoint",
 						"X:="			, "(ra*0.2)",
-						"Y:="			, "ri",
+						"Y:="			, "(ri+wT)",
 						"Z:="			, "0"
 					]
 				],
@@ -1689,13 +1695,13 @@ else:
 					[
 						"NAME:PLPoint",
 						"X:="			, "(ra*0.2)",
-						"Y:="			, "ri",
+						"Y:="			, "(ri+wT)",
 						"Z:="			, "0mm"
 					],
 					[
 						"NAME:PLPoint",
 						"X:="			, "(ra*0.2)",
-						"Y:="			, "ri",
+						"Y:="			, "(ri+wT)",
 						"Z:="			, "-(ra*0.5)"
 					]
 				],
@@ -1745,7 +1751,7 @@ else:
 					[
 						"NAME:PLPoint",
 						"X:="			, "(ra*0.2)",
-						"Y:="			, "ri",
+						"Y:="			, "(ri+wT)",
 						"Z:="			, "-(ra*0.5)"
 					],
 					[
