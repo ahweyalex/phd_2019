@@ -20,19 +20,22 @@ I0  = struct('I',1);
 h   = 3.15e-3;      % [m] 3.15mm
 ra  = 68.38e-3;     % [m] 68mm      % x
 W0  = ra;
-ri  = 48.88e-3;     % [m] 48mm      % y
-L0  = ri;
-%ra = 2; % for ex fig
-%ri = 1; % for ex fig
-phi = 10;           % 10[deg]
+%ri  = 48.88e-3;     % [m] 48mm      % y
+%L0  = ri;
+
+ra = 1e-3;%2; % for ex fig
+ri = 1e-3;%1; % for ex fig
+%phi = 10;           % 10[deg]
+numSeg=200;
+phi=numSeg;
 wT  = 0.2546e-3;    % [m] 30AWG
 %wT = 1; % for ex fig
 O   = 1; 
 N   = 3; 
 Nxy = 3;
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%[Sx,Sy,Sz] = constrCircWire(h,ra,ri,phi,N,O,wT,Nxy);
-[Sx,Sy,Sz] = constrRectWire(h,W0,L0,phi,N,O,wT,Nxy);   
+[Sx,Sy,Sz] = constrCircWire(h,ra,ri,phi,N,O,wT,Nxy);
+%[Sx,Sy,Sz] = constrRectWire(h,W0,L0,phi,N,O,wT,Nxy);   
 %% plot antenna wire 
 figure(1)
 %H = plot3(Sx,Sy,Sz,'-');

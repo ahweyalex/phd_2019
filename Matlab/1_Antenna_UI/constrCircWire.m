@@ -57,7 +57,9 @@
 function [xS0,yS0,zS0] = constrCircWire(h,ra,ri,phi,N,O,wT,Nxy)
     helixSTEP = phi*(pi/180);
     start=0; fin = N*(2*pi) + helixSTEP/2;
-    cst_xxx = start:helixSTEP:fin;
+    %cst_xxx = start:helixSTEP:fin;
+    phi=numSeg;
+    cst_xxx = linspace(start,fin,numSeg);
     xS0=[];yS0=[];zS0=[];
     %{
     % EDIT
