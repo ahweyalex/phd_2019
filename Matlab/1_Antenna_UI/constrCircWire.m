@@ -56,10 +56,13 @@
 
 function [xS0,yS0,zS0] = constrCircWire(h,ra,ri,phi,N,O,wT,Nxy)
     helixSTEP = phi*(pi/180);
-    start=0; fin = N*(2*pi) + helixSTEP/2;
+    start=0; 
+    %fin = N*(2*pi) + helixSTEP/2;
+    fin = N*(2*pi);
+    
     %cst_xxx = start:helixSTEP:fin;
-    phi=numSeg;
-    cst_xxx = linspace(start,fin,numSeg);
+    % phi=numSeg;
+    cst_xxx = linspace(start,fin,phi);
     xS0=[];yS0=[];zS0=[];
     %{
     % EDIT
@@ -122,6 +125,21 @@ function [xS0,yS0,zS0] = constrCircWire(h,ra,ri,phi,N,O,wT,Nxy)
             end % END: FOR        
     end % END: 
     
+    %% add feed lines
+    %zEnd = h*N*2*pi;
+    %{
+    LN = 20;
+    outX = linspace(0,0,LN);
+    outY = linspace(ri,2*ri,LN); 
+    outZ = linspace(zS0(end),zS0(end),LN);
+    inX  = linspace(0,0,LN);
+    inY  = linspace(ri,2*ri,LN);
+    inZ  = linspace(0,0,LN);
+    
+    xS0 = [inX,xS0,outX];
+    yS0 = [inY,yS0,outY];
+    zS0 = [inZ,zS0,outZ];
+    %}
 end % end of constrWireAnt_10_25_2018
 
 % adds more points to create "thickness"

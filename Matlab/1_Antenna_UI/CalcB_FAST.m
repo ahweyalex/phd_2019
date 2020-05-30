@@ -19,15 +19,24 @@ xi=ceil(min(xS)); xf=ceil(max(xS)); Nx=Ns(1); xdis=abs(xmaxb-xminb);
 yi=ceil(min(yS)); yf=ceil(max(yS)); Ny=Ns(2); ydis=abs(ymaxb-yminb); 
 zi=ceil(min(zS)); zf=ceil(max(zS)); Nz=Ns(3); zdis=abs(zmaxb-zminb); 
 % construct 3-D grid coordinates defined by the vectors x, y, and z
-x_M = linspace(-xdis, xdis, Nx);
-y_M = linspace(-ydis, ydis, Ny);
-z_M = linspace(-zdis, zdis, Nz);
+%x_M = linspace(-xdis, xdis, Nx);
+%y_M = linspace(-ydis, ydis, Ny);
+%z_M = linspace(-zdis, zdis, Nz);
+
+x_M = linspace(xminb, xmaxb, Nx);
+y_M = linspace(yminb, ymaxb, Ny);
+z_M = linspace(zminb, zmaxb, Nz);
 [X,Y,Z]=meshgrid(x_M,y_M,z_M);
 % initialize null/zero matrcies 
 dBx = zeros(Ny,Nx,Nz,lenS); BX = zeros(Ny,Nx,Nz);
 dBy = zeros(Ny,Nx,Nz,lenS); BY = zeros(Ny,Nx,Nz);
 dBz = zeros(Ny,Nx,Nz,lenS); BZ = zeros(Ny,Nx,Nz);
 R   = zeros(Ny,Nx,Nz,lenS); % magnitude vector (source to point of interest)
+
+%dBx = zeros(Nx,Ny,Nz,lenS); BX = zeros(Nx,Ny,Nz);
+%dBy = zeros(Nx,Ny,Nz,lenS); BY = zeros(Nx,Ny,Nz);
+%dBz = zeros(Nx,Ny,Nz,lenS); BZ = zeros(Nx,Ny,Nz);
+%R   = zeros(Nx,Ny,Nz,lenS); % magnitude vector (source to point of interest)
 %% Compute B-Fields
 for n=1:lenS
     R(:,:,:,n) = sqrt((X-xS(n)).^2 + (Y-yS(n)).^2 + (Z-zS(n)).^2).^3;

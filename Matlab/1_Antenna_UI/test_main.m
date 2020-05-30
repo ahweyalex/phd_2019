@@ -17,34 +17,36 @@ global I0
 % input parameters
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 I0  = struct('I',1);
-h   = 3.15e-3;      % [m] 3.15mm
-ra  = 68.38e-3;     % [m] 68mm      % x
-W0  = ra;
+%h   = 3.15e-3;      % [m] 3.15mm
+%ra  = 68.38e-3;     % [m] 68mm      % x
+%W0  = ra;
 %ri  = 48.88e-3;     % [m] 48mm      % y
 %L0  = ri;
 
-ra = 1e-3;%2; % for ex fig
-ri = 1e-3;%1; % for ex fig
-%phi = 10;           % 10[deg]
-numSeg=200;
-phi=numSeg;
 wT  = 0.2546e-3;    % [m] 30AWG
-%wT = 1; % for ex fig
+h  = wT*0.35;
+ra = 30e-3;%2; % for ex fig
+ri = 30e-3;%1; % for ex fig
+%phi = 10;           % 10[deg]
+numSeg = 200;
+phi    = numSeg;
 O   = 1; 
 N   = 3; 
-Nxy = 3;
+Nxy = 1;
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 [Sx,Sy,Sz] = constrCircWire(h,ra,ri,phi,N,O,wT,Nxy);
 %[Sx,Sy,Sz] = constrRectWire(h,W0,L0,phi,N,O,wT,Nxy);   
 %% plot antenna wire 
 figure(1)
-%H = plot3(Sx,Sy,Sz,'-');
+H = plot3(Sx,Sy,Sz,'-');
+%{
 n=202;
 H = plot3(Sx(1:n),Sy(1:n),Sz(1:n),Sx(n:2*n),Sy(n:2*n),Sz(n:2*n),...
     Sx(2*n:end),Sy(2*n:end),Sz(2*n:end));
 set(H(1),'color','b');
 set(H(2),'color','r');
 set(H(3),'color','g');
+%}
 %set(H,'linewidth',3);
 %ns=361;
 %H=plot3(Sx(1:ns),Sy(1:ns),Sz(1:ns),Sx(ns+1:2*ns),Sy(ns+1:2*ns),...
@@ -66,11 +68,17 @@ grid on;
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % input parameters
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-Nx = 50; Ny = 50; Nz = 50; Ns = [Nx,Ny,Nz];
+Nx = 100; Ny = 100; Nz = 2; Ns = [Nx,Ny,Nz];
 %xminb=-(h+ra); yminb=-(h+ra); zminb=-(h+ra);
 %xmaxb=h+ra;    ymaxb=h+ra;    zmaxb= h+ra;
+%{
 xminb=-70e-3; yminb=-50e-3; zminb=-2e-3;    % [m]
 xmaxb= 70e-3; ymaxb= 50e-3; zmaxb= 5e-3;    % [m]
+%}
+zEnd = h*N*2*pi;
+xminb=-ri*1.25; yminb=-ri*1.25; zminb= zEnd;    % [m]
+xmaxb= ri*1.25; ymaxb= ri*1.25; zmaxb= zEnd;    % [m]
+
 bBox = [xminb,yminb,zminb; xmaxb,ymaxb,zmaxb];
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% compute B-Fields
@@ -121,6 +129,10 @@ quiver3(B0.X(nn,:,:),B0.Z(nn,:,:),B0.Y(nn,:,:),BXn(nn,:,:),BZn(nn,:,:),BYn(nn,:,
 view(0,90)
 %% B-Fields mag
 hold all;
+nn=1;
+%{
+% XZ
+
 %H=plot3(Sx(1:361),Sz(1:361),Sy(1:361),'-');
 nn=ceil(Nx)/2; nn=30;
 %
@@ -137,7 +149,11 @@ ylabel('z[m]','FontWeight','bold','FontSize', 24);
 view(0,90); grid on; axis tight;
 contourcbar;
 %}
+
+%}
 %{
+% YZ 
+
 X2 = squeeze(B0.X(:,nn,:));
 Y2 = squeeze(B0.Y(:,nn,:));
 Z2 = squeeze(B0.Z(:,nn,:));
@@ -149,7 +165,9 @@ ylabel('z[m]','FontWeight','bold','FontSize', 24);
 view(0,90); grid on; axis tight;
 contourcbar;
 %}
-%{
+%
+% XY
+
 X2 = squeeze(B0.X(:,:,nn));
 Y2 = squeeze(B0.Y(:,:,nn));
 Z2 = squeeze(B0.Z(:,:,nn));
