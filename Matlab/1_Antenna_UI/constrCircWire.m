@@ -65,30 +65,6 @@ function [xS0,yS0,zS0] = constrCircWire(h,ra,ri,phi,N,O,wT,Nxy)
     cst_xxx = linspace(start,fin,phi);
     xS0=[];yS0=[];zS0=[];
     %{
-    % EDIT
-    zS0 = [zS0,((h).*cst_xxx)./(2*pi*N)];
-    sn = sin(cst_xxx);
-    cs = cos(cst_xxx);
-    idx_p = find(sn>=0 & sn<=0.2);
-    zS0(idx_p(1:7:end)) = (h*.0800)+(h.*cst_xxx(idx_p(1:7:end)))./(2*pi*N);
-    zS0(idx_p(2:7:end)) = (h*.0825)+(h.*cst_xxx(idx_p(2:7:end)))./(2*pi*N);
-    zS0(idx_p(3:7:end)) = (h*.0850)+(h.*cst_xxx(idx_p(3:7:end)))./(2*pi*N);
-    zS0(idx_p(4:7:end)) = (h*.0900)+(h.*cst_xxx(idx_p(4:7:end)))./(2*pi*N);
-    zS0(idx_p(5:7:end)) = (h*.0925)+(h.*cst_xxx(idx_p(5:7:end)))./(2*pi*N);
-    zS0(idx_p(6:7:end)) = (h*.0950)+(h.*cst_xxx(idx_p(6:7:end)))./(2*pi*N);
-    zS0(idx_p(7:7:end)) = (h*.0100)+(h.*cst_xxx(idx_p(7:7:end)))./(2*pi*N);
-    
-    idx_n = find(sn>=-0.2 & sn<=0); 
-    zS0(idx_n(1:7:end)) = (h*.0100)+(h.*cst_xxx(idx_n(1:7:end)))./(2*pi*N);
-    zS0(idx_n(2:7:end)) = (h*.0950)+(h.*cst_xxx(idx_n(2:7:end)))./(2*pi*N);
-    zS0(idx_n(3:7:end)) = (h*.0925)+(h.*cst_xxx(idx_n(3:7:end)))./(2*pi*N);
-    zS0(idx_n(4:7:end)) = (h*.0900)+(h.*cst_xxx(idx_n(4:7:end)))./(2*pi*N);
-    zS0(idx_n(5:7:end)) = (h*.0850)+(h.*cst_xxx(idx_n(5:7:end)))./(2*pi*N);
-    zS0(idx_n(6:7:end)) = (h*.0825)+(h.*cst_xxx(idx_n(6:7:end)))./(2*pi*N);
-    zS0(idx_n(7:7:end)) = (h*.0800)+(h.*cst_xxx(idx_n(7:7:end)))./(2*pi*N); 
-    zSn = [];
-    % EDIT
-    %}
    if(O==1) % clock wise
         for nx=1:Nxy
             % checking: 1st iteration 
@@ -127,7 +103,7 @@ function [xS0,yS0,zS0] = constrCircWire(h,ra,ri,phi,N,O,wT,Nxy)
     
     %% add feed lines
     %zEnd = h*N*2*pi;
-    %{
+    %
     LN = 20;
     outX = linspace(0,0,LN);
     outY = linspace(ri,2*ri,LN); 
@@ -140,15 +116,11 @@ function [xS0,yS0,zS0] = constrCircWire(h,ra,ri,phi,N,O,wT,Nxy)
     yS0 = [inY,yS0,outY];
     zS0 = [inZ,zS0,outZ];
     %}
-end % end of constrWireAnt_10_25_2018
+%end % end of constrWireAnt_10_25_2018
+%}
 
 % adds more points to create "thickness"
-%{
-function [xS0,yS0,zS0] = constrCircWire(h,ra,ri,phi,N,O,wT,Nxy)
-    helixSTEP = phi*(pi/180);
-    start=0; fin = N*(2*pi) + helixSTEP/2;
-    cst_xxx = start:helixSTEP:fin;
-    xS0=[];yS0=[];zS0=[];
+
     if(O==1) % clock wise
         for nx=1:Nxy
             % checking: 1st iteration 
@@ -192,6 +164,17 @@ function [xS0,yS0,zS0] = constrCircWire(h,ra,ri,phi,N,O,wT,Nxy)
             end % END: IF
         end %END: FOR
         
+        LN = 20;
+        outX = linspace(0,0,LN);
+        outY = linspace(ri,2*ri,LN); 
+        outZ = linspace(zS0(end),zS0(end),LN);
+        inX  = linspace(0,0,LN);
+        inY  = linspace(ri,2*ri,LN);
+        inZ  = linspace(0,0,LN);
+        xS0 = [inX,xS0,outX];
+        yS0 = [inY,yS0,outY];
+        zS0 = [inZ,zS0,outZ];
+
         else % counter clock wise
             for nx=1:Nxy
                 t   = wT/2;
