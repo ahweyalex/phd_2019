@@ -20,7 +20,7 @@ for x in range(0,(nxySize)*2,2):
 		Nxy.append(str(x))
 	else:
 		Nxy.append(str(x+1))
-	
+# input parameters for HFSS Script	
 wT = "0.2546mm"
 ra = "30mm"
 ri = "30mm"
@@ -29,6 +29,7 @@ numSeg = "200"
 O = 0
 u = "mm"
 nn = 0
+
 ###########################################################################
 #### END:  define parameters within python script
 ###########################################################################
