@@ -45,48 +45,29 @@
 %   Units:
 % ------------------------------------------------------------------------
 
-function [X,Y,Z,BX,BY,BZ,normB,R0] = CalcB_FAST(I,xS,yS,zS,bBox,Ns)
+function [X,Y,Z,BX,BY,BZ,normB,R0] = CalcB_SLOW(I,xS,yS,zS,bBox,Ns)
     %% Initialize variables
-    % Ns = 20;         % Total segments in space <scalar> 
     mu0 = 4*pi*1e-7; % free space permeability <scalar> [H/m]
+    uc   = 1.256629*10^-6;    % Permeability of copper 
+    u    = mu0*uc;
     dS = 1e9;        % filament max discretization step [m]
+    
     % bBox = [xminb,yminb,zminb; xmaxb,ymaxb,zmaxb];
     xminb=bBox(1,1); yminb=bBox(1,2); zminb=bBox(1,3);   
     xmaxb=bBox(2,1); ymaxb=bBox(2,2); zmaxb=bBox(2,3);
+    
     % Calc Boundaries for cartesian points of interest
-    xi=ceil(min(xS));
-    xf=ceil(max(xS)); 
-    Nx=Ns(1); 
-    yi=ceil(min(yS)); 
-    yf=ceil(max(yS)); 
-    Ny=Ns(2); 
-    zi=ceil(min(zS)); 
-    zf=ceil(max(zS)); 
-    Nz=Ns(3);
-    
-    %xdis=abs(xi-xf); % [older version(a)]
-    %ydis=abs(yi-yf); % [older version(a)] 
-    %zdis=abs(zi-zf); % [older version(a)]
-    
-    xdis=abs(xmaxb-xminb); 
-    ydis=abs(ymaxb-yminb); 
-    zdis=abs(zmaxb-zminb); 
+    % initial        % final           % res      % distance  
+    xi=ceil(min(xS)); xf=ceil(max(xS)); Nx=Ns(1); xdis=abs(xmaxb-xminb); 
+    yi=ceil(min(yS)); yf=ceil(max(yS)); Ny=Ns(2); ydis=abs(ymaxb-yminb); 
+    zi=ceil(min(zS)); zf=ceil(max(zS)); Nz=Ns(3); zdis=abs(zmaxb-zminb); 
     
     % discrete points in space 
-    %{
-    % when boundaries are not defined by user
-    % [older version (a)]
-    x_M = linspace( xi-(xdis/4), xf+(xdis/4), Nx);
-    y_M = linspace( yi-(ydis/4), yf+(ydis/4), Ny);
-    z_M = linspace( zi-(zdis/4), zf+(zdis/4), Nz);
-    %}
-    % need to update this some how
-    x_M = linspace( -xdis, xdis, Nx);
-    y_M = linspace( -ydis, ydis, Ny);
-    % z_M = linspace( -zdis, 2*zdis, Nz);
-    z_M = linspace( -zdis, zdis, Nz);
-    
+    x_M = linspace(xminb, xmaxb, Nx);
+    y_M = linspace(yminb, ymaxb, Ny);
+    z_M = linspace(zminb, zmaxb, Nz);
     [X,Y,Z]=meshgrid(x_M,y_M,z_M);
+    
     % Initialize B-Fields matrices
     BX = zeros(Ny,Nx,Nz); 
     BY = zeros(Ny,Nx,Nz); 
@@ -106,6 +87,7 @@ function [X,Y,Z,BX,BY,BZ,normB,R0] = CalcB_FAST(I,xS,yS,zS,bBox,Ns)
         zP = [zP, linspace(zS(sn),zS(sn+1), NP)];
     end
     
+    test = 1;
     %% Compute B-Fields
     count=0;
     for yn=1:size(X,1)          % iterate y-points (points of interest)
@@ -115,9 +97,10 @@ function [X,Y,Z,BX,BY,BZ,normB,R0] = CalcB_FAST(I,xS,yS,zS,bBox,Ns)
                 xM = X(yn,xn,zn);
                 yM = Y(yn,xn,zn);
                 zM = Z(yn,xn,zn);
+                
                 for n=1:length(xP)-1    % iterate through Source (points)
                     R = (sqrt((xM-xP(n))^2 + (yM-yP(n))^2 + (zM-zP(n))^2))^3; % source to point of interest
-                    R1(yn,xn,zn) = (sqrt((xM-xP(n))^2 + (yM-yP(n))^2 + (zM-zP(n))^2))^3; % source to point of interest
+                    %R1(yn,xn,zn) = (sqrt((xM-xP(n))^2 + (yM-yP(n))^2 + (zM-zP(n))^2))^3; % source to point of interest
                     
                     % cross product(s)
                     % reference: Biot-Savart Law

@@ -4,7 +4,8 @@ function [xS,yS,zS] = constrRectWire(h,W0,L0,phi,N,O,wT,Nxy)
     helixSTEP = phi*(pi/180);
     start     = 0; 
     fin       = N*(2*pi) + helixSTEP/2;
-    cst_xxx   = start:helixSTEP:fin;
+    %cst_xxx   = start:helixSTEP:fin;
+    cst_xxx = linspace(start,fin,phi);
     cstSize   = floor((numel(cst_xxx)/4)/N);
     hSize     = floor(cstSize);    % trying to fix it
     xS=[]; yS=[]; zS=[];
@@ -15,7 +16,8 @@ function [xS,yS,zS] = constrRectWire(h,W0,L0,phi,N,O,wT,Nxy)
                 txy =(wT/2); 
                 t0 = (3/2)*(wT)*(nx-1);
                 % set up x-vectors
-                xn = linspace((-W0/2)-(t0),0,hSize)'; xn(end)=[];
+                xn = linspace((-W0/2)-(t0),0,hSize)'; 
+                xn(end)=[];
                 xp = linspace(0,(W0/2)+(t0),hSize)';
                 xc = ((W0/2)+(t0))*ones(1,2*hSize-1)';  
                 % set up y-vectors
@@ -37,7 +39,7 @@ function [xS,yS,zS] = constrRectWire(h,W0,L0,phi,N,O,wT,Nxy)
                 xS=[xS;xS0]; 
                 yS=[yS;yS0]; 
                 zS=[zS;zS0];
-                numel(xS)
+                % numel(xS)
             else
                 txy =(wT/2); 
                 t0 = (3/2)*(wT)*(nx-1);
