@@ -137,7 +137,6 @@ def create_singleCoil(N,O,nxy):
 	sep_xy = 2.1 
 	# Coiled Rectangle	
 	ZN0 = ZN-1 # one less than the total 
-	# ccw
 	if(O==0):
 	# -------------------------------- #
 	# ------ Counter-Clock-Wise ------ # 
@@ -145,7 +144,7 @@ def create_singleCoil(N,O,nxy):
 		for ns in range(0,int(N)+1):
 			# first iteration 
 			# half (bottom)
-			if ns==0:
+			if(ns==0):
 			# front side 
 				xi = "ri/2 +"+str(sep_xy)+"*wT*"+str(nxy)
 				xf = "ri/2 +"+str(sep_xy)+"*wT*"+str(nxy)
@@ -244,8 +243,103 @@ def create_singleCoil(N,O,nxy):
 	# ------ Clock-Wise ------ # 
 	# ------------------------ #
 	elif(O==1):
-	
-					
+		zn = int(N)-1
+		#for ns in range(1,int(N)+2):
+		for ns in range(0,int(N)+1):
+			# first iteration
+			# front (half)
+			if(ns==0):
+				xi = "ri/2 +"+str(sep_xy)+"*wT*"+str(nxy)
+				xf = "ri/2 +"+str(sep_xy)+"*wT*"+str(nxy)
+				yi = "-wT*2"
+				yf = "-ra/2 +"+str(sep_xy)+"*wT*"+str(nxy)				
+				zi = str(zRev[z])+"+wT*1.15*"+str(zn)
+				zf = str(zRev[z+1])+"+wT*1.15*"+str(zn)
+				fn = "fs"+str(ns)+"_"+str(nxy)	# filname
+				create_PolyLine(xi,yi,xf,yf,zi,zf,fn)
+				fnList.append(fn)
+				z  = z + 1
+			
+			# final iteration
+			# front (half)
+			elif(ns==int(N)):
+				# ends on ?? (even)
+				if(ns%2==0):
+					xi = "ri/2 +"+str(sep_xy)+"*wT*"+str(nxy)
+					xf = "ri/2 +"+str(sep_xy)+"*wT*"+str(nxy)
+					# yi = "-ra/2 - wT*"+str(nxy)
+					# yf = "-wT*2 - wT*"+str(nxy)
+					yi = "-ra/2 -"+str(sep_xy)+"*wT*"+str(nxy)
+					yf = "-wT*2"
+					zi = str(zRev[z])+"+wT*1.15*"+str(zn+1)
+					zf = str(zRev[z+1])+"+wT*1.15*"+str(zn)
+					fn = "fs"+str(ns)+"_"+str(nxy)	# filname
+					create_PolyLine(xi,yi,xf,yf,zi,zf,fn)
+					fnList.append(fn)
+					z = z + 1				
+				# ends on ???? (odd)
+				elif(ns%2==1):
+					xi = "ri/2 +"+str(sep_xy)+"*wT*"+str(nxy)
+					xf = "ri/2 +"+str(sep_xy)+"*wT*"+str(nxy)
+					#yi = "ra/2 + wT*"+str(nxy)
+					#yf = "wT*2 + wT*"+str(nxy)
+					yi = "ra/2 +"+str(sep_xy)+"*wT*"+str(nxy)
+					yf = "wT*2"
+					zi = str(zRev[z])+"+wT*1.15*"+str(zn+1)
+					zf = str(zRev[z+1])+"+wT*1.15*"+str(zn)
+					fn = "fs"+str(ns)+"_"+str(nxy)	# filname
+					create_PolyLine(xi,yi,xf,yf,zi,zf,fn)
+					fnList.append(fn)
+					z = z + 1			
+			# inside coil
+			# front (full)
+			elif(ns is not int(N)):
+				xi = "ri/2 +"+str(sep_xy)+"*wT*"+str(nxy)
+				xf = "ri/2 +"+str(sep_xy)+"*wT*"+str(nxy)
+				yi = "-ra/2 -"+str(sep_xy)+"*wT*"+str(nxy)
+				yf = "ra/2 +"+str(sep_xy)+"*wT*"+str(nxy)
+				zi = str(zRev[z])+"+wT*1.15*"+str(zn+1)
+				zf = str(zRev[z+1])+"+wT*1.15*"+str(zn)
+				fn = "fs"+str(ns)+"_"+str(nxy)	# filname
+				create_PolyLine(xi,yi,xf,yf,zi,zf,fn)
+				fnList.append(fn)
+				z = z + 1				
+			# left, back, right
+			if(ns is not int(N) and ns<int(N)):
+			# left side
+				xi = "-ra/2 +"+str(sep_xy)+"*wT*"+str(nxy)				
+				xf = "ra/2 +"+str(sep_xy)+"*wT*"+str(nxy)
+				yi = "-ri/2 -"+str(sep_xy)+"*wT*"+str(nxy)
+				yf = "-ri/2 -"+str(sep_xy)+"*wT*"+str(nxy)
+				zi = str(zRev[z])+"+wT*1.15*"+str(zn)
+				zf = str(zRev[z+1])+"+wT*1.15*"+str(zn)
+				fn = "ls"+str(ns)+"_"+str(nxy)	# filname
+				create_PolyLine(xi,yi,xf,yf,zi,zf,fn)
+				fnList.append(fn)
+				z = z + 1
+			# back side
+				xi = "-ri/2 -"+str(sep_xy)+"*wT*"+str(nxy)
+				xf = "-ri/2 -"+str(sep_xy)+"*wT*"+str(nxy)
+				yi = "ra/2  +"+str(sep_xy)+"*wT*"+str(nxy)
+				yf = "-ra/2 -"+str(sep_xy)+"*wT*"+str(nxy)
+				zi = str(zRev[z])+"+wT*1.15*"+str(zn)
+				zf = str(zRev[z+1])+"+wT*1.15*"+str(zn)
+				fn = "bs"+str(ns)+"_"+str(nxy)	# filname
+				create_PolyLine(xi,yi,xf,yf,zi,zf,fn)
+				fnList.append(fn)
+				z = z + 1			
+			# right side
+				xi = "ra/2 +"+str(sep_xy)+"*wT*"+str(nxy)
+				xf = "-ra/2 -"+str(sep_xy)+"*wT*"+str(nxy)
+				yi = "ri/2  +"+str(sep_xy)+"*wT*"+str(nxy)
+				yf = "ri/2  +"+str(sep_xy)+"*wT*"+str(nxy)
+				zi = str(zRev[z])+"+wT*1.15*"+str(zn)
+				zf = str(zRev[z+1])+"+wT*1.15*"+str(zn)
+				fn = "rs"+str(ns)+"_"+str(nxy)	# filname
+				create_PolyLine(xi,yi,xf,yf,zi,zf,fn)
+				fnList.append(fn)
+				z = z + 1			
+			zn = zn - 1
 # description: creates lines for HFSS 
 # input parameters:
 # fnList
@@ -430,7 +524,7 @@ zn     = 0	# counter for z-axis
 ns     = 0
 z      = 0
 #O     = 1	# works --> Nxy is even
-O      = 0
+O      = 1
 nxyO   = O
 nxy=0
 # create zRect
@@ -442,12 +536,12 @@ for ns in range(0,ZN+1):
 # create zRev
 for ns in range(len(zRect)-1,-1,-1):
 	zRev.append(zRect[ns])
+zRev = zRev[1:len(zRev)]
 
 ############################################################################
 # construct coiled rect wire
 ############################################################################
 create_singleCoil(N,O,nxy)
-create_singleCoil(N,O,1)
 	
 #create_MultiCoil_Rect(Nxy,N)
 #unite_PolyLine(fnList)
