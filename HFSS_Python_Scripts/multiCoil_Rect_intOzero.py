@@ -2,19 +2,132 @@
 # Script Recorded by ANSYS Electronics Desktop Version 2018.1.0
 # 15:45:00  Jul 16, 2020
 # ----------------------------------------------
-
 import ScriptEnv
 ScriptEnv.Initialize("Ansoft.ElectronicsDesktop")
 oDesktop.RestoreWindow()
 oProject = oDesktop.SetActiveProject("Rect_Test")
 oDesign  = oProject.SetActiveDesign("Maxwell3DDesign1")
 oEditor  = oDesign.SetActiveEditor("3D Modeler")
+
 				
 ############################################################################
 #                        Custom Functions
 ############################################################################
-# description: creates lines for HFSS 
-# input parameters:
+
+#--------------------------------------------------------------------------#
+#                     FUNCTION NAME: createVars
+# DESCRIPTION: creates variables within HFSS, make sure to comment this out 
+# after variables have been created when re-running this script on the same
+# project to avoid errors.
+#                         [INPUT PARAMETERS]
+# Nxy
+# description: Number of coils/number of turns along the xy-plane
+# type: integer 
+# units: N/A
+#
+# N
+# description: Number of turns along the z-direction
+# type: integer
+# units: N/A
+#
+# h
+# description: total height of the coiled
+# type: float/string
+# units: [m]
+#
+# ra
+# description: radius in the x-direction
+# type: float/string
+# units: [m]
+#
+# ri
+# description: radius in the x-direction
+# type: float/string
+# units: [m]
+#
+# wT
+# description: thickness of wire (gauge)
+# type: float/string
+# units: [m]
+#
+
+def createVars(Nxy,N,h,ra,ri,wT):
+	oDesign.ChangeProperty(
+	[
+		"NAME:AllTabs",
+		[
+			"NAME:LocalVariableTab",
+			[
+				"NAME:PropServers", 
+				"LocalVariables"
+			],
+			[
+				"NAME:NewProps",
+				[
+					"NAME:Nxy",
+					"PropType:="		, "VariableProp",
+					"UserDef:="		, True,
+					"Value:="		, str(Nxy)
+				],				
+				[
+					"NAME:N",
+					"PropType:="		, "VariableProp",
+					"UserDef:="		, True,
+					"Value:="		, str(N)
+				],
+				[
+					"NAME:ra",
+					"PropType:="		, "VariableProp",
+					"UserDef:="		, True,
+					"Value:="		, ra
+				],
+				[
+					"NAME:ri",
+					"PropType:="		, "VariableProp",
+					"UserDef:="		, True,
+					"Value:="		, ri
+				],	
+				[
+					"NAME:wT",
+					"PropType:="		, "VariableProp",
+					"UserDef:="		, True,
+					"Value:="		, str(wT)
+				],
+				[
+					"NAME:h",
+					"PropType:="		, "VariableProp",
+					"UserDef:="		, True,
+					"Value:="		, str(h)
+				],	
+				[
+					"NAME:sep_z",
+					"PropType:="		, "VariableProp",
+					"UserDef:="		, True,
+					"Value:="		, 0.25
+				],
+				[
+					"NAME:sep_xy",
+					"PropType:="		, "VariableProp",
+					"UserDef:="		, True,
+					"Value:="		, 2.1
+				],				
+				[
+					"NAME:zEnd",
+					"PropType:="		, "VariableProp",
+					"UserDef:="		, True,
+					"Value:="		, "h*N*2*pi"
+				]				
+			]
+		]
+	])
+#                       END: createVars
+#--------------------------------------------------------------------------#
+
+
+#--------------------------------------------------------------------------#
+#                     FUNCTION NAME: create_PolyLine
+# DESCRIPTION: creates lines for HFSS 
+#                         [INPUT PARAMETERS]
 # xi
 # description: intitial x postion [m] for a single line segment
 #
@@ -46,7 +159,6 @@ oEditor  = oDesign.SetActiveEditor("3D Modeler")
 # description: its a void command, creates a line object in HFSS	
 #
 def create_PolyLine(xi,yi,xf,yf,zi,zf,lineName):
-	n = 1
 	oEditor.CreatePolyline(
 	[
 		"NAME:PolylineParameters",
@@ -101,34 +213,52 @@ def create_PolyLine(xi,yi,xf,yf,zi,zf,lineName):
 		"IsMaterialEditable:="	, True,
 		"UseMaterialAppearance:=", False,
 		"IsLightweight:="	, False
-	])
+	])		
+#                       END: create_PolyLine
+#--------------------------------------------------------------------------#
 
-# description: creates rect coil for HFSS 
-# input parameters:
-#
+
+#--------------------------------------------------------------------------#
+#                     FUNCTION NAME: create_singleCoil
+# DESCRIPTION: creates a single rectangular coil with orientation clock-wise
+# or counter clock-wise
+#                         [INPUT PARAMETERS]
 # N
-# description: Number of turns along the z-direction
-# type: <scalar> [integer]
+# description: Number of turns in the z-direction
+# type: string/float
 #
-# output paramters:
-# description: its a void command, creates a line object in HFSS	
+# O
+# description: orientation of the coil. value of 1 yields ccw orientation. 
+# value of 0 yields cw orientation  
+# type: integer
+# values: 1 or 0
 #
-#def create_MultiCoil_Rect(Nxy,N):
-# initialize variables
-	nxy = 0 # counter for number of turns along xy-plane
-	nz  = 0 # counter for number of turns along z-direction
-	sn  = 0 # counter for number of lines, will be used to 
-	#give each line an unique name to later combine
-	z   = 0 # counter for the zRect (array containg z-steps)
-
-
-
-def create_singleCoil(N,O,nxy):
+# nxy
+# description: value between 0 and Nxy. determines placement in xy-plane of the 
+# rect-coil lines
+# type: integer
+# values: 0 to Nxy
+#
+# sep_xy
+# description: seperation along the xy-plane between each coils
+# type: float/string
+# units: N/A
+#
+# sep_z
+# description: seperation along the z-plane within the coils
+# type: float/string
+# units: N/A
+#
+# ZN
+# description: total number of points along the z-direction 
+# for each point of the rectangule coil
+# type: integer
+# units: N/A
+#
+def create_singleCoil(N,O,nxy,sep_xy,sep_z,ZN,zRect,fnList):
 	nz  = 0	
 	z   = 0
 	sn  = 0 
-	sep_xy = 2.2 
-	sep_z  = 1.52
 	# Coiled Rectangle	
 	ZN0 = ZN-1 # one less than the total 
 	if(O==0):
@@ -290,10 +420,10 @@ def create_singleCoil(N,O,nxy):
 			# right, back, left
 			if(ns is not int(N) and ns<int(N)):
 			# left side 
-				xi = "ra/2 +"+str(sep_xy)+"*wT*"+str(nxy)
-				xf = "-ra/2 -"+str(sep_xy)+"*wT*"+str(nxy)
-				yi = "-ri/2 -"+str(sep_xy)+"*wT*"+str(nxy)
-				yf = "-ri/2 -"+str(sep_xy)+"*wT*"+str(nxy)
+				xi = "ri/2 +"+str(sep_xy)+"*wT*"+str(nxy)
+				xf = "-ri/2 -"+str(sep_xy)+"*wT*"+str(nxy)
+				yi = "-ra/2 -"+str(sep_xy)+"*wT*"+str(nxy)
+				yf = "-ra/2 -"+str(sep_xy)+"*wT*"+str(nxy)
 				zi = str(zRect[z])+"+wT*"+str(sep_z)+"*"+str(ns)
 				zf = str(zRect[z+1])+"+wT*"+str(sep_z)+"*"+str(ns)
 				fn = "ls"+str(ns)+"_"+str(nxy)	# filname
@@ -313,25 +443,176 @@ def create_singleCoil(N,O,nxy):
 				z = z + 1
 				xi = "-ra/2 -"+str(sep_xy)+"*wT*"+str(nxy)
 			# right side 
-				xi = "ra/2 +"+str(sep_xy)+"*wT*"+str(nxy)
-				xf = "-ra/2 -"+str(sep_xy)+"*wT*"+str(nxy)
-				yi = "ri/2  +"+str(sep_xy)+"*wT*"+str(nxy)
-				yf = "ri/2  +"+str(sep_xy)+"*wT*"+str(nxy)
+				xi = "ri/2 +"+str(sep_xy)+"*wT*"+str(nxy)
+				xf = "-ri/2 -"+str(sep_xy)+"*wT*"+str(nxy)
+				yi = "ra/2  +"+str(sep_xy)+"*wT*"+str(nxy)
+				yf = "ra/2  +"+str(sep_xy)+"*wT*"+str(nxy)
 				zi = str(zRect[z+1])+"+wT*"+str(sep_z)+"*"+str(ns)
 				zf = str(zRect[z])+"+wT*"+str(sep_z)+"*"+str(ns)
 				fn = "rs"+str(ns)+"_"+str(nxy)	# filname
 				create_PolyLine(xi,yi,xf,yf,zi,zf,fn)
 				fnList.append(fn)
 				z = z + 1
-				
 
-# input parameters:
+
+#                       END: create_singleCoil
+#--------------------------------------------------------------------------#
+
+#--------------------------------------------------------------------------#
+#                     FUNCTION NAME: multiRectCoil
+# DESCRIPTION:
+#                         [INPUT PARAMETERS]
+# O
+# description: orientation of the coil. value of 1 yields ccw orientation. 
+# type: integer
+# values: 0 or 1
+#
+# Nxy
+# description:
+# type: integer
+#
+# N
+# description: Number of turns in the z-direction
+# type: string/float
+#
+# wT0
+# description: thickness of wire (gauge)
+# type: float/string
+# units: [m]
+#
+# h
+# description: total height of the coiled
+# type: float/string
+# units: [m]
+#
+# ra
+# description: radius in the x-direction
+# type: float/string
+# units: [m]
+#
+# ri
+# description: radius in the y-direction
+# type: float/string
+# units: [m]
+#
+# sep_xy
+# description: seperation along the xy-plane between each coils
+# type: float/string
+# units: N/A
+#
+# sep_z
+# description: seperation along the z-plane within the coils
+# type: float/string
+# units: N/A
+#
+def multiRectCoil(O,Nxy,N,wT0,h,ra,ri,sep_xy,sep_z,fnList):
+	wT  = str(wT0) + "mm"
+	h 	= (wT0*1e-3)*0.35
+	# set up the z-values
+	zEnd   = h*int(N)*2*3.14 # last value along z-direction
+	ZN     = int(N)*4 + 2	 # total number of points along the z-direction
+	# for each point of the rectangule coil
+	zRect  = []				 # initialize empty list to later fill with 
+	# points along z-direction
+	fnList = []				 # initialize empty list to later fill with 
+	# strings of each line segments
+	zSTEP  = zEnd/ZN	 	 	
+	zn     = 0	# counter for z-axis
+	ns     = 0
+	z      = 0
+	# create zRect
+	for ns in range(0,ZN+1):
+		zStr = "(zEnd *("+str(ns)+"/("+str(ZN)+")))"
+		#zRect.append(zEnd * (ns/(ZN-1)))
+		zRect.append(zStr)
+		ns = ns+1	
+		
+	# create multi-coil
+	for nxy in range(0,Nxy):
+		create_singleCoil(N,O,nxy,sep_xy,sep_z,ZN,zRect,fnList)
+		# inbetween connections
+		# even --> O=0 (top)
+		if(nxy%2==0 and nxy is not Nxy-1):
+			xi = "ri/2 +"+str(sep_xy)+"*wT*"+str(nxy)
+			xf = "ri/2 +"+str(sep_xy)+"*wT*"+str(nxy+1)
+			yi = "-wT*2"
+			yf = "wT*2"
+			zi = "(zEnd *(9/(10)))+wT*"+str(sep_z)+"*1.5"
+			zf = "(zEnd *(9/(10)))+wT*"+str(sep_z)+"*1.5"
+			fn = "fc_"+str(nxy)	# filname
+			create_PolyLine(xi,yi,xf,yf,zi,zf,fn)
+			fnList.append(fn)
+		# odd --> O=1 (bottom)
+		elif(nxy%2==1 and nxy is not Nxy-1):
+			xi = "ri/2 +"+str(sep_xy)+"*wT*"+str(nxy)
+			xf = "ri/2 +"+str(sep_xy)+"*wT*"+str(nxy+1)
+			yi = "-wT*2"
+			yf = "wT*2"
+			zi = "wT*"+str(sep_z)+"*-0.5"
+			zf = "wT*"+str(sep_z)+"*-0.5"
+			fn = "fc_"+str(nxy)	# filname
+			create_PolyLine(xi,yi,xf,yf,zi,zf,fn)
+			fnList.append(fn)	
+		# feed lines
+		if(nxy==0):
+			# goes down
+			xi = "ri/2"
+			xf = "ri/2"
+			yi = "wT*2"
+			yf = "wT*2"
+			zi = "wT*"+str(sep_z)+"*-0.5"
+			zf = "wT*"+str(sep_z)+"*-0.5-3*wT"
+			fn = "fc_a_"+str(nxy)	# filname
+			create_PolyLine(xi,yi,xf,yf,zi,zf,fn)
+			fnList.append(fn)
+			# feed line 
+			xi = "ri/2"
+			xf = "ri"
+			yi = "wT*2"
+			yf = "wT*2"
+			zi = "wT*"+str(sep_z)+"*-0.5-3*wT"
+			zf = "wT*"+str(sep_z)+"*-0.5-3*wT"
+			fn = "fc_b_"+str(nxy)	# filname
+			create_PolyLine(xi,yi,xf,yf,zi,zf,fn)
+			fnList.append(fn)	
+		# (top) (even)
+		if(nxy==Nxy-1 and Nxy%2==0):
+			xi = "ri/2 +"+str(sep_xy)+"*wT*"+str(nxy)
+			xf = "ri"
+			yi = "-wT*2"
+			yf = "-wT*2"
+			zi = "wT*"+str(sep_z)+"*-0.5"
+			zf = "wT*"+str(sep_z)+"*-0.5"
+			fn = "feed_top"+str(ns)+"_"+str(nxy)	# filname
+			create_PolyLine(xi,yi,xf,yf,zi,zf,fn)
+			fnList.append(fn)
+		# (bottom) (odd)
+		if(nxy==Nxy-1 and Nxy%2==1):	
+			xi = "ri/2 +"+str(sep_xy)+"*wT*"+str(nxy)
+			xf = "ri"
+			yi = "-wT*2"
+			yf = "-wT*2"
+			zi = "(zEnd *(9/(10)))+wT*"+str(sep_z)+"*1.5"
+			zf = "(zEnd *(9/(10)))+wT*"+str(sep_z)+"*1.5"
+			fn = "feed_bottom"+str(ns)+"_"+str(nxy)	# filname
+			create_PolyLine(xi,yi,xf,yf,zi,zf,fn)
+			fnList.append(fn)
+		# change orienation	
+		if(O==1):
+			O=0
+		elif(O==0):
+			O=1	
+#                       END: multiRectCoil
+#--------------------------------------------------------------------------#
+
+#--------------------------------------------------------------------------#
+#                     FUNCTION NAME: unite_PolyLine
+# DESCRIPTION: unites all polylines in HFSS into one structure(object)
+# <not working?>
+#                         [INPUT PARAMETERS]
 # fnList
 # description: list that contains the line names as strings
-# type: list <Strings>
-#
-# output paramters:
-# description: unites all polylines in HFSS into one structure(object)	
+# type: list <Strings>	
 #
 def unite_PolyLine(fnList):
 	FN = len(fnList)
@@ -355,15 +636,17 @@ def unite_PolyLine(fnList):
 		"NAME:UniteParameters",
 		"KeepOriginals:="	, False
 	])
-	
-# description: sweeps 2D circle along the path of coiled rect 
-# input parameters:
+#                       END: unite_PolyLine
+#--------------------------------------------------------------------------#
+
+#--------------------------------------------------------------------------#
+#                     FUNCTION NAME: unite_PolyLine
+# DESCRIPTION: creates 3D wire structure with a radius of wT
+#                         [INPUT PARAMETERS]
+# <needs unite_PolyLine to work for this to work>
 # fnList
 # description: list that contains the line names as strings, only using the first entry
 # type: list <Strings>
-#
-# output paramters:
-# description: creates 3D wire structure with a radius of wT
 #
 def ThickenWire(fnList):
 	q  = ""
@@ -411,203 +694,29 @@ def ThickenWire(fnList):
 		"CheckFaceFaceIntersection:=", False,
 		"TwistAngle:="		, "0deg"
 	])
+#                       END: unite_PolyLine
+#--------------------------------------------------------------------------#
 
-
-
-def createVars(Nxy,N,h,ra,ri,wT):
-	oDesign.ChangeProperty(
-	[
-		"NAME:AllTabs",
-		[
-			"NAME:LocalVariableTab",
-			[
-				"NAME:PropServers", 
-				"LocalVariables"
-			],
-			[
-				"NAME:NewProps",
-				[
-					"NAME:Nxy",
-					"PropType:="		, "VariableProp",
-					"UserDef:="		, True,
-					"Value:="		, str(Nxy)
-				],				
-				[
-					"NAME:N",
-					"PropType:="		, "VariableProp",
-					"UserDef:="		, True,
-					"Value:="		, str(N)
-				],
-				[
-					"NAME:ra",
-					"PropType:="		, "VariableProp",
-					"UserDef:="		, True,
-					"Value:="		, ra
-				],
-				[
-					"NAME:ri",
-					"PropType:="		, "VariableProp",
-					"UserDef:="		, True,
-					"Value:="		, ri
-				],	
-				[
-					"NAME:wT",
-					"PropType:="		, "VariableProp",
-					"UserDef:="		, True,
-					"Value:="		, str(wT)
-				],
-				[
-					"NAME:h",
-					"PropType:="		, "VariableProp",
-					"UserDef:="		, True,
-					"Value:="		, str(h)
-				],	
-				[
-					"NAME:zEnd",
-					"PropType:="		, "VariableProp",
-					"UserDef:="		, True,
-					"Value:="		, "h*N*2*pi"
-				]				
-			]
-		]
-	])
-
-#--------------------------------------------------------------------------
-#---------------------------END OF Custom Functions------------------------
-#--------------------------------------------------------------------------
-
-
-############################################################################	
-############################################################################
-#                              MAIN FUNCTION
-############################################################################
-############################################################################
 
 ############################################################################
-# define parameters within python script
+#                     FUNCTION NAME: MAIN
 ############################################################################
-# current code needs nxySize to be equal or greater than 3
-
+O   = 0 
+Nxy = 2
+N   = 2
 wT0 = 0.2546
 wT  = str(wT0) + "mm"
 h 	= (wT0*1e-3)*0.35
 ra  = "30mm"
 ri  = "30mm"
-N   = 2
-Nxy = 1
-#createVars(N,Nxy,h,ra,ri,wT)
-
-# set up the z-values
-zEnd   = h*int(N)*2*3.14 
-ZN     = int(N)*4 + 2
-zRect  = []
-zRev   = []
-fnList = [] 
-zSTEP  = zEnd/ZN
-zn     = 0	# counter for z-axis
-ns     = 0
-z      = 0
-#O     = 1	# works --> Nxy is even
-
-nxyO   = 1
-# create zRect
-for ns in range(0,ZN+1):
-	zStr = "(zEnd *("+str(ns)+"/("+str(ZN)+")))"
-	#zRect.append(zEnd * (ns/(ZN-1)))
-	zRect.append(zStr)
-	ns = ns+1
-# create zRev
-#for ns in range(len(zRect)-1,-1,-1):
-#	zRev.append(zRect[ns])
-#zRev = zRev[1:len(zRev)]
+#sep_xy = 2.2 
+#sep_z  = 1.52
+sep_xy = "sep_xy" 
+sep_z  = "sep_z"
+fnList = []	
+#createVars(Nxy,N,h,ra,ri,wT)
+multiRectCoil(O,Nxy,N,wT0,h,ra,ri,sep_xy,sep_z,fnList)
 
 ############################################################################
-# construct coiled rect wire
+#                       END: MAIN
 ############################################################################
-sep_xy = 2.2 
-sep_z  = 1.52
-O=0 # (works) (do first)
-#O=1 # breaks
-for nxy in range(0,Nxy):
-	create_singleCoil(N,O,nxy)
-	
-	# inbetween connections
-	# even --> O=0 (top)
-	if(nxy%2==0 and nxy is not Nxy-1):
-		xi = "ri/2 +"+str(sep_xy)+"*wT*"+str(nxy)
-		xf = "ri/2 +"+str(sep_xy)+"*wT*"+str(nxy+1)
-		yi = "-wT*2"
-		yf = "wT*2"
-		zi = "(zEnd *(9/(10)))+wT*"+str(sep_z)+"*1.5"
-		zf = "(zEnd *(9/(10)))+wT*"+str(sep_z)+"*1.5"
-		fn = "fc_"+str(nxy)	# filname
-		create_PolyLine(xi,yi,xf,yf,zi,zf,fn)
-		fnList.append(fn)
-	# odd --> O=1 (bottom)
-	elif(nxy%2==1 and nxy is not Nxy-1):
-		xi = "ri/2 +"+str(sep_xy)+"*wT*"+str(nxy)
-		xf = "ri/2 +"+str(sep_xy)+"*wT*"+str(nxy+1)
-		yi = "-wT*2"
-		yf = "wT*2"
-		zi = "wT*1.52*-0.5"
-		zf = "wT*1.52*-0.5"
-		fn = "fc_"+str(nxy)	# filname
-		create_PolyLine(xi,yi,xf,yf,zi,zf,fn)
-		fnList.append(fn)	
-
-	# feed lines
-	if(nxy==0):
-		# goes down
-		xi = "ri/2"
-		xf = "ri/2"
-		yi = "wT*2"
-		yf = "wT*2"
-		zi = "wT*1.52*-0.5"
-		zf = "wT*1.52*-0.5-3*wT"
-		fn = "fc_a_"+str(nxy)	# filname
-		create_PolyLine(xi,yi,xf,yf,zi,zf,fn)
-		fnList.append(fn)
-		# feed line 
-		xi = "ri/2"
-		xf = "ri"
-		yi = "wT*2"
-		yf = "wT*2"
-		zi = "wT*1.52*-0.5-3*wT"
-		zf = "wT*1.52*-0.5-3*wT"
-		fn = "fc_b_"+str(nxy)	# filname
-		create_PolyLine(xi,yi,xf,yf,zi,zf,fn)
-		fnList.append(fn)	
-
-	# (top) (even)
-	if(nxy==Nxy-1 and Nxy%2==0):
-		xi = "ri/2 +"+str(sep_xy)+"*wT*"+str(nxy)
-		xf = "ri"
-		yi = "-wT*2"
-		yf = "-wT*2"
-		zi = "wT*1.52*-0.5"
-		zf = "wT*1.52*-0.5"
-		fn = "feed_top"+str(ns)+"_"+str(nxy)	# filname
-		create_PolyLine(xi,yi,xf,yf,zi,zf,fn)
-		fnList.append(fn)
-	
-	# (bottom) (odd)
-	if(nxy==Nxy-1 and Nxy%2==1):	
-		xi = "ri/2 +"+str(sep_xy)+"*wT*"+str(nxy)
-		xf = "ri"
-		yi = "-wT*2"
-		yf = "-wT*2"
-		zi = "(zEnd *(9/(10)))+wT*1.52*1.5"
-		zf = "(zEnd *(9/(10)))+wT*1.52*1.5"
-		fn = "feed_bottom"+str(ns)+"_"+str(nxy)	# filname
-		create_PolyLine(xi,yi,xf,yf,zi,zf,fn)
-		fnList.append(fn)
-
-	# change orienation	
-	if(O==1):
-		O=0
-	elif(O==0):
-		O=1
-
-#create_MultiCoil_Rect(Nxy,N)
-#unite_PolyLine(fnList)
-#ThickenWire(fnList)
