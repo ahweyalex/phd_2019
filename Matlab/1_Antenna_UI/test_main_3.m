@@ -58,8 +58,9 @@ view(45,45);
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % input parameters
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-Nx = 1000; Ny = 1000; Nz = 2; Ns = [Nx,Ny,Nz];
-%Nx = 400; Ny = 400; Nz = 400; Ns = [Nx,Ny,Nz];
+%Nx = 1000; Ny = 1000; Nz = 2; Ns = [Nx,Ny,Nz];
+Nx = 400; Ny = 400; Nz = 400; Ns = [Nx,Ny,Nz];
+%Nx = 400; Ny = 400; Nz = 2; Ns = [Nx,Ny,Nz];
 %xminb=-(h+ra); yminb=-(h+ra); zminb=-(h+ra);
 %xmaxb=h+ra;    ymaxb=h+ra;    zmaxb= h+ra;
 %{
@@ -81,17 +82,17 @@ xmaxb= 70e-3; ymaxb= 50e-3; zmaxb= 5e-3;    % [m]
 
 %xyz  =ri*1.25;
 xyz  =ri/2;
-xminb=-xyz; yminb=-xyz; zminb= 0;    % [m]
-xmaxb= xyz; ymaxb= xyz; zmaxb= xyz;    % [m]
+xminb=-xyz*2; yminb=-xyz*2; zminb= 0;    % [m]
+xmaxb= xyz*2; ymaxb= xyz*2; zmaxb= xyz;    % [m]
 bBox = [xminb,yminb,zminb; xmaxb,ymaxb,zmaxb];
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% compute B-Fields
 tic;
-[bX,bY,bZ, BX,BY,BZ, normB,R] = ...
-    CalcB_FAST(I0.I,Sx,Sy,Sz,bBox,Ns);
-
 %[bX,bY,bZ, BX,BY,BZ, normB,R] = ...
-%    CalcB_SLOW(I0.I,Sx,Sy,Sz,bBox,Ns);    
+%    CalcB_FAST(I0.I,Sx,Sy,Sz,bBox,Ns);
+
+[bX,bY,bZ, BX,BY,BZ, normB,R] = ...
+    CalcB_SLOW(I0.I,Sx,Sy,Sz,bBox,Ns);    
 %%
 normB = sqrt(BX.^2+BY.^2+BZ.^2);
 nBX   = BX./normB;
@@ -100,8 +101,8 @@ nBZ   = BZ./normB;
 B0 = struct('BX',BX,'BY',BY,'BZ',BZ,'X',bX,'Y',bY,'Z',bZ);
 toc;
 %% mag
-nn=1;
-%{
+nn=floor(Nx/2);
+%
 % XZ
 %H=plot3(Sx(1:361),Sz(1:361),Sy(1:361),'-');
 %BO.Var(Ny:Nx:Nz)
@@ -117,17 +118,21 @@ figure(nn)
 xlabel('x[m]','FontWeight','bold','FontSize', 24); 
 ylabel('z[m]','FontWeight','bold','FontSize', 24);
 % zlabel('z[m]','FontWeight','bold','FontSize', 24);
-view(0,90); grid on; axis tight;
+view(0,90); 
+grid on; 
+%axis tight;
 contourcbar;
 %}
-%{
+%
 % XY
-X2   = squeeze(B0.X(:,:,nn));
-Y2   = squeeze(B0.Y(:,:,nn));
-Z2   = squeeze(B0.Z(:,:,nn));
-B2   = squeeze(normB(:,:,nn)); 
-BXY  = squeeze(B0.BY(:,:,nn));
-nBXY = squeeze(nBZ(:,:,nn));
+nz = 1;
+X2   = squeeze(B0.X(:,:,nz));
+Y2   = squeeze(B0.Y(:,:,nz));
+Z2   = squeeze(B0.Z(:,:,nz));
+B2   = squeeze(normB(:,:,nz)); 
+BXY  = squeeze(B0.BY(:,:,nz));
+nBXY = squeeze(nBZ(:,:,nz));
+
 figure(nn)
 %[M0,c]=contourf(X2,Y2,B2);
 [M0,c]=contourf(X2,Y2,nBXY);
@@ -139,7 +144,7 @@ ylabel('y[m]','FontWeight','bold','FontSize', 24);
 view(0,90); %grid on; axis tight;
 contourcbar;
 %}
-%{
+%
 % YZ 
 %                 (Ny:Nx:Nz)
 figure(nn+2)
@@ -191,7 +196,9 @@ xlabel('x'); ylabel('y'); zlabel('z');
 view(0,90)
 %}
 
+%{
     X2    = squeeze(B0.X(:,:,nn));
     Y2    = squeeze(B0.Y(:,:,nn));
     Z2    = squeeze(B0.Z(:,:,nn));
     BZ    = squeeze(B0.BZ(:,:,nn));
+%}
