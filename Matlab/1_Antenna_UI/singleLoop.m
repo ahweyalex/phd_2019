@@ -12,7 +12,8 @@ function [Sx,Sy,Sz] = singleLoop(W0,L0,N,O,wT)
     yFront = linspace(-W0/2, W0/2,nN)';
     % startL
     xSL = linspace(L0/2,   L0/2, n2)';
-    ySL = linspace(-W0/2,0-gap,  n2)';
+    %ySL = linspace(-W0/2,0-gap,  n2)';
+    ySL = linspace(0-gap, -W0/2,  n2)';
     % startR
     xSR = linspace(L0/2, L0/2, n2)';
     ySR = linspace(gap,  W0/2, n2)';
@@ -33,9 +34,14 @@ function [Sx,Sy,Sz] = singleLoop(W0,L0,N,O,wT)
     yFO = linspace(gap,gap,nF)';
     %
     % combine
+    %Sx = [xFI;xSL;xLarm;xBack;xRarm;xSR;xFO];
+    %Sy = [yFI;ySL;yLarm;yBack;yRarm;ySR;yFO];
+    %Sz = linspace(0,0,numel(Sy))';
+    
     Sx = [xFI;xSL;xLarm;xBack;xRarm;xSR;xFO];
     Sy = [yFI;ySL;yLarm;yBack;yRarm;ySR;yFO];
     Sz = linspace(0,0,numel(Sy))';
+    
     %}
     
     %{

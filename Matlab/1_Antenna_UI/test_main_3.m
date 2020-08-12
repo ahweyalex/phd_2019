@@ -161,7 +161,7 @@ view(0,90);
 contourcbar;
 %}
 %%
-%{
+%
 nn=150;
 ss=10;
 %L=quiver3(B0.X(nn,:,:),B0.Z(nn,:,:),B0.Y(nn,:,:),nBX(nn,:,:),nBZ(nn,:,:),nBY(nn,:,:),'b'); % matlab
@@ -179,6 +179,7 @@ B0.Y(1:ss:end,nn,1:ss:end),nBX(1:ss:end,nn,1:ss:end),...
 nBZ(1:ss:end,nn,1:ss:end),nBY(1:ss:end,nn,1:ss:end),'b'); % matlab
 view(90,0)
 %}
+%
 % XY
 figure
 %hold all;

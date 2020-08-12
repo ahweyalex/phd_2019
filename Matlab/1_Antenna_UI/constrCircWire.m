@@ -64,7 +64,7 @@ function [xS0,yS0,zS0] = constrCircWire(h,ra,ri,phi,N,O,wT,Nxy)
     % phi=numSeg;
     cst_xxx = linspace(start,fin,phi);
     xS0=[];yS0=[];zS0=[];
-    %{
+   %
    if(O==1) % clock wise
         for nx=1:Nxy
             % checking: 1st iteration 
@@ -119,8 +119,8 @@ function [xS0,yS0,zS0] = constrCircWire(h,ra,ri,phi,N,O,wT,Nxy)
 %end % end of constrWireAnt_10_25_2018
 %}
 
+%{
 % adds more points to create "thickness"
-
     if(O==1) % clock wise
         for nx=1:Nxy
             % checking: 1st iteration 

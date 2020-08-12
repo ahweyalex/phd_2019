@@ -109,7 +109,7 @@ global I0; I0 = struct('I',1);
 
 wT     = 0.2546e-3; % 30AWG 
 h      = wT*0.35;  
-N      = 4;
+N      = 2;
 zEnd   = h*N*2*pi;
 ra     = 10e-3;
 ri     = 10e-3;
@@ -118,7 +118,7 @@ L0     = ri;
 numSeg = 200;
 phi    = numSeg;
 O      = 1;
-Nxy    = 1;
+Nxy    = 2;
 %%                     MULTI-COILED WIRE ANTENNA                         %%  
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Create the 1D arrays (Sx,Sy,Sz) that will contain the spatiral locations
@@ -126,14 +126,14 @@ Nxy    = 1;
 % coordinates.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %Single rectangular loop, Assumes Nxy=0 and N=0 
- [Sx,Sy,Sz] = singleLoop(ra,ri,phi,O,wT);
+% [Sx,Sy,Sz] = singleLoop(ra,ri,phi,O,wT);
 %Multi-Coiled Elliptical Wire 
-% [Sx,Sy,Sz] = constrCircWire(zEnd,ra,ri,phi,N,O,wT,Nxy);
+[Sx,Sy,Sz] = constrCircWire(zEnd,ra,ri,phi,N,O,wT,Nxy);
 %Multi-Coiled Rectangular Wire 
 %[Sx,Sy,Sz] = constrRectWire(h,W0,L0,phi,N,O,wT,Nxy); 
 figure
-H=plot3(Sx,Sy,Sz,'.');
-%H=plot3(Sx,Sy,Sz,'-');
+%H=plot3(Sx,Sy,Sz,'.');
+H=plot3(Sx,Sy,Sz,'-');
 fontSize = 14;
 xlabel('x[m]','FontWeight','bold','FontSize', fontSize); 
 ylabel('y[m]','FontWeight','bold','FontSize', fontSize); 
@@ -141,6 +141,7 @@ zlabel('z[m]','FontWeight','bold','FontSize', fontSize);
 title('Wire Antenna','FontWeight','bold','FontSize', fontSize); 
 grid on
 %xlim([-7e-3 7e-3]); ylim([-7e-3 7e-3]);
+%view(45,45);
 view(45,45);
 %%                     INPUT PARAMETERS FOR BFIELDS                      %%  
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -271,7 +272,7 @@ if(Nz>1)
 else
     nz = 1;
 end
-nz = 10; % testing
+nz = 20; % testing
 % recall that B0.? is formatted as the following, where "?" is X,Y, or Z
 % B0.?(ny,nx,nz), where n? represents the index to respecting "?"
 % Therefore if you want to plot something in the xy-plane the following
@@ -279,16 +280,35 @@ nz = 10; % testing
 XY_X     = squeeze(B0.X(:,:,nz));
 XY_Y     = squeeze(B0.Y(:,:,nz));
 XY_Z     = squeeze(B0.Z(:,:,nz));
-XY_normB = squeeze(normB(:,:,nz));  
-figure
+Z        = zeros(Ny,Nx);
+XY_BX    = squeeze(B0.BX(:,:,nz));
+XY_BY    = squeeze(B0.BY(:,:,nz));
+XY_BZ    = squeeze(B0.BZ(:,:,nz));
+XY_normB = squeeze(normB(:,:,nz));
+
+hold on;
+figure(1)
+% antenna
+H=plot3(Sx,Sy,Sz,'-');
+lw = 5;
+set(H,'color','r'); set(H,'linewidth',lw);
+% magnitude 
 [M0_XY,c_XY]=contourf(XY_X,XY_Y,XY_normB);
+c_XY.ContourZLevel =  XY_Z(1,1);
+% quiver
+Q=quiver3(XY_X,XY_Y,XY_Z, XY_BX,XY_BY,XY_BZ);
+set(Q,'color','k');
 xlabel('x[m]','FontWeight','bold','FontSize', fontSize); 
 ylabel('y[m]','FontWeight','bold','FontSize', fontSize);
 title(['XY-Plane (nz/Nz):',num2str((nz)),'/',num2str(Nz)],'FontWeight',...
     'bold','FontSize', fontSize);
-view(0,90); grid on; axis tight;
-contourcbar;
-
+hold on; grid on; axis tight;
+xl = (ri)*(3/4); yl = (ra)*(3/4);
+xlim([-xl xl]); ylim([-yl yl]);
+view(0,90);
+%contourcbar;
+% saves the figure as a PNG 
+saveas(gcf,'MagBFields_XYPlane.png')
 %% PLOT: XZ PLANE
 if(Ny>1)
     ny = floor(Ny/2);
@@ -303,17 +323,41 @@ end
 XZ_X     = squeeze(B0.X(ny,:,:));
 XZ_Y     = squeeze(B0.Y(ny,:,:));
 XZ_Z     = squeeze(B0.Z(ny,:,:));
+Z        = zeros(Nx,Nz);
+XZ_BX    = squeeze(B0.BX(ny,:,:));
+XZ_BY    = squeeze(B0.BY(ny,:,:));
+XZ_BZ    = squeeze(B0.BZ(ny,:,:));
 XZ_normB = squeeze(normB(ny,:,:));  
-figure
+
+hold on;
+figure(2)
+% antenna
+H=plot3(Sx,Sy,Sz,'-');
+direction = [0 0 1];
+rotate(H,direction,90)
+direction = [1 0 0];
+rotate(H,direction,90)
+lw = 5;
+set(H,'color','r'); set(H,'linewidth',lw);
+% mag
 [M0_XZ,c_XZ]=contourf(XZ_X,XZ_Z,XZ_normB);
+c_XZ.ContourZLevel =  XZ_Y(1,1);
+% quiver
+Q=quiver3(XZ_X,XZ_Y,Z, XZ_BX,XZ_BY,XZ_BZ);
+set(Q,'color','w');
 xlabel('x[m]','FontWeight','bold','FontSize', fontSize); 
 ylabel('z[m]','FontWeight','bold','FontSize', fontSize);
 title(['XZ-Plane (ny/Ny):',num2str((ny)),'/',num2str(Ny)],'FontWeight',...
     'bold','FontSize', fontSize);
-view(0,90); grid on; axis tight;
-contourcbar;
-
+grid on; axis tight;
+xl = (ri)*(3/4); yl = (ra)*(3/4);
+xlim([-xl xl]); ylim([-yl yl]);
+view(0,90);
+%contourcbar;
+saveas(gcf,'MagBFields_XZPlane.png')
+hold off;
 %% PLOT: YZ PLANE
+% working on
 if(Nx>1)
     nx = floor(Nx/2);
 else
@@ -327,17 +371,34 @@ end
 YZ_X     = squeeze(B0.X(:,nx,:));
 YZ_Y     = squeeze(B0.Y(:,nx,:));
 YZ_Z     = squeeze(B0.Z(:,nx,:));
+Z        = zeros(Ny,Nz);
+YZ_BX    = squeeze(B0.BX(:,nx,:));
+YZ_BY    = squeeze(B0.BY(:,nx,:));
+YZ_BZ    = squeeze(B0.BZ(:,nx,:));
 YZ_normB = squeeze(normB(:,nx,:));  
-figure
+hold all;
+%figure(3)
+% antenna
+H=plot3(Sx-ri/2,Sy,Sz,'-');
+direction = [0 0 1];
+rotate(H,direction,180)
+direction = [1 0 0];
+rotate(H,direction,90)
+lw = 5;
+set(H,'color','r'); set(H,'linewidth',lw);
+% mag
 [M0_YZ,c_YZ]=contourf(YZ_Y,YZ_Z,YZ_normB);
+c_YZ.ContourZLevel = YZ_X(1,1);
+% quiver
+Q=quiver3(YZ_X,YZ_Y,YZ_Z, YZ_BX,YZ_BY,YZ_BZ);
 xlabel('y[m]','FontWeight','bold','FontSize', fontSize); 
 ylabel('z[m]','FontWeight','bold','FontSize', fontSize);
-title(['XZ-Plane (nx/Nx):',num2str((nx)),'/',num2str(Nx)],'FontWeight',...
+title(['YZ-Plane (nx/Nx):',num2str((nx)),'/',num2str(Nx)],'FontWeight',...
     'bold','FontSize', fontSize);
 view(0,90); grid on; axis tight;
 contourcbar;
-
-
+saveas(gcf,'MagBFields_YZPlane.png')
+hold off;
 %%                         EXPORT CSV FILES                              %%  
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %
