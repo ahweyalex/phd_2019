@@ -111,14 +111,14 @@ wT     = 0.2546e-3; % 30AWG
 h      = wT*0.35;  
 N      = 2;
 zEnd   = h*N*2*pi;
-ra     = 10e-3;
-ri     = 10e-3;
+ra     = 2e-3;
+ri     = 3e-3;
 W0     = ra;       
 L0     = ri;        
 numSeg = 200;
 phi    = numSeg;
 O      = 1;
-Nxy    = 2;
+Nxy    = 3;
 %%                     MULTI-COILED WIRE ANTENNA                         %%  
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Create the 1D arrays (Sx,Sy,Sz) that will contain the spatiral locations
@@ -128,12 +128,13 @@ Nxy    = 2;
 %Single rectangular loop, Assumes Nxy=0 and N=0 
 % [Sx,Sy,Sz] = singleLoop(ra,ri,phi,O,wT);
 %Multi-Coiled Elliptical Wire 
-[Sx,Sy,Sz] = constrCircWire(zEnd,ra,ri,phi,N,O,wT,Nxy);
+%[Sx,Sy,Sz] = constrCircWire(zEnd,ra,ri,phi,N,O,wT,Nxy);
 %Multi-Coiled Rectangular Wire 
-%[Sx,Sy,Sz] = constrRectWire(h,W0,L0,phi,N,O,wT,Nxy); 
+[Sx,Sy,Sz] = constrRectWire(h,W0,L0,phi,N,O,wT,Nxy); 
+%%
 figure
 %H=plot3(Sx,Sy,Sz,'.');
-H=plot3(Sx,Sy,Sz,'-');
+H=plot3(Sx,Sy,Sz,'O');
 fontSize = 14;
 xlabel('x[m]','FontWeight','bold','FontSize', fontSize); 
 ylabel('y[m]','FontWeight','bold','FontSize', fontSize); 
@@ -142,7 +143,7 @@ title('Wire Antenna','FontWeight','bold','FontSize', fontSize);
 grid on
 %xlim([-7e-3 7e-3]); ylim([-7e-3 7e-3]);
 %view(45,45);
-view(45,45);
+view(0,90)
 %%                     INPUT PARAMETERS FOR BFIELDS                      %%  
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % USER can change these values towards their desirable spatial locations to
@@ -195,11 +196,15 @@ view(45,45);
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 Nx    = 100; 
 Ny    = 100; 
-Nz    = 20; 
+Nz    = 100; 
 Ns    = [Nx,Ny,Nz];
-xyz   = 2*ri;
-xminb = -xyz; yminb = -xyz; zminb = -ri/2;    % [m]
-xmaxb =  xyz; ymaxb =  xyz; zmaxb =  ri/2;  % [m]
+if (ri>=ra)
+    xyz = 2*ri;
+elseif (ra>=ri)
+    xyz = 2*ra;
+end
+xminb = -xyz; yminb = -xyz; zminb = -zEnd/4;   % [m]
+xmaxb =  xyz; ymaxb =  xyz; zmaxb = zEnd*1.2;  % [m]
 bBox  = [xminb,yminb,zminb; xmaxb,ymaxb,zmaxb];
 %%                         COMPUTE BFIELDS                               %%  
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -258,21 +263,33 @@ nBZ   = BZ./normB;
 B0 = struct('BX',BX,'BY',BY,'BZ',BZ,'X',bX,'Y',bY,'Z',bZ);
 %[bX,bY,bZ, BX,BY,BZ, normB,R] = ...
 %    CalcB_SLOW(I0.I,Sx,Sy,Sz,bBox,Ns);  
+
+%%                         SELF-INDUCTANCE                               %%  
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% rectunglar 
+
+% square
+
+% circular
+
+% elliptical 
+
 %%                             PLOTS                                     %%  
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% PLOT: XY PLANE
-clc;
+% (working-ish)
+
 fontSize = 14;
 % checks if Nz is greater than one, chooses the middle value 
 % in the case of odd number of points, round down
 if(Nz>1)
-    nz = floor(Nz/2);
+    nz = floor(Nz/2)+1;
 else
     nz = 1;
 end
-nz = 20; % testing
+% nz = 70; % testing
 % recall that B0.? is formatted as the following, where "?" is X,Y, or Z
 % B0.?(ny,nx,nz), where n? represents the index to respecting "?"
 % Therefore if you want to plot something in the xy-plane the following
@@ -285,37 +302,43 @@ XY_BX    = squeeze(B0.BX(:,:,nz));
 XY_BY    = squeeze(B0.BY(:,:,nz));
 XY_BZ    = squeeze(B0.BZ(:,:,nz));
 XY_normB = squeeze(normB(:,:,nz));
-
+%%
+%
 hold on;
 figure(1)
-% antenna
+% ----------- antenna -------------% 
 H=plot3(Sx,Sy,Sz,'-');
-lw = 5;
+lw = 0.5;
 set(H,'color','r'); set(H,'linewidth',lw);
-% magnitude 
+% ----------- magnitude -----------% 
 [M0_XY,c_XY]=contourf(XY_X,XY_Y,XY_normB);
-c_XY.ContourZLevel =  XY_Z(1,1);
-% quiver
+c_XY.ContourZLevel = XY_Z(1,1);
+%c_XY.ContourZLevel = 0;
+contourcbar;
+% ----------- quiver --------------%
 Q=quiver3(XY_X,XY_Y,XY_Z, XY_BX,XY_BY,XY_BZ);
-set(Q,'color','k');
+set(Q,'color','w');
+Q.MaxHeadSize = 5;
+Q.AutoScaleFactor = 5;
+% ----------- plot props -----------%
 xlabel('x[m]','FontWeight','bold','FontSize', fontSize); 
 ylabel('y[m]','FontWeight','bold','FontSize', fontSize);
 title(['XY-Plane (nz/Nz):',num2str((nz)),'/',num2str(Nz)],'FontWeight',...
     'bold','FontSize', fontSize);
 hold on; grid on; axis tight;
-xl = (ri)*(3/4); yl = (ra)*(3/4);
-xlim([-xl xl]); ylim([-yl yl]);
 view(0,90);
-%contourcbar;
 % saves the figure as a PNG 
 saveas(gcf,'MagBFields_XYPlane.png')
+hold off;
+%}
 %% PLOT: XZ PLANE
+% (working)
 if(Ny>1)
     ny = floor(Ny/2);
 else
     ny = 1;
 end
-%ny = 250; % testing
+ny =51; % testing
 % recall that B0.? is formatted as the following, where "?" is X,Y, or Z
 % B0.?(ny,nx,nz), where n? represents the index to respecting "?"
 % Therefore if you want to plot something in the xy-plane the following
@@ -323,39 +346,50 @@ end
 XZ_X     = squeeze(B0.X(ny,:,:));
 XZ_Y     = squeeze(B0.Y(ny,:,:));
 XZ_Z     = squeeze(B0.Z(ny,:,:));
-Z        = zeros(Nx,Nz);
+Y        = zeros(Nx,Nz);
 XZ_BX    = squeeze(B0.BX(ny,:,:));
 XZ_BY    = squeeze(B0.BY(ny,:,:));
 XZ_BZ    = squeeze(B0.BZ(ny,:,:));
 XZ_normB = squeeze(normB(ny,:,:));  
-
+%{
+%[M0_XZ,c_XZ]=contourf(XZ_X,XZ_Z,XZ_normB);
+Q=quiver3(XZ_X,XZ_Y,XZ_Z, XZ_BX,XZ_BY,XZ_BZ);
+set(Q,'color','r');
+direction = [1 0 0];
+rotate(Q,direction,90)
+xlabel('x'); ylabel('y'); zlabel('z');
+%}
+%
 hold on;
-figure(2)
-% antenna
+% ----------- antenna -------------% 
 H=plot3(Sx,Sy,Sz,'-');
 direction = [0 0 1];
 rotate(H,direction,90)
 direction = [1 0 0];
 rotate(H,direction,90)
-lw = 5;
+%lw = 5;
 set(H,'color','r'); set(H,'linewidth',lw);
-% mag
+% ----------- magnitude -----------% 
 [M0_XZ,c_XZ]=contourf(XZ_X,XZ_Z,XZ_normB);
 c_XZ.ContourZLevel =  XZ_Y(1,1);
-% quiver
-Q=quiver3(XZ_X,XZ_Y,Z, XZ_BX,XZ_BY,XZ_BZ);
+contourcbar;
+% ----------- quiver --------------%
+Q=quiver3(XZ_X,XZ_Z,XZ_Y, XZ_BX,XZ_BY,XZ_BZ);
+Q.MaxHeadSize = 1;
+Q.AutoScaleFactor = 1.5;
 set(Q,'color','w');
+% ----------- plot props -----------%
 xlabel('x[m]','FontWeight','bold','FontSize', fontSize); 
 ylabel('z[m]','FontWeight','bold','FontSize', fontSize);
 title(['XZ-Plane (ny/Ny):',num2str((ny)),'/',num2str(Ny)],'FontWeight',...
     'bold','FontSize', fontSize);
-grid on; axis tight;
-xl = (ri)*(3/4); yl = (ra)*(3/4);
-xlim([-xl xl]); ylim([-yl yl]);
+grid on; 
+axis tight;
 view(0,90);
-%contourcbar;
+contourcbar;
 saveas(gcf,'MagBFields_XZPlane.png')
 hold off;
+%}
 %% PLOT: YZ PLANE
 % working on
 if(Nx>1)
@@ -363,7 +397,7 @@ if(Nx>1)
 else
     nx = 1;
 end
-%nx = 300; % testing
+nx = 51; % testing
 % recall that B0.? is formatted as the following, where "?" is X,Y, or Z
 % B0.?(ny,nx,nz), where n? represents the index to respecting "?"
 % Therefore if you want to plot something in the xy-plane the following
@@ -376,29 +410,40 @@ YZ_BX    = squeeze(B0.BX(:,nx,:));
 YZ_BY    = squeeze(B0.BY(:,nx,:));
 YZ_BZ    = squeeze(B0.BZ(:,nx,:));
 YZ_normB = squeeze(normB(:,nx,:));  
+
+%
 hold all;
 %figure(3)
-% antenna
-H=plot3(Sx-ri/2,Sy,Sz,'-');
+% ----------- antenna -------------% 
+%
+H=plot3(Sx,Sy,Sz,'-');
 direction = [0 0 1];
 rotate(H,direction,180)
 direction = [1 0 0];
 rotate(H,direction,90)
-lw = 5;
+lw = 1;
 set(H,'color','r'); set(H,'linewidth',lw);
-% mag
+%}
+% ----------- magnitude -----------% 
 [M0_YZ,c_YZ]=contourf(YZ_Y,YZ_Z,YZ_normB);
 c_YZ.ContourZLevel = YZ_X(1,1);
-% quiver
-Q=quiver3(YZ_X,YZ_Y,YZ_Z, YZ_BX,YZ_BY,YZ_BZ);
+%c_YZ.ContourZLevel = 0;
+contourcbar;
+% ----------- quiver --------------%
+%Q=quiver3(XZ_X,XZ_Z,XZ_Y, XZ_BX,XZ_BY,XZ_BZ); %XZ
+Q=quiver3(YZ_Y,YZ_Z,YZ_X, YZ_BX,YZ_BY,YZ_BZ);
+Q.MaxHeadSize = 10;
+Q.AutoScaleFactor = 10;
+set(Q,'color','w');
+% ----------- plot props -----------%
 xlabel('y[m]','FontWeight','bold','FontSize', fontSize); 
 ylabel('z[m]','FontWeight','bold','FontSize', fontSize);
 title(['YZ-Plane (nx/Nx):',num2str((nx)),'/',num2str(Nx)],'FontWeight',...
     'bold','FontSize', fontSize);
 view(0,90); grid on; axis tight;
-contourcbar;
 saveas(gcf,'MagBFields_YZPlane.png')
 hold off;
+%}
 %%                         EXPORT CSV FILES                              %%  
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %
@@ -409,6 +454,7 @@ hold off;
 % SIZE: size(Sx) by 3 UNITS: each index is [m]
 %
 % antenna
+%
 aSize = numel(Sx); 
 aXYZ = {'x[m]','y[m]','z[m]'};
 for n=1:aSize
@@ -460,3 +506,4 @@ YZC       = {'y[m]','z[m]','|B|'};
 YZBF      = num2cell([YZ_Xr,YZ_Zr,YZ_normBr]);
 BF        = [YZC;YZBF];
 writecell(BF,'Magnitude_BFields_YZ.csv');
+%}

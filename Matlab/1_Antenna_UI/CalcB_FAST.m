@@ -12,7 +12,7 @@ function [X,Y,Z,BX,BY,BZ,normB,R0] = CalcB_FAST(I,xS,yS,zS,bBox,Ns)
 mu0  =  4*pi*10^-7; % free space permeability <scalar> [H/m]
 %uc   = 1.256629*10^-6;    % Permeability of copper 
 %u    = mu0*uc;
-lenS = numel(xS);
+%lenS = numel(xS);
 
 % bBox = [xminb,yminb,zminb; xmaxb,ymaxb,zmaxb];
 xminb=bBox(1,1);  yminb=bBox(1,2);  zminb=bBox(1,3);   

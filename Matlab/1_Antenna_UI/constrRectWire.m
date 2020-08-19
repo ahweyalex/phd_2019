@@ -39,7 +39,24 @@ function [xS,yS,zS] = constrRectWire(h,W0,L0,phi,N,O,wT,Nxy)
                 xS=[xS;xS0]; 
                 yS=[yS;yS0]; 
                 zS=[zS;zS0];
-                % numel(xS)
+                % connetions between the coils along the xy-plane
+                if(nx~=Nxy)
+                    %c = 'c_odd'
+                    %nx
+                    t1 = (3/2)*(wT)*(nx);
+                    LN = 4;
+                    xC = linspace(0,0,LN)';
+                    if(nx==1)
+                        yC = -1*linspace(L0/2,L0/2+t1,LN)';
+                    else
+                        yC = -1*linspace(yc(1),yc(1)+t1,LN)';
+                    end
+                    zC = linspace(zS0(end),zS0(end),LN)';
+                    xS = [xS;xC];
+                    yS = [yS;yC];
+                    zS = [zS;zC];
+                end
+                
             else
                 txy =(wT/2); 
                 t0 = (3/2)*(wT)*(nx-1);
@@ -65,6 +82,22 @@ function [xS,yS,zS] = constrRectWire(h,W0,L0,phi,N,O,wT,Nxy)
                 xS=[xS;xS0]; 
                 yS=[yS;yS0]; 
                 zS=[zS;zS0];
+                if(nx~=Nxy)
+                    %c = 'c_even'
+                    %nx
+                    t0 = (3/2)*(wT)*(nx);
+                    LN = 4;
+                    xC = linspace(0,0,LN)';
+                    if(nx==1)
+                        yC = -1*linspace(L0/2,L0/2+t1,LN)';
+                    else
+                        yC = -1*linspace(L0/2+t0,L0/2+t1,LN)';
+                    end
+                    zC = linspace(0,0,LN)';
+                    xS = [xS;xC];
+                    yS = [yS;yC];
+                    zS = [zS;zC];
+                end
             end
             %{
             % +z
@@ -140,6 +173,7 @@ function [xS,yS,zS] = constrRectWire(h,W0,L0,phi,N,O,wT,Nxy)
             %}
         end
         % END: LOOP: NXY
+    %counter clock wise
     else
         for nx=1:Nxy
             if(mod(nx,2)~=0)
