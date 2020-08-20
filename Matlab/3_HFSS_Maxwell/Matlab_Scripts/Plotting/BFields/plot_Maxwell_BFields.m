@@ -1,6 +1,7 @@
 clear all; close all; clc;
 
 N = 100;
+%A = importdata('s3N_oct.fld');
 A = importdata('s3N_oct.fld');
 xx = reshape(A.data(:,1),N,N);
 yy = reshape(A.data(:,2),N,N);
