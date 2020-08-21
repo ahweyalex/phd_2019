@@ -252,13 +252,12 @@ clc; close all;
     X0       = zeros(Ny,Nz);
     YZ_BX    = squeeze(BX(:,nx,:)); % BX (vector)
     YZ_BY    = squeeze(BY(:,nx,:)); % BY (vector)
-    YZ_BZ    = squeeze(BZ(:,nx,:)); % BZ (vector)
-    YZ_normB = squeeze(normB(:,nx,:)); % B  (magnitude) 
+    YZ_BZ    = squeeze(BZ(ny,:,:)); % BZ (vector)
+    YZ_normB = squeeze(normB(ny,:,:)); % B  (magnitude) 
     % plotting stuff
+    
+p = 'yz';
 hold on;
-
-yz = 'yz'
-
 figure(1)
 % ----------- antenna -------------% 
 %H=plot3(Sx,Sy,Sz,'-');

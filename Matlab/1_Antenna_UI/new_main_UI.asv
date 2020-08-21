@@ -264,186 +264,14 @@ B0 = struct('BX',BX,'BY',BY,'BZ',BZ,'X',bX,'Y',bY,'Z',bZ);
 %[bX,bY,bZ, BX,BY,BZ, normB,R] = ...
 %    CalcB_SLOW(I0.I,Sx,Sy,Sz,bBox,Ns);  
 
-%%                         SELF-INDUCTANCE                               %%  
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% rectunglar 
-
-% square
-
-% circular
-
-% elliptical 
-
 %%                             PLOTS                                     %%  
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%% PLOT: XY PLANE
-% (working-ish)
+% PLOT: XY PLANE
 
-fontSize = 14;
-% checks if Nz is greater than one, chooses the middle value 
-% in the case of odd number of points, round down
-if(Nz>1)
-    nz = floor(Nz/2)+1;
-else
-    nz = 1;
-end
-% nz = 70; % testing
-% recall that B0.? is formatted as the following, where "?" is X,Y, or Z
-% B0.?(ny,nx,nz), where n? represents the index to respecting "?"
-% Therefore if you want to plot something in the xy-plane the following
-% format is recommend to be used B0.?(:,:,nz)
-XY_X     = squeeze(B0.X(:,:,nz));
-XY_Y     = squeeze(B0.Y(:,:,nz));
-XY_Z     = squeeze(B0.Z(:,:,nz));
-Z        = zeros(Ny,Nx);
-XY_BX    = squeeze(B0.BX(:,:,nz));
-XY_BY    = squeeze(B0.BY(:,:,nz));
-XY_BZ    = squeeze(B0.BZ(:,:,nz));
-XY_normB = squeeze(normB(:,:,nz));
-%%
-%
-hold on;
-figure(1)
-% ----------- antenna -------------% 
-H=plot3(Sx,Sy,Sz,'-');
-lw = 0.5;
-set(H,'color','r'); set(H,'linewidth',lw);
-% ----------- magnitude -----------% 
-[M0_XY,c_XY]=contourf(XY_X,XY_Y,XY_normB);
-c_XY.ContourZLevel = XY_Z(1,1);
-%c_XY.ContourZLevel = 0;
-contourcbar;
-% ----------- quiver --------------%
-Q=quiver3(XY_X,XY_Y,XY_Z, XY_BX,XY_BY,XY_BZ);
-set(Q,'color','w');
-Q.MaxHeadSize = 5;
-Q.AutoScaleFactor = 5;
-% ----------- plot props -----------%
-xlabel('x[m]','FontWeight','bold','FontSize', fontSize); 
-ylabel('y[m]','FontWeight','bold','FontSize', fontSize);
-title(['XY-Plane (nz/Nz):',num2str((nz)),'/',num2str(Nz)],'FontWeight',...
-    'bold','FontSize', fontSize);
-hold on; grid on; axis tight;
-view(0,90);
-% saves the figure as a PNG 
-saveas(gcf,'MagBFields_XYPlane.png')
-hold off;
-%}
-%% PLOT: XZ PLANE
-% (working)
-if(Ny>1)
-    ny = floor(Ny/2);
-else
-    ny = 1;
-end
-ny =51; % testing
-% recall that B0.? is formatted as the following, where "?" is X,Y, or Z
-% B0.?(ny,nx,nz), where n? represents the index to respecting "?"
-% Therefore if you want to plot something in the xy-plane the following
-% format is recommend to be used B0.?(:,:,nz)
-XZ_X     = squeeze(B0.X(ny,:,:));
-XZ_Y     = squeeze(B0.Y(ny,:,:));
-XZ_Z     = squeeze(B0.Z(ny,:,:));
-Y        = zeros(Nx,Nz);
-XZ_BX    = squeeze(B0.BX(ny,:,:));
-XZ_BY    = squeeze(B0.BY(ny,:,:));
-XZ_BZ    = squeeze(B0.BZ(ny,:,:));
-XZ_normB = squeeze(normB(ny,:,:));  
-%{
-%[M0_XZ,c_XZ]=contourf(XZ_X,XZ_Z,XZ_normB);
-Q=quiver3(XZ_X,XZ_Y,XZ_Z, XZ_BX,XZ_BY,XZ_BZ);
-set(Q,'color','r');
-direction = [1 0 0];
-rotate(Q,direction,90)
-xlabel('x'); ylabel('y'); zlabel('z');
-%}
-%
-hold on;
-% ----------- antenna -------------% 
-H=plot3(Sx,Sy,Sz,'-');
-direction = [0 0 1];
-rotate(H,direction,90)
-direction = [1 0 0];
-rotate(H,direction,90)
-%lw = 5;
-set(H,'color','r'); set(H,'linewidth',lw);
-% ----------- magnitude -----------% 
-[M0_XZ,c_XZ]=contourf(XZ_X,XZ_Z,XZ_normB);
-c_XZ.ContourZLevel =  XZ_Y(1,1);
-contourcbar;
-% ----------- quiver --------------%
-Q=quiver3(XZ_X,XZ_Z,XZ_Y, XZ_BX,XZ_BY,XZ_BZ);
-Q.MaxHeadSize = 1;
-Q.AutoScaleFactor = 1.5;
-set(Q,'color','w');
-% ----------- plot props -----------%
-xlabel('x[m]','FontWeight','bold','FontSize', fontSize); 
-ylabel('z[m]','FontWeight','bold','FontSize', fontSize);
-title(['XZ-Plane (ny/Ny):',num2str((ny)),'/',num2str(Ny)],'FontWeight',...
-    'bold','FontSize', fontSize);
-grid on; 
-axis tight;
-view(0,90);
-contourcbar;
-saveas(gcf,'MagBFields_XZPlane.png')
-hold off;
-%}
-%% PLOT: YZ PLANE
-% working on
-if(Nx>1)
-    nx = floor(Nx/2);
-else
-    nx = 1;
-end
-nx = 51; % testing
-% recall that B0.? is formatted as the following, where "?" is X,Y, or Z
-% B0.?(ny,nx,nz), where n? represents the index to respecting "?"
-% Therefore if you want to plot something in the xy-plane the following
-% format is recommend to be used B0.?(:,:,nz)
-YZ_X     = squeeze(B0.X(:,nx,:));
-YZ_Y     = squeeze(B0.Y(:,nx,:));
-YZ_Z     = squeeze(B0.Z(:,nx,:));
-Z        = zeros(Ny,Nz);
-YZ_BX    = squeeze(B0.BX(:,nx,:));
-YZ_BY    = squeeze(B0.BY(:,nx,:));
-YZ_BZ    = squeeze(B0.BZ(:,nx,:));
-YZ_normB = squeeze(normB(:,nx,:));  
 
-%
-hold all;
-%figure(3)
-% ----------- antenna -------------% 
-%
-H=plot3(Sx,Sy,Sz,'-');
-direction = [0 0 1];
-rotate(H,direction,180)
-direction = [1 0 0];
-rotate(H,direction,90)
-lw = 1;
-set(H,'color','r'); set(H,'linewidth',lw);
-%}
-% ----------- magnitude -----------% 
-[M0_YZ,c_YZ]=contourf(YZ_Y,YZ_Z,YZ_normB);
-c_YZ.ContourZLevel = YZ_X(1,1);
-%c_YZ.ContourZLevel = 0;
-contourcbar;
-% ----------- quiver --------------%
-%Q=quiver3(XZ_X,XZ_Z,XZ_Y, XZ_BX,XZ_BY,XZ_BZ); %XZ
-Q=quiver3(YZ_Y,YZ_Z,YZ_X, YZ_BX,YZ_BY,YZ_BZ);
-Q.MaxHeadSize = 10;
-Q.AutoScaleFactor = 10;
-set(Q,'color','w');
-% ----------- plot props -----------%
-xlabel('y[m]','FontWeight','bold','FontSize', fontSize); 
-ylabel('z[m]','FontWeight','bold','FontSize', fontSize);
-title(['YZ-Plane (nx/Nx):',num2str((nx)),'/',num2str(Nx)],'FontWeight',...
-    'bold','FontSize', fontSize);
-view(0,90); grid on; axis tight;
-saveas(gcf,'MagBFields_YZPlane.png')
-hold off;
-%}
+
 %%                         EXPORT CSV FILES                              %%  
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %
@@ -453,60 +281,9 @@ hold off;
 % the (multi)coiled wire antenna
 % SIZE: size(Sx) by 3 UNITS: each index is [m]
 %
-% antenna
-%
-aSize = numel(Sx); 
-aXYZ = {'x[m]','y[m]','z[m]'};
-for n=1:aSize
-    aXYZ{n+1,1} = Sx(n);
-    aXYZ{n+1,2} = Sy(n);
-    aXYZ{n+1,3} = Sz(n);
-end
-writecell(aXYZ,'antenna.csv');
-%  B-Fields
-bSize = Nx*Ny*Nz;
-Xcsv = reshape(B0.X,bSize,1);
-Ycsv = reshape(B0.Y,bSize,1);
-Zcsv = reshape(B0.Z,bSize,1);
-BXcsv = reshape(B0.BX,bSize,1);
-BYcsv = reshape(B0.BY,bSize,1);
-BZcsv = reshape(B0.BZ,bSize,1);
-BFC   = {'x[m]','y[m]','z[m]','BX','BY','BZ'};
-BFA   = num2cell([Xcsv,Ycsv,Zcsv,BXcsv,BYcsv,BZcsv]);
-BF    = [BFC;BFA];
-writecell(aXYZ,'BFields_AllPoints.csv');
-%
-% XY
-XYN       = Nx*Ny;
-XY_Xr     = reshape(XY_X,XYN,1);
-XY_Yr     = reshape(XY_Y,XYN,1);
-XY_Zr     = reshape(XY_Z,XYN,1);
-XY_normBr = reshape(XY_normB,XYN,1); 
-XYC       = {'x[m]','y[m]','|B|'};
-XYBF      = num2cell([XY_Xr,XY_Zr,XY_normBr]);
-BF        = [XYC;XYBF];
-writecell(BF,'Magnitude_BFields_XY.csv');
-% XZ
-XZN       = Nx*Nz;
-XZ_Xr     = reshape(XZ_X,XZN,1);
-XZ_Yr     = reshape(XZ_Y,XZN,1);
-XZ_Zr     = reshape(XZ_Z,XZN,1);
-XZ_normBr = reshape(XZ_normB,XZN,1); 
-XZC       = {'x[m]','z[m]','|B|'};
-XZBF      = num2cell([XZ_Xr,XZ_Zr,XZ_normBr]);
-BF        = [XZC;XZBF];
-writecell(BF,'Magnitude_BFields_XZ.csv');
-% YZ
-YZN       = Nx*Nz;
-YZ_Xr     = reshape(YZ_X,YZN,1);
-YZ_Yr     = reshape(YZ_Y,YZN,1);
-YZ_Zr     = reshape(YZ_Z,YZN,1);
-YZ_normBr = reshape(YZ_normB,YZN,1); 
-YZC       = {'y[m]','z[m]','|B|'};
-YZBF      = num2cell([YZ_Xr,YZ_Zr,YZ_normBr]);
-BF        = [YZC;YZBF];
-writecell(BF,'Magnitude_BFields_YZ.csv');
-%}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+export_BF_Ant(Sx,Sy,Sz,B0X,Y,Z,BX,BY,BZ,nx,ny,nz);
+
 %%                         SELF-INDUCTANCE                               %%  
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % DESCRIPTION: Computes the self-inductance of an ellipse or rectangle 
@@ -574,13 +351,13 @@ writecell(BF,'Magnitude_BFields_YZ.csv');
 % Description: Self-indutance from the BFields provided from the user. 
 % UNITS: [H]  ARRAY: 1x1 TYPE: double 
 %
-G = 'r';
-nz       = 1;
-BX     = squeeze(B0.X(:,:,nz));
-BY     = squeeze(B0.Y(:,:,nz));
-BZ     = squeeze(B0.Z(:,:,nz));
-XY_BX    = squeeze(B0.BX(:,:,nz));
-XY_BY    = squeeze(B0.BY(:,:,nz));
-XY_BZ    = squeeze(B0.BZ(:,:,nz));
-XY_normB = squeeze(normB(:,:,nz));
-[L11] = selfInductance_BFields(ri,ra,I,X,Y,BFnorm,G);
+%G     = 'e' % ellipse/circle
+G     = 'r'; % rectanlge/square
+nz    = 1;
+X     = squeeze(B0.X(:,:,nz));
+Y     = squeeze(B0.Y(:,:,nz));
+Z     = squeeze(B0.Z(:,:,nz));
+BX    = squeeze(B0.BX(:,:,nz));
+BY    = squeeze(B0.BY(:,:,nz));
+BZ    = squeeze(B0.BZ(:,:,nz));
+[L11] = selfInductance_BFields(ri,ra,I0.I,X,Y,BZ,G);
