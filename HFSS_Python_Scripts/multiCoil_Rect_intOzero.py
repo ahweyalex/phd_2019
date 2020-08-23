@@ -1,3 +1,6 @@
+# Alexander Moreno
+# To create a multi-coil rectangular wire  
+#
 # ----------------------------------------------
 # Script Recorded by ANSYS Electronics Desktop Version 2018.1.0
 # 15:45:00  Jul 16, 2020
@@ -5,7 +8,7 @@
 import ScriptEnv
 ScriptEnv.Initialize("Ansoft.ElectronicsDesktop")
 oDesktop.RestoreWindow()
-oProject = oDesktop.SetActiveProject("Rect_Test")
+oProject = oDesktop.SetActiveProject("Rect_Loop_Temp")
 oDesign  = oProject.SetActiveDesign("Maxwell3DDesign1")
 oEditor  = oDesign.SetActiveEditor("3D Modeler")
 
@@ -301,13 +304,13 @@ def create_singleCoil(N,O,nxy,sep_xy,sep_z,ZN,zRect,fnList):
 					fnList.append(fn)
 					z = z + 1
 				# odd (right side)
-				else:
+				if(ns%2==1):
 					xi = "ri/2 +"+str(sep_xy)+"*wT*"+str(nxy)
 					xf = "ri/2 +"+str(sep_xy)+"*wT*"+str(nxy)
 					#yi = "ra/2 + wT*"+str(nxy)
 					#yf = "wT*2 + wT*"+str(nxy)
-					yi = "ra/2 +"+str(sep_xy)+"*wT*"+str(nxy)
-					yf = "wT*2"
+					yi = "-(ra/2 +"+str(sep_xy)+"*wT*"+str(nxy)+")"
+					yf = "-wT*2"
 					zi = str(zRect[z])+"+wT*"+str(sep_z)+"*"+str(ns-1)
 					zf = str(zRect[z+1])+"+wT*"+str(sep_z)+"*"+str(ns-0.5)
 					fn = "fs"+str(ns)+"_"+str(nxy)	# filname
@@ -537,8 +540,10 @@ def multiRectCoil(O,Nxy,N,wT0,h,ra,ri,sep_xy,sep_z,fnList):
 			xf = "ri/2 +"+str(sep_xy)+"*wT*"+str(nxy+1)
 			yi = "-wT*2"
 			yf = "wT*2"
-			zi = "(zEnd *(9/(10)))+wT*"+str(sep_z)+"*1.5"
-			zf = "(zEnd *(9/(10)))+wT*"+str(sep_z)+"*1.5"
+			#zi = "(zEnd *(9/(10)))+wT*"+str(sep_z)+"*1.5"
+			#zf = "(zEnd *(9/(10)))+wT*"+str(sep_z)+"*1.5"
+			zi = "(zEnd *("+str(ZN-1)+"/("+str(ZN)+")))+wT*"+str(sep_z)+"*"+str(N-0.5)
+			zf = "(zEnd *("+str(ZN-1)+"/("+str(ZN)+")))+wT*"+str(sep_z)+"*"+str(N-0.5)
 			fn = "fc_"+str(nxy)	# filname
 			create_PolyLine(xi,yi,xf,yf,zi,zf,fn)
 			fnList.append(fn)
@@ -553,6 +558,7 @@ def multiRectCoil(O,Nxy,N,wT0,h,ra,ri,sep_xy,sep_z,fnList):
 			fn = "fc_"+str(nxy)	# filname
 			create_PolyLine(xi,yi,xf,yf,zi,zf,fn)
 			fnList.append(fn)	
+		
 		# feed lines
 		if(nxy==0):
 			# goes down
@@ -592,8 +598,10 @@ def multiRectCoil(O,Nxy,N,wT0,h,ra,ri,sep_xy,sep_z,fnList):
 			xf = "ri"
 			yi = "-wT*2"
 			yf = "-wT*2"
-			zi = "(zEnd *(9/(10)))+wT*"+str(sep_z)+"*1.5"
-			zf = "(zEnd *(9/(10)))+wT*"+str(sep_z)+"*1.5"
+			#zi = "(zEnd *(9/(10)))+wT*"+str(sep_z)+"*"+str(N-0.5)
+			#zf = "(zEnd *(9/(10)))+wT*"+str(sep_z)+"*"+str(N-0.5)
+			zi = "(zEnd *("+str(ZN-1)+"/("+str(ZN)+")))+wT*"+str(sep_z)+"*"+str(N-0.5)
+			zf = "(zEnd *("+str(ZN-1)+"/("+str(ZN)+")))+wT*"+str(sep_z)+"*"+str(N-0.5)			
 			fn = "feed_bottom"+str(ns)+"_"+str(nxy)	# filname
 			create_PolyLine(xi,yi,xf,yf,zi,zf,fn)
 			fnList.append(fn)
@@ -702,8 +710,8 @@ def ThickenWire(fnList):
 #                     FUNCTION NAME: MAIN
 ############################################################################
 O   = 0 
-Nxy = 2
-N   = 2
+Nxy = 3
+N   = 3
 wT0 = 0.2546
 wT  = str(wT0) + "mm"
 h 	= (wT0*1e-3)*0.35
@@ -714,9 +722,57 @@ ri  = "30mm"
 sep_xy = "sep_xy" 
 sep_z  = "sep_z"
 fnList = []	
-#createVars(Nxy,N,h,ra,ri,wT)
-multiRectCoil(O,Nxy,N,wT0,h,ra,ri,sep_xy,sep_z,fnList)
 
+#createVars(Nxy,N,h,ra,ri,wT)
+if(Nxy>1 and N>1):
+	multiRectCoil(O,int(Nxy),int(N),wT0,h,ra,ri,sep_xy,sep_z,fnList)
+elif(Nxy<1):
+	# set up the z-values
+	zEnd   = h*int(N)*2*3.14 # last value along z-direction
+	ZN     = int(N)*4 + 2	 # total number of points along the z-direction
+	# for each point of the rectangule coil
+	zRect  = []				 # initialize empty list to later fill with 
+	# points along z-direction
+	fnList = []				 # initialize empty list to later fill with 
+	# strings of each line segments
+	zSTEP  = zEnd/ZN	 	 	
+	zn     = 0	# counter for z-axis
+	ns     = 0
+	z      = 0
+	# create zRect
+	for ns in range(0,ZN+1):
+		zStr = "(zEnd *("+str(ns)+"/("+str(ZN)+")))"
+		#zRect.append(zEnd * (ns/(ZN-1)))
+		zRect.append(zStr)
+		ns = ns+1	
+	nxy=0
+	create_singleCoil(N,O,nxy,sep_xy,sep_z,ZN,zRect,fnList)
+elif(Nxy>1 and N<2):
+	# set up the z-values
+	zEnd   = h*int(N)*2*3.14 # last value along z-direction
+	ZN     = int(N)*4 + 2	 # total number of points along the z-direction
+	# for each point of the rectangule coil
+	zRect  = []				 # initialize empty list to later fill with 
+	# points along z-direction
+	fnList = []				 # initialize empty list to later fill with 
+	# strings of each line segments
+	zSTEP  = zEnd/ZN	 	 	
+	zn     = 0	# counter for z-axis
+	ns     = 0
+	z      = 0
+	# create zRect
+	for ns in range(0,ZN+1):
+		zStr = "(zEnd *("+str(ns)+"/("+str(ZN)+")))"
+		#zRect.append(zEnd * (ns/(ZN-1)))
+		zRect.append(zStr)
+		ns = ns+1	
+	for nxy in range(0,Nxy):
+		create_singleCoil(N,O,nxy,sep_xy,sep_z,ZN,zRect,fnList)		
+		# change orienation	
+		if(O==1):
+			O=0
+		elif(O==0):
+			O=1	
 ############################################################################
 #                       END: MAIN
 ############################################################################

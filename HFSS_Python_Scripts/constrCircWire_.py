@@ -5,76 +5,78 @@
 import ScriptEnv
 ScriptEnv.Initialize("Ansoft.ElectronicsDesktop")
 oDesktop.RestoreWindow()
-oProject = oDesktop.SetActiveProject("Project2")
+oProject = oDesktop.SetActiveProject("Ellipse_Loop_Temp")
 oDesign = oProject.SetActiveDesign("Maxwell3DDesign1")
-oDesign.ChangeProperty(
-	[
-		"NAME:AllTabs",
-		[
-			"NAME:LocalVariableTab",
-			[
-				"NAME:PropServers", 
-				"LocalVariables"
-			],
-			[
-				"NAME:NewProps",
-				[
-					"NAME:wT",
-					"PropType:="		, "VariableProp",
-					"UserDef:="		, True,
-					"Value:="		, "0.2546mm"
-				],
-				[
-					"NAME:pitch",
-					"PropType:="		, "VariableProp",
-					"UserDef:="		, True,
-					"Value:="		, "wT*2.0001"
-				],
-				[
-					"NAME:ra",
-					"PropType:="		, "VariableProp",
-					"UserDef:="		, True,
-					"Value:="		, "30mm"
-				],
-				[
-					"NAME:ri",
-					"PropType:="		, "VariableProp",
-					"UserDef:="		, True,
-					"Value:="		, "30mm"
-				],
-				[
-					"NAME:N",
-					"PropType:="		, "VariableProp",
-					"UserDef:="		, True,
-					"Value:="		, "3"
-				],
-				[
-					"NAME:Nxy",
-					"PropType:="		, "VariableProp",
-					"UserDef:="		, True,
-					"Value:="		, "3"
-				],
-				[
-					"NAME:numSeg",
-					"PropType:="		, "VariableProp",
-					"UserDef:="		, True,
-					"Value:="		, "200"
-				],
-				[
-					"NAME:h",
-					"PropType:="		, "VariableProp",
-					"UserDef:="		, True,
-					"Value:="		, "wT*0.35"
-				],
-				[
-					"NAME:zEnd",
-					"PropType:="		, "VariableProp",
-					"UserDef:="		, True,
-					"Value:="		, "h*N*2*pi"
-				]
-			]
-		]
-	])
+# oDesign.ChangeProperty(
+	# [
+		# "NAME:AllTabs",
+		# [
+			# "NAME:LocalVariableTab",
+			# [
+				# "NAME:PropServers", 
+				# "LocalVariables"
+			# ],
+			# [
+				# "NAME:NewProps",
+				# [
+					# "NAME:wT",
+					# "PropType:="		, "VariableProp",
+					# "UserDef:="		, True,
+					# "Value:="		, "0.2546mm"
+				# ],
+				# [
+					# "NAME:pitch",
+					# "PropType:="		, "VariableProp",
+					# "UserDef:="		, True,
+					# "Value:="		, "wT*2.0001"
+				# ],
+				# [
+					# "NAME:ra",
+					# "PropType:="		, "VariableProp",
+					# "UserDef:="		, True,
+					# "Value:="		, "30mm"
+				# ],
+				# [
+					# "NAME:ri",
+					# "PropType:="		, "VariableProp",
+					# "UserDef:="		, True,
+					# "Value:="		, "30mm"
+				# ],
+				# [
+					# "NAME:N",
+					# "PropType:="		, "VariableProp",
+					# "UserDef:="		, True,
+					# "Value:="		, "3"
+				# ],
+				# [
+					# "NAME:Nxy",
+					# "PropType:="		, "VariableProp",
+					# "UserDef:="		, True,
+					# "Value:="		, "3"
+				# ],
+				# [
+					# "NAME:numSeg",
+					# "PropType:="		, "VariableProp",
+					# "UserDef:="		, True,
+					# "Value:="		, "200"
+				# ],
+				# [
+					# "NAME:h",
+					# "PropType:="		, "VariableProp",
+					# "UserDef:="		, True,
+					# "Value:="		, "wT*0.35"
+				# ],
+				# [
+					# "NAME:zEnd",
+					# "PropType:="		, "VariableProp",
+					# "UserDef:="		, True,
+					# "Value:="		, "h*N*2*pi"
+				# ]
+			# ]
+		# ]
+	# ])
+
+
 oEditor = oDesign.SetActiveEditor("3D Modeler")
 oEditor.CreateEquationCurve(
 	[

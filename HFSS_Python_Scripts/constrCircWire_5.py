@@ -5,7 +5,7 @@
 import ScriptEnv
 ScriptEnv.Initialize("Ansoft.ElectronicsDesktop")
 oDesktop.RestoreWindow()
-oProject = oDesktop.SetActiveProject("Project1")
+oProject = oDesktop.SetActiveProject("Ellipse_Loop_Temp")
 oDesign = oProject.SetActiveDesign("Maxwell3DDesign1")
 oEditor = oDesign.SetActiveEditor("3D Modeler")
 ############################################################################
