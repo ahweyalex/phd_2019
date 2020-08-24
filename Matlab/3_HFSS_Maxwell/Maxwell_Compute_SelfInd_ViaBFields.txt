@@ -1,0 +1,16 @@
+copy to stack : B_Vector
+Geomtery : Rect
+normal
+int
+abs
+--> should see:
+Scl : Abs(Integrate(Surface(Rectangle1), Dot(B_Vector, SurfaceNormal)))
+
+eval
+====================
+161.113 nH
+====================
+4.31844720428262E-08 @ Z=0
+ *N = 130nH
+5.74285555263828E-08 @ Z=zEnd/2
+ *N= 170nH
