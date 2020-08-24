@@ -1,5 +1,4 @@
 clear all; close all; clc;
-%
 ri = 10e-3;
 ra = 10e-3;
 I  = 1;
@@ -25,7 +24,7 @@ bx  = reshape(A.data(:,4),Nm,Nm);
 by  = reshape(A.data(:,5),Nm,Nm);
 bz  = reshape(A.data(:,6),Nm,Nm);
 [L11] = selfInductance_BFields(ri,ra,I,x,y,bz,N,G);
-%}
+
 
 % Rect_Loop_N3
 %{
