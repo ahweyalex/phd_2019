@@ -12,6 +12,7 @@ function [xS,yS,zS] = constrRectWire(h,W0,L0,phi,N,O,wT,Nxy)
     
     if(O==1) %clock wise
         for nx=1:Nxy
+            % even
             if(mod(nx,2)~=0)
                 txy =(wT/2); 
                 t0 = (3/2)*(wT)*(nx-1);

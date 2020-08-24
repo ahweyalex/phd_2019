@@ -196,22 +196,19 @@ view(45,45);
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 Nx    = 199; 
 Ny    = 199; 
-Nz    = 20; 
+Nz    = 10; 
 Ns    = [Nx,Ny,Nz];
 if (ri>=ra)
-    %xyz = 2*ri;
-    xyz = ri;
+    xyz = 2*ri;
 elseif (ra>=ri)
-    %xyz = 2*ra;
-    xyz = ra;
+    xyz = 2*ra;
 end
 xminb = -xyz; 
 xmaxb =  xyz;
 yminb = -xyz; 
 ymaxb =  xyz;
-%zminb = zEnd/2;   % [m]
-zminb = 0;
-zmaxb = zEnd;  % [m]
+zminb = -zEnd/4;   % [m]
+zmaxb = zEnd*1.2;  % [m]
 bBox  = [xminb,yminb,zminb; xmaxb,ymaxb,zmaxb];
 %%                         COMPUTE BFIELDS                               %%  
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -270,6 +267,39 @@ nBZ   = BZ./normB;
 B0 = struct('BX',BX,'BY',BY,'BZ',BZ,'X',bX,'Y',bY,'Z',bZ);
 %[bX,bY,bZ, BX,BY,BZ, normB,R] = ...
 %    CalcB_SLOW(I0.I,Sx,Sy,Sz,bBox,Ns);  
+
+%%                             PLOTS                                     %%  
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% ------------------- WRITE: BFIELDS (XY-PLANE) ------------------------- %
+% checks if Nz is greater than one, chooses the middle value 
+% in the case of odd number of points, round down
+if(Nz>1)
+    nz = floor(Nz/2)+1;
+else
+    nz = 1;
+end
+% -------------------- PLOT: BFIELDS (XZ-PLANE) ------------------------- %
+% -------------------- PLOT: BFIELDS (YZ-PLANE) ------------------------- %
+nx = 25;
+ny = 25;
+nz = 25;
+
+plot_BF_Ant(Sx,Sy,Sz,B0.X,B0.Y,B0.Z,B0.BX,B0.BY,B0.BZ,nx,ny,nz)
+
+%%                         EXPORT CSV FILES                              %%  
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% A
+% Description: Matrix that contains the 1D arrays of x,y, and z points of
+% the (multi)coiled wire antenna
+% SIZE: size(Sx) by 3 UNITS: each index is [m]
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+ALL = 1;
+%export_BF_Ant(Sx,Sy,Sz,B0.X,B0.Y,B0.Z,B0.BX,B0.BY,B0.BZ,nx,ny,nz, ALL);
 
 %%                         SELF-INDUCTANCE                               %%  
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -339,50 +369,12 @@ B0 = struct('BX',BX,'BY',BY,'BZ',BZ,'X',bX,'Y',bY,'Z',bZ);
 % UNITS: [H]  ARRAY: 1x1 TYPE: double 
 %
 %G     = 'e' % ellipse/circle
+G     = 'r'; % rectanlge/square
 nz    = 1;
-%for nz=1:Nz
-    G     = 'r'; % rectanlge/square
-    X     = squeeze(B0.X(:,:,nz));
-    Y     = squeeze(B0.Y(:,:,nz));
-    Z     = squeeze(B0.Z(:,:,nz));
-    BX    = squeeze(B0.BX(:,:,nz));
-    BY    = squeeze(B0.BY(:,:,nz));
-    BZ    = squeeze(B0.BZ(:,:,nz));
-    [L11] = selfInductance_BFields(ri,ra,I0.I,X,Y,BZ,N,G);
-    L11z(nz) = L11; 
-%end
-%{
-%%                             PLOTS                                     %%  
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% ------------------- WRITE: BFIELDS (XY-PLANE) ------------------------- %
-% checks if Nz is greater than one, chooses the middle value 
-% in the case of odd number of points, round down
-if(Nz>1)
-    nz = floor(Nz/2)+1;
-else
-    nz = 1;
-end
-% -------------------- PLOT: BFIELDS (XZ-PLANE) ------------------------- %
-% -------------------- PLOT: BFIELDS (YZ-PLANE) ------------------------- %
-nx = 25;
-ny = 25;
-nz = 25;
-
-plot_BF_Ant(Sx,Sy,Sz,B0.X,B0.Y,B0.Z,B0.BX,B0.BY,B0.BZ,nx,ny,nz)
-
-%%                         EXPORT CSV FILES                              %%  
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% A
-% Description: Matrix that contains the 1D arrays of x,y, and z points of
-% the (multi)coiled wire antenna
-% SIZE: size(Sx) by 3 UNITS: each index is [m]
-%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-ALL = 1;
-%export_BF_Ant(Sx,Sy,Sz,B0.X,B0.Y,B0.Z,B0.BX,B0.BY,B0.BZ,nx,ny,nz, ALL);
-
-%}
+X     = squeeze(B0.X(:,:,nz));
+Y     = squeeze(B0.Y(:,:,nz));
+Z     = squeeze(B0.Z(:,:,nz));
+BX    = squeeze(B0.BX(:,:,nz));
+BY    = squeeze(B0.BY(:,:,nz));
+BZ    = squeeze(B0.BZ(:,:,nz));
+[L11] = selfInductance_BFields(ri,ra,I,x,y,bz,N,G);
