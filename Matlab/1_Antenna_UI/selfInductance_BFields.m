@@ -52,6 +52,11 @@
 % UNITS: [T]  ARRAY: Ny by Nx
 %
 %
+% N
+% Description: Number of turns along the z-direction
+% UNITS: N/A  ARRAY: 1x1 TYPE: Int 
+%
+%
 % G
 % Description: Choosing which structure of the inner most coil. The options
 % are Ellipse, Circle, Rectangle, Square 
@@ -69,7 +74,7 @@
 % Description: Self-indutance from the BFields provided from the user. 
 % UNITS: [H]  ARRAY: 1x1 TYPE: double 
 %
-function [L11] = selfInductance_BFields(ri,ra,I,X,Y,BFnorm,G)
+function [L11] = selfInductance_BFields(ri,ra,I,X,Y,BFnorm,N,G)
     L11 = 0;
     u0 = 4*pi*10^-7;        % Permeability of free space
     uc = 1.256629*10^-6;    % Permeability of copper 
@@ -93,7 +98,7 @@ function [L11] = selfInductance_BFields(ri,ra,I,X,Y,BFnorm,G)
         bz    = BF.*A; 
         sumB  = sum(sum(bz,1),2);   % sum of Bz
         phi11 = sumB;               % phi_11
-        L11   = phi11/I;            % self ind
+        L11   = abs((phi11/I)*N);            % self ind
        
     elseif(G=='c' || G=='C' || G=='e' || G=='E')
             rx = ri;
@@ -106,6 +111,6 @@ function [L11] = selfInductance_BFields(ri,ra,I,X,Y,BFnorm,G)
             bz    = BF.*A;
             sumB  = sum(sum(bz,1),2);   % sum of Bz
             phi11 = sumB;               % phi_11
-            L11   = phi11/I;            % self ind            
+            L11   = abs((phi11/I)*N);            % self ind            
     end
 end
