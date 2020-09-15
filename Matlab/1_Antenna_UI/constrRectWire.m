@@ -1,6 +1,6 @@
 
 function [xS,yS,zS] = constrRectWire(h,W0,L0,phi,N,O,wT,Nxy)
-    deltaS    = 200;
+    %deltaS    = 200;
     helixSTEP = phi*(pi/180);
     start     = 0; 
     fin       = N*(2*pi) + helixSTEP/2;
@@ -300,5 +300,38 @@ function [xS,yS,zS] = constrRectWire(h,W0,L0,phi,N,O,wT,Nxy)
             %}
         end  % END: LOOP: NXY
     end %      
+    
+    % add feed lines, single coil
+   if(Nxy==1 && O==1)
+        LN = 20;
+        t0 = (3/2)*wT;
+        % top (last)
+        xf_top = linspace(t0,t0,LN)';
+        yf_top = linspace(-W0/2,-W0,LN)';
+        zf_top = linspace(zS(end),zS(end),LN)';
+        % bottom (first)
+        xf_bot = linspace(0,0,LN)';
+        yf_bot = linspace(-W0/2,-W0,LN)';
+        zf_bot = linspace(0,0,LN)';
+        % unit all
+        xS=[xf_bot;xS;xf_top];
+        yS=[yf_bot;yS;yf_top];
+        zS=[zf_bot;zS;zf_top];   
+   elseif(Nxy==1 && O==0)
+        LN = 20;
+        t0 = (3/2)*wT;
+        % top (last)
+        xf_bot = linspace(-t0,-t0,LN)';
+        yf_bot = linspace(-W0/2,-W0,LN)';
+        zf_bot = linspace(zS(end),zS(end),LN)';
+        % bottom (first)
+        xf_top = linspace(0,0,LN)';
+        yf_top = linspace(-W0/2,-W0,LN)';
+        zf_top = linspace(0,0,LN)';
+        % unit all
+        xS=[xf_bot;xS;xf_top];
+        yS=[yf_bot;yS;yf_top];
+        zS=[zf_bot;zS;zf_top];          
+   end
     
 end %% END: constrRectWire

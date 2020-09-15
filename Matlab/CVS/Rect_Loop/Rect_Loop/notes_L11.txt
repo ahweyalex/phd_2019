@@ -1,0 +1,200 @@
+DATE: 08-24-2020
+-- Field DATA FROM MAXWELL --
+-- Single Rect Loop --
+====================================================================================
+====================================================================================
+====================================================================================
+GOAL: approx 26nH
+total pts: 401 bounds:(ri)
+L11 =   2.5309e-08
+total pts: 401 bounds:(ri+wT/2)
+L11 =   2.5207e-08
+total pts: 401 bounds:(ri+wT)
+L11 =   2.4734e-08
+
+total pts: 201 bounds:(ri)
+L11 =   2.5106e-08
+total pts: 201 bounds:(ri+wT/2)
+L11 =   2.5243e-08
+total pts: 201 bounds:(ri+wT)
+L11 =   2.4296e-08
+
+total pts: 100 
+(but only within the bounds of flux) so really higher resolution
+L11 =   2.6267e-08
+====================================================================================
+====================================================================================
+====================================================================================
+-- Matlab RESULTS --
+-- Single Rect Loop--
+        [50][numSeg:200]
+total pts: 50 bounds: (=ri) 
+L11 =  1.2129e-08
+total pts: 50 bounds: (ri+wT/2) 
+L11 = 1.2129e-08
+total pts: 50 bounds: (ri+wT) 
+L11 = 1.8811e-09
+total pts: 50 bounds: (ri+wT*1.5) 
+L11 =  1.8811e-09
+total pts: 50 bounds: (ri-wT/2) 
+L11 =  1.2129e-08
+total pts: 50 bounds: (<ri) 
+L11 = 
+total pts: 50 bounds: (ri_oneLess) 
+L11 = 8.3123e-09
+-------------------------------------
+        [100][numSeg:200]
+total pts: 100 bounds: (=ri) 
+L11 = 2.6828e-08
+total pts: 100 bounds: (ri+wT/2) 
+L11 = 2.6828e-08
+total pts: 100 bounds: (ri+wT) 
+L11 = 2.6828e-08
+total pts: 100 bounds: (ri+wT*1.5) 
+L11 = 2.2845e-08
+total pts: 100 bounds: (ri-wT/2) 
+L11 = 1.1162e-08
+total pts: 100 bounds: (<ri) 
+L11 = 2.6828e-08
+total pts: 100 bounds: (ri_oneLess) 
+L11 = 7.5566e-09
+
+        [100][numSeg:50]
+total pts: 100 bounds: (=ri) 
+L11 = 2.5408e-08
+        [100][numSeg:100]
+total pts: 100 bounds: (=ri) 
+L11 = 2.6400e-08
+        [100][numSeg:800]
+total pts: 100 bounds: (=ri) 
+L11 = 2.7138e-08		
+----------------------------------------
+        [200][numSeg:200]
+total pts: 200 bounds: ri 
+L11 = 4.0322e-08
+total pts: 200 bounds: (ri+wT/2) 
+L11 = 4.0322e-08
+total pts: 200 bounds: (ri+wT) 
+L11 = 3.6414e-08
+total pts: 200 bounds: (ri+wT*1.5) 
+L11 = 3.4509e-08
+total pts: 200 bounds: (ri-wT/2) 
+L11 = 1.3561e-08
+total pts: 100 bounds: (<ri) 
+L11 = 4.0322e-08
+total pts: 200 bounds: (ri_oneLess) 
+L11 = 1.2513e-08
+
+        [200][numSeg:50]
+total pts: 200 bounds: (=ri) 
+L11 = 3.8803e-08
+        [200][numSeg:100]
+total pts: 200 bounds: (=ri) 
+L11 = 3.9864e-08
+        [200][numSeg:800]
+total pts: 200 bounds: (=ri) 
+L11 = 4.0653e-08
+----------------------------------------
+        [300][numSeg:200]
+total pts: 300 bounds: ri 
+L11 = 3.7964e-08
+total pts: 300 bounds: (ri+wT/2) 
+L11 = 3.4232e-08
+total pts: 300 bounds: (ri+wT) 
+L11 = 3.2322e-08
+total pts: 300 bounds: (ri+wT*1.5) 
+L11 = 3.1099e-08
+total pts: 300 bounds: (ri-wT/2) 
+L11 = 1.4953e-08
+total pts: 300 bounds: (<ri) 
+L11 = 3.7964e-08
+total pts: 300 bounds: (ri_oneLess) 
+L11 = 1.4418e-08
+
+        [300][numSeg:50]
+total pts: 300 bounds: (=ri) 
+L11 = 3.6388e-08
+        [300][numSeg:100]
+total pts: 300 bounds: (=ri) 
+L11 =  3.7489e-08
+        [300][numSeg:800]
+total pts: 300 bounds: (=ri) 
+L11 = 3.8308e-08
+--------------------------------------
+        [400][numSeg:200]
+total pts: 400 bounds: ri 
+L11 = 3.3262e-08
+total pts: 400 bounds: (ri+wT/2) 
+L11 = 2.9383e-08
+total pts: 400 bounds: (ri+wT) 
+L11 = 2.7471e-08
+total pts: 400 bounds: (ri+wT*1.5) 
+L11 = 2.5347e-08
+total pts: 400 bounds: (ri-wT/2) 
+L11 = 1.3125e-08
+total pts: 400 bounds: (<ri) 
+L11 = 3.3262e-08
+total pts: 400 bounds: (ri_oneLess) 
+L11 = 1.5617e-08
+
+        [400][numSeg:50]
+total pts: 400 bounds: (=ri) 
+L11 = 3.1645e-08
+        [400][numSeg:100]
+total pts: 400 bounds: (=ri) 
+L11 = 3.2774e-08
+        [400][numSeg:800]
+total pts: 400 bounds: (=ri) 
+L11 = 3.3614e-08
+--------------------------------------
+        [800][numSeg:200]
+total pts: 800 bounds: ri 
+L11 = 3.4449e-08
+total pts: 800 bounds: (ri+wT/2) 
+L11 = 2.8573e-08
+total pts: 800 bounds: (ri+wT) 
+L11 = 2.5729e-08
+total pts: 800 bounds: (ri+wT*1.5) 
+L11 = 2.4640e-08
+total pts: 100 bounds: (ri-wT/2) 
+L11 = 1.3968e-08
+total pts: 100 bounds: (<ri) 
+L11 = 3.3262e-08
+total pts: 800 bounds: (ri_oneLess) 
+L11 = 1.8285e-08
+
+        [800][numSeg:50]
+total pts: 100 bounds: (=ri) 
+L11 = 3.2735e-08
+        [800][numSeg:100]
+total pts: 100 bounds: (=ri) 
+L11 =  3.3932e-08
+        [800][numSeg:800]
+total pts: 100 bounds: (=ri) 
+L11 = 3.4823e-08
+--------------------------------------
+        [1000][numSeg:200]
+total pts: 1000 bounds: ri 
+L11 = 4.4844e-08
+total pts: 1000 bounds: (ri+wT/2) 
+L11 = 3.7928e-08
+total pts: 1000 bounds: (ri+wT) 
+L11 = 3.5722e-08
+total pts: 1000 bounds: (ri+wT*1.5) 
+L11 = 3.4398e-08
+total pts: 100 bounds: (ri-wT/2) 
+L11 = 1.4731e-08
+total pts: 100 bounds: (<ri) 
+L11 = 4.4844e-08
+total pts: 1000 bounds: (ri_oneLess) 
+L11 = 1.9118e-08
+
+        [1000][numSeg:50]
+total pts: 100 bounds: (=ri) 
+L11 = 4.3098e-08
+        [1000][numSeg:100]
+total pts: 100 bounds: (=ri) 
+L11 =  4.4317e-08
+        [1000][numSeg:800]
+total pts: 100 bounds: (=ri) 
+L11 = 4.5225e-08

@@ -11,6 +11,7 @@ xa = [0.5:Nx-0.5]*dx;       xa = xa-mean(xa);
 ya = [0.5:Ny-0.5]*dy;       ya = ya-mean(ya);
 [Y,X] = meshgrid(ya,xa);
 RSQ = X.^2 + Y.^2;
+imagesc(xa,ya,RSQ.')
 %%
 % rotate coordinates
 degrees = pi/180;

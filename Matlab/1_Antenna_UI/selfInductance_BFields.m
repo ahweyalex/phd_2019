@@ -56,6 +56,13 @@
 % Description: Number of turns along the z-direction
 % UNITS: N/A  ARRAY: 1x1 TYPE: Int 
 %
+% Nx
+% Description: Resolution (total number of points along x-direction)
+% UNITS: N/A  ARRAY: 1x1 TYPE: Int 
+%
+% Ny
+% Description: Resolution (total number of points along y-direction)
+% UNITS: N/A  ARRAY: 1x1 TYPE: Int 
 %
 % G
 % Description: Choosing which structure of the inner most coil. The options
@@ -74,13 +81,15 @@
 % Description: Self-indutance from the BFields provided from the user. 
 % UNITS: [H]  ARRAY: 1x1 TYPE: double 
 %
-function [L11] = selfInductance_BFields(ri,ra,I,X,Y,BFnorm,N,G)
+%function [L11] = selfInductance_BFields(ri,ra,I,X,Y,BFnorm,N,Nx,Ny,G)
+function [L11,r,c] = selfInductance_BFields(ri,ra,I,X,Y,BFnorm,N,G)
+
     L11 = 0;
-    u0 = 4*pi*10^-7;        % Permeability of free space
-    uc = 1.256629*10^-6;    % Permeability of copper 
-    u  = u0*uc;
-    xdel  = X(1,1) - X(1,2);  % del x
-    ydel  = Y(1,1) - Y(2,1);  % del y
+    %u0 = 4*pi*10^-7;        % Permeability of free space
+    %uc = 1.256629*10^-6;    % Permeability of copper 
+    %u  = u0*uc;
+    xdel  = abs(X(1,1) - X(1,2));  % del x
+    ydel  = abs(Y(1,1) - Y(2,1));  % del y
     A     = xdel*ydel;        % Area (ds)
 
 %    switch G
@@ -91,19 +100,37 @@ function [L11] = selfInductance_BFields(ri,ra,I,X,Y,BFnorm,N,G)
         y1 = -ra/2;
         y2 =  ra/2;
         R = (X>=x1 & X<=x2 & Y>=y1 & Y<=y2);
+        %{
+        figure
+        x = reshape(X,1,Nx*Nx);
+        y = reshape(Y,1,Ny*Ny);
+        imagesc(x,y,R.')
+        grid on;
+        %}
+        %R = (X>x1 & X<x2 & Y>y1 & Y<y2);
         [r,c] = find(R);
+        %%r = r-1;c = c-1; % just seeing if L11 value at one less index
+        %%from ri/ra
+        %
         for n=1:numel(r)
             BF(n) = BFnorm(r(n),c(n))';
         end
         bz    = BF.*A; 
         sumB  = sum(sum(bz,1),2);   % sum of Bz
         phi11 = sumB;               % phi_11
-        L11   = abs((phi11/I)*N);            % self ind
-       
+        L11   = abs((phi11/I)*N);   % self ind
+        
     elseif(G=='c' || G=='C' || G=='e' || G=='E')
             rx = ri;
             ry = ra; 
             E  = (X/rx).^2 + (Y/ry).^2 <= 1;
+            %{
+            figure
+            x = reshape(X,1,Nx*Nx);
+            y = reshape(Y,1,Ny*Ny);
+            imagesc(x,y,E.')
+            grid on;
+            %}
             [r,c] = find(E);
             for n=1:numel(r)
                 BF(n) = BFnorm(r(n),c(n))';

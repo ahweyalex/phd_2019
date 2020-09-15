@@ -45,28 +45,31 @@
 %   Units:
 % ------------------------------------------------------------------------
 
-function [X,Y,Z,BX,BY,BZ,normB,R0] = CalcB_SLOW(I,xS,yS,zS,bBox,Ns)
-    %% Initialize variables
+%function [X,Y,Z,BX,BY,BZ,normB,R0] = CalcB_SLOW(I,xS,yS,zS,bBox,Ns)
+function [bX,bY,bZ,BX,BY,BZ,normB,R1,DBx,DBy,DBz] = CalcB_SLOW(I,xS,yS,zS,bBox,Ns)
+%% Initialize variables
     mu0 = 4*pi*1e-7; % free space permeability <scalar> [H/m]
-    uc   = 1.256629*10^-6;    % Permeability of copper 
-    u    = mu0*uc;
-    dS = 1e9;        % filament max discretization step [m]
+    uc  = 1.256629*10^-6;    % Permeability of copper 
+    u   = mu0*uc;
+    dS  = 1e9;        % filament max discretization step [m]
     
     % bBox = [xminb,yminb,zminb; xmaxb,ymaxb,zmaxb];
     xminb=bBox(1,1); yminb=bBox(1,2); zminb=bBox(1,3);   
     xmaxb=bBox(2,1); ymaxb=bBox(2,2); zmaxb=bBox(2,3);
-    
-    % Calc Boundaries for cartesian points of interest
-    % initial        % final           % res      % distance  
-    xi=ceil(min(xS)); xf=ceil(max(xS)); Nx=Ns(1); xdis=abs(xmaxb-xminb); 
-    yi=ceil(min(yS)); yf=ceil(max(yS)); Ny=Ns(2); ydis=abs(ymaxb-yminb); 
-    zi=ceil(min(zS)); zf=ceil(max(zS)); Nz=Ns(3); zdis=abs(zmaxb-zminb); 
-    
+        
+    % res
+    Nx=Ns(1);
+    Ny=Ns(2);
+    Nz=Ns(3);
     % discrete points in space 
     x_M = linspace(xminb, xmaxb, Nx);
     y_M = linspace(yminb, ymaxb, Ny);
     z_M = linspace(zminb, zmaxb, Nz);
     [X,Y,Z]=meshgrid(x_M,y_M,z_M);
+    %   
+    bX = X;
+    bY = Y;
+    bZ = Z;
     
     % Initialize B-Fields matrices
     BX = zeros(Ny,Nx,Nz); 
@@ -77,7 +80,8 @@ function [X,Y,Z,BX,BY,BZ,normB,R0] = CalcB_SLOW(I,xS,yS,zS,bBox,Ns)
     xP=[]; yP=[]; zP=[];
     Ns = numel(xS)-1;
     % Source of current flow along the wire antenna
-    S = [xS;yS;zS]; 
+    %S = [xS;yS;zS]; 
+    S = [xS,yS,zS];
     for sn=1:Ns
         L_Si = norm(S(sn,:)-S(sn+1,:));
         NP  = ceil(L_Si/dS);
@@ -100,7 +104,7 @@ function [X,Y,Z,BX,BY,BZ,normB,R0] = CalcB_SLOW(I,xS,yS,zS,bBox,Ns)
                 
                 for n=1:length(xP)-1    % iterate through Source (points)
                     R = (sqrt((xM-xP(n))^2 + (yM-yP(n))^2 + (zM-zP(n))^2))^3; % source to point of interest
-                    %R1(yn,xn,zn) = (sqrt((xM-xP(n))^2 + (yM-yP(n))^2 + (zM-zP(n))^2))^3; % source to point of interest
+                    R1(yn,xn,zn,n) = (sqrt((xM-xP(n))^2 + (yM-yP(n))^2 + (zM-zP(n))^2))^3; % source to point of interest
                     
                     % cross product(s)
                     % reference: Biot-Savart Law
@@ -108,6 +112,10 @@ function [X,Y,Z,BX,BY,BZ,normB,R0] = CalcB_SLOW(I,xS,yS,zS,bBox,Ns)
                     dBx(n) = ((yP(n+1)-yP(n))*(zM-zP(n)) - (zP(n+1)-zP(n))*(yM-yP(n)))/R; % cross product x
                     dBy(n) = ((zP(n+1)-zP(n))*(xM-xP(n)) - (xP(n+1)-xP(n))*(zM-zP(n)))/R; % cross product y
                     dBz(n) = ((xP(n+1)-xP(n))*(yM-yP(n)) - (yP(n+1)-yP(n))*(xM-xP(n)))/R; % cross product z
+                
+                    DBx(yn,xn,zn,n) = ((yP(n+1)-yP(n))*(zM-zP(n)) - (zP(n+1)-zP(n))*(yM-yP(n)))/R; % cross product x
+                    DBy(yn,xn,zn,n) = ((zP(n+1)-zP(n))*(xM-xP(n)) - (xP(n+1)-xP(n))*(zM-zP(n)))/R; % cross product y
+                    DBZ(yn,xn,zn,n) = ((xP(n+1)-xP(n))*(yM-yP(n)) - (yP(n+1)-yP(n))*(xM-xP(n)))/R; % cross product z
                 end
                 % B-Fields at that point in space, summed all source point calcs 
                 % reference: Biot-Savart Law
@@ -124,5 +132,6 @@ function [X,Y,Z,BX,BY,BZ,normB,R0] = CalcB_SLOW(I,xS,yS,zS,bBox,Ns)
     nBX = BX./normB;
     nBY = BY./normB;
     nBZ = BZ./normB;
+    mean(R1,'all')
     R0=999; % need to change this 
 end

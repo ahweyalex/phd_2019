@@ -106,19 +106,24 @@ clear all; close all; clc;
 % Construct and defined current 
 % units: [A]
 global I0; I0 = struct('I',1); 
-
-wT     = 0.2546e-3; % 30AWG 
+wT     = 0.2546e-3;  % 30AWG 
+%wT     = 0.07874e-3; % 40AWG
 h      = wT*0.35;  
-N      = 3;
+N      = 1;
+%N      = 3;
 zEnd   = h*N*2*pi;
 ra     = 10e-3;
 ri     = 10e-3;
 W0     = ra;       
 L0     = ri;        
-numSeg = 200;
-phi    = numSeg;
-O      = 1;
-Nxy    = 1;
+%numSeg = 50;
+%numSeg = 100;
+numSeg  = 200;
+%numSeg = 800;
+phi     = numSeg;
+%O      = 1;
+O       = 0;
+Nxy     = 1;
 %%                     MULTI-COILED WIRE ANTENNA                         %%  
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Create the 1D arrays (Sx,Sy,Sz) that will contain the spatiral locations
@@ -126,11 +131,11 @@ Nxy    = 1;
 % coordinates.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %Single rectangular loop, Assumes Nxy=0 and N=0 
-% [Sx,Sy,Sz] = singleLoop(ra,ri,phi,O,wT);
+[Sx,Sy,Sz] = singleLoop(ra,ri,phi,O,wT);
 %Multi-Coiled Elliptical Wire 
 %[Sx,Sy,Sz] = constrCircWire(zEnd,ra,ri,phi,N,O,wT,Nxy);
 %Multi-Coiled Rectangular Wire 
-[Sx,Sy,Sz] = constrRectWire(h,W0,L0,phi,N,O,wT,Nxy); 
+%[Sx,Sy,Sz] = constrRectWire(h,ra,ri,phi,N,O,wT,Nxy); 
 %%
 figure
 %H=plot3(Sx,Sy,Sz,'.');
@@ -140,7 +145,7 @@ xlabel('x[m]','FontWeight','bold','FontSize', fontSize);
 ylabel('y[m]','FontWeight','bold','FontSize', fontSize); 
 zlabel('z[m]','FontWeight','bold','FontSize', fontSize); 
 title('Wire Antenna','FontWeight','bold','FontSize', fontSize); 
-grid on;
+grid on; %axis tight on;
 %xlim([-7e-3 7e-3]); ylim([-7e-3 7e-3]);
 %view(45,45);
 view(45,45);
@@ -194,24 +199,32 @@ view(45,45);
 % UNITS: [m] ARRAY: 1x1
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-Nx    = 199; 
-Ny    = 199; 
-Nz    = 20; 
+Nx = 21; Ny = Nx;
+%Nx = 50; Ny = 50; 
+%Nx = 100; Ny = 100; 
+%Nx = 200; Ny = 200; 
+%Nx = 300; Ny = 300; 
+%Nx = 400; Ny = 400; 
+%Nx = 800; Ny = 800; 
+%Nx = 1000; Ny = 1000; 
+Nz    = 2; 
 Ns    = [Nx,Ny,Nz];
 if (ri>=ra)
     %xyz = 2*ri;
-    xyz = ri;
+    xyz = ri/2;
 elseif (ra>=ri)
     %xyz = 2*ra;
-    xyz = ra;
+    xyz = ra/2;
 end
 xminb = -xyz; 
 xmaxb =  xyz;
 yminb = -xyz; 
 ymaxb =  xyz;
 %zminb = zEnd/2;   % [m]
-zminb = 0;
-zmaxb = zEnd;  % [m]
+%zminb = zEnd/2;
+%zmaxb = zEnd;  % [m]
+zminb = 0;   % [m]
+zmaxb = 0;
 bBox  = [xminb,yminb,zminb; xmaxb,ymaxb,zmaxb];
 %%                         COMPUTE BFIELDS                               %%  
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -263,13 +276,14 @@ bBox  = [xminb,yminb,zminb; xmaxb,ymaxb,zmaxb];
 [bX,bY,bZ, BX,BY,BZ, normB,R] = ...
     CalcB_FAST(I0.I,Sx,Sy,Sz,bBox,Ns);
 
+%[bX,bY,bZ, BX,BY,BZ, normB,R] = ...
+%    CalcB_SLOW(I0.I,Sx,Sy,Sz,bBox,Ns);  
+
 normB = sqrt(BX.^2+BY.^2+BZ.^2);
 nBX   = BX./normB;
 nBY   = BY./normB;
 nBZ   = BZ./normB;
 B0 = struct('BX',BX,'BY',BY,'BZ',BZ,'X',bX,'Y',bY,'Z',bZ);
-%[bX,bY,bZ, BX,BY,BZ, normB,R] = ...
-%    CalcB_SLOW(I0.I,Sx,Sy,Sz,bBox,Ns);  
 
 %%                         SELF-INDUCTANCE                               %%  
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -338,9 +352,22 @@ B0 = struct('BX',BX,'BY',BY,'BZ',BZ,'X',bX,'Y',bY,'Z',bZ);
 % Description: Self-indutance from the BFields provided from the user. 
 % UNITS: [H]  ARRAY: 1x1 TYPE: double 
 %
+clc;
 %G     = 'e' % ellipse/circle
 nz    = 1;
-%for nz=1:Nz
+%
+    ra = 10e-3;
+    ri = 10e-3;
+    %ri = 10e-3+wT/2;
+    %ra = 10e-3+wT/2;
+    %ri = 10e-3+wT;
+    %ra = 10e-3+wT;
+    %ri = 10e-3+wT*1.5;
+    %ra = 10e-3+wT*1.5;
+    %ri = (10e-3)-wT/2;
+    %ra = (10e-3)-wT/2;
+%}
+%for nz=1:Nz    
     G     = 'r'; % rectanlge/square
     X     = squeeze(B0.X(:,:,nz));
     Y     = squeeze(B0.Y(:,:,nz));
@@ -348,9 +375,11 @@ nz    = 1;
     BX    = squeeze(B0.BX(:,:,nz));
     BY    = squeeze(B0.BY(:,:,nz));
     BZ    = squeeze(B0.BZ(:,:,nz));
-    [L11] = selfInductance_BFields(ri,ra,I0.I,X,Y,BZ,N,G);
+    [L11] = selfInductance_BFields(ri,ra,I0.I,X,Y,BZ,N,G)
+    %[L11] = selfInductance_BFields(RI(nz),RA(nz),I0.I,X,Y,BZ,N,G);
     L11z(nz) = L11; 
 %end
+%L11z(:)
 %{
 %%                             PLOTS                                     %%  
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

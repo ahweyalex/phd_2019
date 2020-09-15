@@ -2,8 +2,10 @@
 function [Sx,Sy,Sz] = singleLoop(W0,L0,N,O,wT)
     
     gap = wT*1;
+    %gap = 0;
     nN = floor(N/4);
     n2 = floor(N/8);
+ 
     % back
     xBack = linspace(-L0/2,-L0/2,nN)';
     yBack = linspace(-W0/2, W0/2,nN)';
@@ -26,22 +28,21 @@ function [Sx,Sy,Sz] = singleLoop(W0,L0,N,O,wT)
     
     %
     % FeedIn
-    nF  = 20;
+    %nF  = 20;
+    nF  = 5;
     xFI = linspace(L0/2,L0,nF)';
     yFI = linspace(-gap,-gap,nF)';
     % FeedOut
     xFO = linspace(L0/2,L0,nF)';
     yFO = linspace(gap,gap,nF)';
-    %
-    % combine
-    %Sx = [xFI;xSL;xLarm;xBack;xRarm;xSR;xFO];
-    %Sy = [yFI;ySL;yLarm;yBack;yRarm;ySR;yFO];
-    %Sz = linspace(0,0,numel(Sy))';
     
+    Sx = [xSR;xRarm;xBack;xLarm;xSL;];
+    Sy = [ySR;yRarm;yBack;yLarm;ySL;];
+    Sz = linspace(0,0,numel(Sy))';
+    %{
     Sx = [xFI;xSL;xLarm;xBack;xRarm;xSR;xFO];
     Sy = [yFI;ySL;yLarm;yBack;yRarm;ySR;yFO];
     Sz = linspace(0,0,numel(Sy))';
-    
     %}
     
     %{

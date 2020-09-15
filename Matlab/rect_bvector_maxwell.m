@@ -1,6 +1,7 @@
 clear all; close all; clc;
 N  = 100; 
 ri = 10e-3;
+ra = 10e-3;
 A  = importdata('rect_bvector_xy.fld');
 x  = reshape(A.data(:,1),N,N);
 y  = reshape(A.data(:,2),N,N);
@@ -43,6 +44,10 @@ bz3   = bz2.*A;
 sumB  = sum(sum(bz3,1),2);   % sum of Bz
 %phi11 = u0*sumB*A;           % phi_11
 phi11 = sumB;              % phi_11
-L11   = phi11/1;             % self ind
-
+L11   = abs(phi11/1)             % self ind
+%%
+I = 1;
+G = 'r';
+N = 1;
+L11_s =  selfInductance_BFields(ri,ra,I,x,y,bz,N,G) 
 %L11 =  -2.6267e-08
