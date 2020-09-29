@@ -7,7 +7,8 @@ function [Sx,Sy,Sz] = singleRectLoop(W0,L0,numSeg,wT,O)
 %------------ counter clock wise ( start at 0 then pos x into neg x)
     if(O==1)
         N = numSeg;
-        gap  = wT;
+        %gap  = wT;
+        gap=0;
         nA   = floor(N/4); % number of segments along each full arms
         nH   = floor(N/8); % number of segments along each halr arms 
         xDis = L0/2;
@@ -26,6 +27,9 @@ function [Sx,Sy,Sz] = singleRectLoop(W0,L0,numSeg,wT,O)
         % front right arm
         xFR = linspace(xDis,xDis,nH)';
         yFR = linspace(yDis,gap,nH)';
+        % front
+        xF = linspace(xDis,xDis,nA)';
+        yF = linspace(-yDis,yDis,nA)';
         % -------- other arms ----------%
         % right arm
         xR = linspace(xDis,-xDis,nA)';
@@ -38,8 +42,10 @@ function [Sx,Sy,Sz] = singleRectLoop(W0,L0,numSeg,wT,O)
         yL = linspace(yDis,yDis,nA)';
         % --------- combine ---------- %
         % combine all arms in the correct order
-        Sx = [xFeedL;xFL;xR;xB;xL;xFR;xFeedR];
-        Sy = [yFeedL;yFL;yR;yB;yL;yFR;yFeedR];
+        %Sx = [xFeedL;xFL;xR;xB;xL;xFR;xFeedR];
+        %Sy = [yFeedL;yFL;yR;yB;yL;yFR;yFeedR];
+        Sx = [xF;xR;xB;xL];
+        Sy = [yF;yR;yB;yL];
         Sz = zeros(numel(Sy),1);
         
 %------------ clock wise ( start at 0 then neg x into pos x) 

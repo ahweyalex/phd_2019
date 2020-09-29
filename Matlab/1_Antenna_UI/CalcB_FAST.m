@@ -46,45 +46,43 @@ z_M = linspace(zminb, zmaxb, Nz);
         zP = [zP, linspace(zS(sn),zS(sn+1), NP(sn))];
         %numel(xP)
     end
+    numel(xP);
 %%    
     % initialize null/zero matrcies 
     lenDB = length(xP)-1;
     dBx_FAST = zeros(Ny,Nx,Nz,lenDB); BX = zeros(Ny,Nx,Nz);
     dBy_FAST = zeros(Ny,Nx,Nz,lenDB); BY = zeros(Ny,Nx,Nz);
     dBz_FAST = zeros(Ny,Nx,Nz,lenDB); BZ = zeros(Ny,Nx,Nz);
-
     R_FAST   = zeros(Ny,Nx,Nz,lenDB); % magnitude vector (source to point of interest)
 %% Compute B-Fields (FAST)
 f='fast start';
 % FAST
 test=1;
 for n=1:length(xP)-1
-    R_FAST(:,:,:,n) = sqrt((X-xP(n)).^2 + (Y-yP(n)).^2 + (Z-zP(n)).^2).^3;
+    R_FAST(:,:,:,n) = sqrt((X-xP(n)).^2 + (Y-yP(n)).^2 + (Z-zP(n)).^2).^3;    
+    %[r(:,n),c(:,n)] = find(R_FAST==0);
 end
 %mean(R_FAST,'all')
 test=1;
 for n=1:length(xP)-1
     % dBx (cross product x)
     dBx_FAST(:,:,:,n) = ((yP(n+1)-yP(n)).*(Z-zP(n))... 
-        - (zP(n+1)-zP(n)).*(Y-yP(n)))...
-        ./R_FAST(:,:,:,n); 
+                        - (zP(n+1)-zP(n)).*(Y-yP(n)))...
+                        ./R_FAST(:,:,:,n); 
     dBx_FAST(isnan(dBx_FAST))=0; % replace nan with 0   
     
     % dBy (cross product y)            
     dBy_FAST(:,:,:,n) = ((zP(n+1)-zP(n)).*(X-xP(n))... 
-        - (xP(n+1)-xP(n)).*(Z-zP(n)))...
-        ./R_FAST(:,:,:,n);
+                         - (xP(n+1)-xP(n)).*(Z-zP(n)))...
+                         ./R_FAST(:,:,:,n);
     dBy_FAST(isnan(dBy_FAST))=0; % replace nan with 0 
-     
+    
     % dBz (cross product z)     
     dBz_FAST(:,:,:,n) = ((xP(n+1)-xP(n)).*(Y-yP(n))... 
-    - (yP(n+1)-yP(n)).*(X-xP(n)))...
-    ./R_FAST(:,:,:,n); % cross product z
+                         - (yP(n+1)-yP(n)).*(X-xP(n)))...
+                         ./R_FAST(:,:,:,n); % cross product z
     dBz_FAST(isnan(dBz_FAST))=0; % replace nan with 0 
-    
-    %dBz_FAST(:,:,:,n) = ((xP(n+1)-xP(n)).*(Y-yP(n))... 
-    %    - (yP(n+1)-yP(n)).*(X-xP(n)))...
-    %    ./R_FAST(:,:,:,n);
+
 end
 
 %mean(dBx_FAST,'all')

@@ -82,7 +82,8 @@
 % UNITS: [H]  ARRAY: 1x1 TYPE: double 
 %
 %function [L11] = selfInductance_BFields(ri,ra,I,X,Y,BFnorm,N,Nx,Ny,G)
-function [L11,r,c] = selfInductance_BFields(ri,ra,I,X,Y,BFnorm,N,G)
+%function [L11,r,c] = selfInductance_BFields(ri,ra,I,X,Y,BFnorm,N,G)
+function [L11] = selfInductance_BFields(ri,ra,I,X,Y,BFnorm,N,G)
 
     L11 = 0;
     %u0 = 4*pi*10^-7;        % Permeability of free space
@@ -100,8 +101,10 @@ function [L11,r,c] = selfInductance_BFields(ri,ra,I,X,Y,BFnorm,N,G)
         y1 = -ra/2;
         y2 =  ra/2;
         R = (X>=x1 & X<=x2 & Y>=y1 & Y<=y2);
-        %{
+        %R = (X>x1 & X<x2 & Y>y1 & Y<y2);
+        %
         figure
+        [Nx,Ny]=size(X);
         x = reshape(X,1,Nx*Nx);
         y = reshape(Y,1,Ny*Ny);
         imagesc(x,y,R.')

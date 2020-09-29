@@ -44,7 +44,8 @@ ra      = 10e-3;
 ri      = 10e-3;
 W0      = ra;       
 L0      = ri;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        numSeg  = 200;
-phi     = numSeg;
+%phi     = numSeg;
+numSeg = 250e3;
 %O      = 1;
 O       = 0;
 Nxy     = 1;
@@ -103,8 +104,9 @@ Nx = 464; Ny = Nx;
 ni = 1;
 %NN=20:240
 %for ns=20:240
-NN=219:224;
-for ns=219:224
+%NN=219:224;
+%for ns=219:224
+    ns = 1;
     Nx = ns; Ny = ns;
     Nz = 1;
     Ns = [Nx,Ny,Nz];
@@ -115,10 +117,15 @@ for ns=219:224
         %xyz = 2*ra;
         xyz = ra;
     end
-    xminb = -xyz; 
-    xmaxb =  xyz;
-    yminb = -xyz; 
-    ymaxb =  xyz;
+    %xminb = -xyz; 
+    %xmaxb =  xyz;
+    %yminb = -xyz; 
+    %ymaxb =  xyz;
+    xminb = 0; 
+    xmaxb = 0;
+    yminb = 0; 
+    ymaxb = 0;
+    
     zminb = 0;
     zmaxb = 0;  
 
@@ -126,8 +133,10 @@ for ns=219:224
     tic;
     %[bX,bY,bZ, BX,BY,BZ, normB,R] = ...
     %    CalcB_FAST(I0.I,Sx,Sy,Sz,bBox,Ns);  
-     [bX,bY,bZ,BX,BY,BZ,normB,R,dBx,dBy,dBz] = ...
-        CalcB_FAST(I0.I,Sx,Sy,Sz,bBox,Ns);
+    % [bX,bY,bZ,BX,BY,BZ,normB,R,dBx,dBy,dBz] = ...
+    %    CalcB_FAST(I0.I,Sx,Sy,Sz,bBox,Ns);
+    [X,Y,Z,BX,BY,BZ] = CalcBSLOW(I0.I,xS,yS,zS,bBox,Ns);
+    %{
     bX_c{ni}  = bX; 
     bY_c{ni}  = bY;
     bZ_c{ni}  = bZ;
@@ -138,6 +147,7 @@ for ns=219:224
     dBx_c{ni} = dBx;
     dBy_c{ni} = dBy;
     dBz_c{ni} = dBz;  
+    %}
     %[bX,bY,bZ, BX,BY,BZ, normB,R] = ...
     %    CalcB_SLOW(I0.I,Sx,Sy,Sz,bBox,Ns);      
     toc;
@@ -159,7 +169,7 @@ for ns=219:224
     %  
     Matlab_L11(ni) = selfInductance_BFields(ri,ra,I0.I,B0.X,B0.Y,B0.BZ,N,G);
     ni = ni+1;
-end    
+%end    
 
 disp('done')
 %end

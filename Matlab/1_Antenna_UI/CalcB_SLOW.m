@@ -45,8 +45,8 @@
 %   Units:
 % ------------------------------------------------------------------------
 
-%function [X,Y,Z,BX,BY,BZ,normB,R0] = CalcB_SLOW(I,xS,yS,zS,bBox,Ns)
-function [bX,bY,bZ,BX,BY,BZ,normB,R1,DBx,DBy,DBz] = CalcB_SLOW(I,xS,yS,zS,bBox,Ns)
+function [X,Y,Z,BX,BY,BZ,normB,R0] = CalcB_SLOW(I,xS,yS,zS,bBox,Ns)
+%function [bX,bY,bZ,BX,BY,BZ,normB,R1,DBx,DBy,DBz] = CalcB_SLOW(I,xS,yS,zS,bBox,Ns)
 %% Initialize variables
     mu0 = 4*pi*1e-7; % free space permeability <scalar> [H/m]
     uc  = 1.256629*10^-6;    % Permeability of copper 
@@ -82,13 +82,13 @@ function [bX,bY,bZ,BX,BY,BZ,normB,R1,DBx,DBy,DBz] = CalcB_SLOW(I,xS,yS,zS,bBox,N
     % Source of current flow along the wire antenna
     %S = [xS;yS;zS]; 
     S = [xS,yS,zS];
-    for sn=1:Ns
+    for sn=1:numel(xS)-1
         L_Si = norm(S(sn,:)-S(sn+1,:));
         NP  = ceil(L_Si/dS);
-        
+       
         xP = [xP, linspace(xS(sn),xS(sn+1), NP)];
         yP = [yP, linspace(yS(sn),yS(sn+1), NP)];
-        zP = [zP, linspace(zS(sn),zS(sn+1), NP)];
+        zP = [zP, linspace(zS(sn),zS(sn+1), NP)];   
     end
     
     test = 1;
@@ -104,7 +104,7 @@ function [bX,bY,bZ,BX,BY,BZ,normB,R1,DBx,DBy,DBz] = CalcB_SLOW(I,xS,yS,zS,bBox,N
                 
                 for n=1:length(xP)-1    % iterate through Source (points)
                     R = (sqrt((xM-xP(n))^2 + (yM-yP(n))^2 + (zM-zP(n))^2))^3; % source to point of interest
-                    R1(yn,xn,zn,n) = (sqrt((xM-xP(n))^2 + (yM-yP(n))^2 + (zM-zP(n))^2))^3; % source to point of interest
+                    %R1(yn,xn,zn,n) = (sqrt((xM-xP(n))^2 + (yM-yP(n))^2 + (zM-zP(n))^2))^3; % source to point of interest
                     
                     % cross product(s)
                     % reference: Biot-Savart Law
@@ -112,10 +112,11 @@ function [bX,bY,bZ,BX,BY,BZ,normB,R1,DBx,DBy,DBz] = CalcB_SLOW(I,xS,yS,zS,bBox,N
                     dBx(n) = ((yP(n+1)-yP(n))*(zM-zP(n)) - (zP(n+1)-zP(n))*(yM-yP(n)))/R; % cross product x
                     dBy(n) = ((zP(n+1)-zP(n))*(xM-xP(n)) - (xP(n+1)-xP(n))*(zM-zP(n)))/R; % cross product y
                     dBz(n) = ((xP(n+1)-xP(n))*(yM-yP(n)) - (yP(n+1)-yP(n))*(xM-xP(n)))/R; % cross product z
-                
-                    DBx(yn,xn,zn,n) = ((yP(n+1)-yP(n))*(zM-zP(n)) - (zP(n+1)-zP(n))*(yM-yP(n)))/R; % cross product x
-                    DBy(yn,xn,zn,n) = ((zP(n+1)-zP(n))*(xM-xP(n)) - (xP(n+1)-xP(n))*(zM-zP(n)))/R; % cross product y
-                    DBZ(yn,xn,zn,n) = ((xP(n+1)-xP(n))*(yM-yP(n)) - (yP(n+1)-yP(n))*(xM-xP(n)))/R; % cross product z
+                    
+                    loveIsFake = 1;
+                    %DBx(yn,xn,zn,n) = ((yP(n+1)-yP(n))*(zM-zP(n)) - (zP(n+1)-zP(n))*(yM-yP(n)))/R; % cross product x
+                    %DBy(yn,xn,zn,n) = ((zP(n+1)-zP(n))*(xM-xP(n)) - (xP(n+1)-xP(n))*(zM-zP(n)))/R; % cross product y
+                    %DBZ(yn,xn,zn,n) = ((xP(n+1)-xP(n))*(yM-yP(n)) - (yP(n+1)-yP(n))*(xM-xP(n)))/R; % cross product z
                 end
                 % B-Fields at that point in space, summed all source point calcs 
                 % reference: Biot-Savart Law
@@ -132,6 +133,6 @@ function [bX,bY,bZ,BX,BY,BZ,normB,R1,DBx,DBy,DBz] = CalcB_SLOW(I,xS,yS,zS,bBox,N
     nBX = BX./normB;
     nBY = BY./normB;
     nBZ = BZ./normB;
-    mean(R1,'all')
+    %mean(R1,'all');
     R0=999; % need to change this 
 end
