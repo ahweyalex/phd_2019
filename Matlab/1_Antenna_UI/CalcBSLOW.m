@@ -103,7 +103,7 @@ function [X,Y,Z,BX,BY,BZ] = CalcBSLOW(I,S,bBox,Ns)
     y_M = linspace(yminb, ymaxb, Ny);
     z_M = linspace(zminb, zmaxb, Nz);
     % create multi-dim arrays with the 1D arrays 
-    [X0,Y0,Z0]=meshgrid(x_M,y_M,z_M);
+    [X,Y,Z]=meshgrid(x_M,y_M,z_M);
 %--------------------------[Compute B-Fields]-----------------------------%
     for yn=1:Ny             % iterate y-points (points of interest)
         for xn=1:Nx         % iterate x-points (points of interest)
@@ -126,6 +126,9 @@ function [X,Y,Z,BX,BY,BZ] = CalcBSLOW(I,S,bBox,Ns)
                 %end % END: S(ource) points
             end % END:Z
         end % END:X
+        if(mod(yn,100)==0)
+           disp(num2str(yn));
+        end
     end % END:Y
 t = 't';
 end % END: CalcBSLOW
