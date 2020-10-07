@@ -33,8 +33,6 @@ nn=1;
 %for ns=221:1005
 %NN = 99:106;
 %for ns=599:606
-NN = 19:1004;
-for ns=19:1004
 Nx = ns;
 Ny = Nx;
 Nz = 2;
@@ -58,7 +56,7 @@ BZ = squeeze(BZ(:,:,1));
 X2 = squeeze(X(:,:,1));
 Y2 = squeeze(Y(:,:,1));
 %[L11(nn)] = selfInductance_BFields(wT,ri,ra,I,X2,Y2,BZ,N1,G);
-%-------------------------------rect--------------------------------------%
+%                               rect--------------------------------------
 %G = 'r';
 % N1 = 0;
 % L11_sq_r5mm(nn) = selfInductance_BFields(wT,ri,ra,I,X2,Y2,BZ,N1,G);
@@ -66,7 +64,8 @@ Y2 = squeeze(Y(:,:,1));
 % L11_wT2_sq_r5mm(nn) = selfInductance_BFields(wT,ri,ra,I,X2,Y2,BZ,N1,G);
 % N1 = 2;
 % L11_notEq_sq_r5mm(nn) = selfInductance_BFields(wT,ri,ra,I,X2,Y2,BZ,N1,G);
-%-------------------------------circ--------------------------------------%
+
+% circle
 G = 'c';
 N1 = 0;
 L11_circ_r5mm(nn) = selfInductance_BFields(wT,ri,ra,I,X2,Y2,BZ,N1,G);
@@ -80,7 +79,7 @@ if(mod(ns,100)==0)
    disp(num2str(ns));
 end
 
-end
+%end
 disp('DONE');
 %%
 %figure
