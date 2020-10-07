@@ -78,7 +78,7 @@ function [L11] = selfInductance_BFields(wT,ri,ra,I,X,Y,BFnorm,N1,G)
     xdel  = X(1,1) - X(1,2);  % del x
     ydel  = Y(1,1) - Y(2,1);  % del y
     A     = xdel*ydel;        % Area (ds)
-%-------------------------------rectangle---------------------------------%
+%                               rectangle---------------------------------
 %    switch G
 %        case('r' || 'R' || 's' || 'S')
     if(G=='r' || G=='R' || G=='s' || G=='S')
@@ -107,7 +107,7 @@ function [L11] = selfInductance_BFields(wT,ri,ra,I,X,Y,BFnorm,N1,G)
         end
         bz    = BF.*A; 
         sumB  = sum(sum(bz,1),2);   % sum of Bz
-        phi11 = abs(sumB);               % phi_11
+        phi11 = sumB;               % phi_11
         L11   = phi11/I;            % self ind
 %--------------------------ellipse----------------------------------------%       
     elseif(G=='c' || G=='C' || G=='e' || G=='E')
@@ -137,7 +137,7 @@ function [L11] = selfInductance_BFields(wT,ri,ra,I,X,Y,BFnorm,N1,G)
             end
             bz    = BF.*A;
             sumB  = sum(sum(bz,1),2);   % sum of Bz
-            phi11 = abs(sumB);               % phi_11
+            phi11 = sumB;               % phi_11
             L11   = phi11/I;            % self ind            
     end
 end
