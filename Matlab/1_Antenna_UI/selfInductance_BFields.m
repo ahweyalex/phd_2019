@@ -83,7 +83,7 @@
 %
 %function [L11] = selfInductance_BFields(ri,ra,I,X,Y,BFnorm,N,Nx,Ny,G)
 %function [L11,r,c] = selfInductance_BFields(ri,ra,I,X,Y,BFnorm,N,G)
-function [L11] = selfInductance_BFields(ri,ra,I,X,Y,BFnorm,N,G)
+function [L11] = selfInductance_BFields(wT,ri,ra,I,X,Y,BFnorm,N,G)
 
     L11 = 0;
     %u0 = 4*pi*10^-7;        % Permeability of free space
@@ -91,22 +91,34 @@ function [L11] = selfInductance_BFields(ri,ra,I,X,Y,BFnorm,N,G)
     %u  = u0*uc;
     xdel  = abs(X(1,1) - X(1,2));  % del x
     ydel  = abs(Y(1,1) - Y(2,1));  % del y
+    
+    % used for test_BFC
+    %xdel  = abs(X(1,1) - X(2,1));  % del x
+    %ydel  = abs(Y(1,1) - Y(2,1));  % del y
+    
     A     = xdel*ydel;        % Area (ds)
 
 %    switch G
 %        case('r' || 'R' || 's' || 'S')
     if(G=='r' || G=='R' || G=='s' || G=='S')
-        x1 = -ri/2;
-        x2 =  ri/2;
-        y1 = -ra/2;
-        y2 =  ra/2;
+%         x1 = -ri/2;
+%         x2 =  ri/2;
+%         y1 = -ra/2;
+%         y2 =  ra/2;
+
+
+        x1 = - ri/2 + wT/2;
+        x2 =   ri/2 - wT/2;
+        y1 = - ra/2 + wT/2;
+        y2 =   ra/2 - wT/2;
+
         R = (X>=x1 & X<=x2 & Y>=y1 & Y<=y2);
         %R = (X>x1 & X<x2 & Y>y1 & Y<y2);
-        %
+        %{
         figure
         [Nx,Ny]=size(X);
-        x = reshape(X,1,Nx*Nx);
-        y = reshape(Y,1,Ny*Ny);
+        x = reshape(X,1,Nx*Ny);
+        y = reshape(Y,1,Nx*Ny);
         imagesc(x,y,R.')
         grid on;
         %}
@@ -129,8 +141,9 @@ function [L11] = selfInductance_BFields(ri,ra,I,X,Y,BFnorm,N,G)
             E  = (X/rx).^2 + (Y/ry).^2 <= 1;
             %{
             figure
-            x = reshape(X,1,Nx*Nx);
-            y = reshape(Y,1,Ny*Ny);
+            [Nx,Ny]=size(X);
+            x = reshape(X,[1,Nx*Ny]);
+            y = reshape(Y,1,Nx*Ny);
             imagesc(x,y,E.')
             grid on;
             %}
