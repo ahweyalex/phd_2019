@@ -1,7 +1,8 @@
 clear all; close all; clc;
 I  = 1;
 u0 = 4*pi*10^-7; % free space permeability <scalar> [H/m]
-W  = 10e-3;
+%W  = 10e-3;
+W  = 5e-3;
 ra = W;
 ri = W;
 L  = W/2;
@@ -40,24 +41,43 @@ sx = [ntp(1:end-1);    con(1:end-1); ptn(1:end-1); -con];
 sy = [-1*con(1:end-1); ntp(1:end-1); con(1:end-1);  ptn];
 sz = zeros(numel(sy),1);
 %}
+
 [sx,sy,sz] = singleEllipticalLoop(ra,ri,numSeg,wT,O);
+W0 = W;
+L0 = W0;
+%[sx,sy,sz] = singleRectLoop(W0,L0,numSeg,wT,O);
+H = plot3(sx,sy,sz,'.');
+grid on; 
+xlabel('x'); ylabel('y'); zlabel('z');
+%%
 l = [sx,sy,sz]';
 S = [sx,sy,sz]';
-% H = plot3(sx,sy,sz,'.');
-% grid on; 
-% xlabel('x'); ylabel('y'); zlabel('z');
-%
 line = l;
 % This function calculates dl vectors
 [curve, dl] = define_curve(line);
 
 nn = 1;
-NN = 100:105
+%NN = 100:105;
+
+NS = 410;
+NI = 10;
+NN = NI:NS;
+
+% NS = 801;
+% NI = 421;
+% NN = NI:NS;
+
+tic;
 %L11 = zeros(numel(NN),1);
-for ns=100:105
+%for ns=NI:NS
+%parfor ns=100:105 
     % X, Y, and Z MESH (this specefies the drawing box
     % x_inst is number of points from x_start to x_stop to calculate mag field.
     % Ns = 101;
+    %ns = 201;
+    %ns = 1e3;
+    %ns = 1e3 +1;
+    ns = 200;
     Nx = ns;
     Ny = Nx;
     Nz = 2;
@@ -94,9 +114,9 @@ for ns=100:105
     Ns = [Nx,Ny,Nz];
     bBox  = [xminb,yminb,zminb; xmaxb,ymaxb,zmaxb];
     %[X,Y,Z,BX,BY,BZ] = CalcBSLOW(I,S,bBox,Ns);
-    tic;
+    %tic;
     [X,Y,Z,BX,BY,BZ] = CalcFAST(I,S,bBox,Ns);
-    toc;
+    %toc;
     %B_z(:,:,nn) = B_z;
     %
     G = 'r';
@@ -110,10 +130,15 @@ for ns=100:105
     X2 = squeeze(X(:,:,1));
     Y2 = squeeze(Y(:,:,1));
     [L11(nn)] = selfInductance_BFields(ri,ra,I,X2,Y2,BZ,N,G);
-    L11
+    %L11
     nn=nn+1;
-    ns
-end
+    if(mod(10,ns)==0)
+        disp(strcat(num2str(ns),'/',num2str(NS)));
+    elseif(ns==NS)
+        disp(strcat(num2str(ns),'/',num2str(NS)));
+    end
+%end
+toc;
 disp('DONE!');
 
 %
