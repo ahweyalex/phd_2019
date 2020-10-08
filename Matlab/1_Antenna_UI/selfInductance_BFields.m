@@ -126,9 +126,12 @@ function [L11] = selfInductance_BFields(wT,ri,ra,I,X,Y,BFnorm,N1,G)
 %                 imagesc(rx,ry,E.');
 %                 title('wT/2')
             elseif(N1==2)
-                rx = ri;
-                ry = ra;                 
-                E  = (X/rx).^2 + (Y/ry).^2 < 1;
+                rx = ri-wT/4;
+                ry = ra-wT/4;
+                E  = (X/rx).^2 + (Y/ry).^2 <= 1;
+%                 figure
+%                 imagesc(rx,ry,E.');
+%                 title('wT/2')
             end
             %E  = (X/rx).^2 + (Y/ry).^2 <= 1;
             [r,c] = find(E);
