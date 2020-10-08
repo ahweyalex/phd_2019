@@ -4,8 +4,9 @@ wT = 0.2546e-3;  % 30AWG
 O  = 1;
 I  = 1;
 u0 = 4*pi*10^-7; % free space permeability <scalar> [H/m]
-%W  = 10e-3;
-W  = 5e-3 - wT/2;
+W  = 10e-3;
+%W  = 5e-3 - wT/2;
+
 %W = 2.5e-3;
 %for W=5e-3:5e-3:10e-3 % rect
 %for W=2.5e-3:2.5e-3:5e-3 % circle
@@ -15,8 +16,8 @@ W  = 5e-3 - wT/2;
     r  = W/2;
     numSeg = 200;
     % make wire antenna
-    [sx,sy,sz] = singleEllipticalLoop(ra,ri,numSeg,wT,O);
-    %[sx,sy,sz] = singleRectLoop(ra,ri,numSeg,wT,O);
+    %[sx,sy,sz] = singleEllipticalLoop(ra,ri,numSeg,wT,O);
+    [sx,sy,sz] = singleRectLoop(ra,ri,numSeg,wT,O);
     figure
     H = plot3(sx/1e-3,sy/1e-3,sz/1e-3,'.');
     grid on; 
@@ -62,7 +63,7 @@ W  = 5e-3 - wT/2;
         Y2 = squeeze(Y(:,:,1));
         %[L11(nn)] = selfInductance_BFields(wT,ri,ra,I,X2,Y2,BZ,N1,G);
         %-------------------------------rect--------------------------------------%
-        %{
+        %
         if(W==5e-3)
             G = 'r';
             N1 = 0;
@@ -82,7 +83,7 @@ W  = 5e-3 - wT/2;
         end
         %}
         %-------------------------------circ--------------------------------------%
-        %
+        %{
         G = 'c';
         if(W==2.5e-3)
             N1 = 0;

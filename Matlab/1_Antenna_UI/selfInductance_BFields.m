@@ -95,11 +95,11 @@ function [L11] = selfInductance_BFields(wT,ri,ra,I,X,Y,BFnorm,N1,G)
             y2 =  ra/2-wT/2;
             R = (X>=x1 & X<=x2 & Y>=y1 & Y<=y2);            
         elseif(N1==2)
-            x1 = -ri/2;
-            x2 =  ri/2;
-            y1 = -ra/2;
-            y2 =  ra/2;
-            R = (X>x1 & X<x2 & Y>y1 & Y<y2);
+            x1 = -ri/2+wT/4;
+            x2 =  ri/2-wT/4;
+            y1 = -ra/2+wT/4;
+            y2 =  ra/2-wT/4;
+            R = (X>=x1 & X<=x2 & Y>=y1 & Y<=y2); 
         end
         [r,c] = find(R);
         for n=1:numel(r)
