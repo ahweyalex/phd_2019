@@ -4,12 +4,13 @@ wT = 0.2546e-3;  % 30AWG
 O  = 1;
 I  = 1;
 u0 = 4*pi*10^-7; % free space permeability <scalar> [H/m]
-W  = 10e-3;
+%W  = 10e-3;
 %W  = 5e-3 - wT/2;
-
 %W = 2.5e-3;
+W = [5e-3, 5e-3-wT/2,10e-3, 10e-3-wT/2];
 %for W=5e-3:5e-3:10e-3 % rect
 %for W=2.5e-3:2.5e-3:5e-3 % circle
+for wn=1:numel(W)
     ra = W;
     ri = W;
     L  = W/2;
@@ -37,8 +38,8 @@ W  = 10e-3;
     %NN = 99:106;
     %for ns=599:606
     NN = 19:1004;
-    %for ns=19:1004
-    for ns=1000:1004
+    for ns=19:1004
+    %for ns=1000:1004
         Nx = ns;
         Ny = Nx;
         Nz = 2;
@@ -125,7 +126,7 @@ W  = 10e-3;
 
     end % iterate though XY res
     disp('DONE');
-%end % iterate though length/radius
+end % iterate though length/radius
 %%
 %figure
 %H=plot(NN,L11_wT2./1e-9,'.-');
