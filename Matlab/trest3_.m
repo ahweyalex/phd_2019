@@ -63,7 +63,7 @@ W  = 10e-3;
         Y2 = squeeze(Y(:,:,1));
         %[L11(nn)] = selfInductance_BFields(wT,ri,ra,I,X2,Y2,BZ,N1,G);
         %-------------------------------rect--------------------------------------%
-        %
+        %{
         if(W==5e-3)
             G = 'r';
             N1 = 0;
@@ -83,23 +83,38 @@ W  = 10e-3;
         end
         %}
         %-------------------------------circ--------------------------------------%
-        %{
+        %
         G = 'c';
-        if(W==2.5e-3)
+        if(wn==1)
             N1 = 0;
             L11_circ_r5mm(nn) = selfInductance_BFields(wT,ri,ra,I,X2,Y2,BZ,N1,G);
             N1 = 1;
             L11_wT2_circ_r5mm(nn) = selfInductance_BFields(wT,ri,ra,I,X2,Y2,BZ,N1,G);
             N1 = 2;
-            L11_notEq_circ_r5mm(nn) = selfInductance_BFields(wT,ri,ra,I,X2,Y2,BZ,N1,G);
-        %elseif(W==5e-3)
-        elseif(W==5e-3 - wT/2)
+            L11_wT4_circ_r5mm(nn) = selfInductance_BFields(wT,ri,ra,I,X2,Y2,BZ,N1,G);       
+        elseif(wn==2)
+            N1 = 0;
+            L11_circ_r5mm_mWT2(nn) = selfInductance_BFields(wT,ri,ra,I,X2,Y2,BZ,N1,G);
+            N1 = 1;
+            L11_wT2_circ_r5mm_mWT2(nn) = selfInductance_BFields(wT,ri,ra,I,X2,Y2,BZ,N1,G);
+            N1 = 2;
+            L11_wT4_circ_r5mm_mWT2(nn) = selfInductance_BFields(wT,ri,ra,I,X2,Y2,BZ,N1,G);
+                    
+      
+        elseif(wn==3)
             N1 = 0;
             L11_circ_r10mm(nn) = selfInductance_BFields(wT,ri,ra,I,X2,Y2,BZ,N1,G);
             N1 = 1;
             L11_wT2_circ_r10mm(nn) = selfInductance_BFields(wT,ri,ra,I,X2,Y2,BZ,N1,G);
             N1 = 2;
             L11_wT4_circ_r10mm(nn) = selfInductance_BFields(wT,ri,ra,I,X2,Y2,BZ,N1,G);
+        elseif(wn==4)
+            N1 = 0;
+            L11_circ_r10mm_mWT2(nn) = selfInductance_BFields(wT,ri,ra,I,X2,Y2,BZ,N1,G);
+            N1 = 1;
+            L11_wT2_circ_r10mm_mWT2(nn) = selfInductance_BFields(wT,ri,ra,I,X2,Y2,BZ,N1,G);
+            N1 = 2;
+            L11_wT4_circ_r10mm_mWT2(nn) = selfInductance_BFields(wT,ri,ra,I,X2,Y2,BZ,N1,G);            
         end
         %}
         nn=nn+1;
