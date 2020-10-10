@@ -99,7 +99,25 @@ function [L11] = selfInductance_BFields(wT,ri,ra,I,X,Y,BFnorm,N1,G)
             x2 =  ri/2-wT/4;
             y1 = -ra/2+wT/4;
             y2 =  ra/2-wT/4;
-            R = (X>=x1 & X<=x2 & Y>=y1 & Y<=y2); 
+            R = (X>=x1 & X<=x2 & Y>=y1 & Y<=y2);     
+        elseif(N1==3)
+            x1 = -ri/2+wT/100;
+            x2 =  ri/2-wT/100;
+            y1 = -ra/2+wT/100;
+            y2 =  ra/2-wT/100;
+            R = (X>=x1 & X<=x2 & Y>=y1 & Y<=y2);  
+        elseif(N1==4)
+            x1 = -ri/2+wT/50;
+            x2 =  ri/2-wT/50;
+            y1 = -ra/2+wT/50;
+            y2 =  ra/2-wT/50;
+            R = (X>=x1 & X<=x2 & Y>=y1 & Y<=y2);  
+        elseif(N1==5)
+            x1 = -ri/2+wT/75;
+            x2 =  ri/2-wT/75;
+            y1 = -ra/2+wT/75;
+            y2 =  ra/2-wT/75;
+            R = (X>=x1 & X<=x2 & Y>=y1 & Y<=y2);  
         end
         [r,c] = find(R);
         for n=1:numel(r)
@@ -132,6 +150,19 @@ function [L11] = selfInductance_BFields(wT,ri,ra,I,X,Y,BFnorm,N1,G)
 %                 figure
 %                 imagesc(rx,ry,E.');
 %                 title('wT/2')
+
+            elseif(N1==3)
+                rx = ri-wT/100;
+                ry = ra-wT/100;
+                E  = (X/rx).^2 + (Y/ry).^2 <= 1;     
+            elseif(N1==4)
+                rx = ri-wT/50;
+                ry = ra-wT/50;
+                E  = (X/rx).^2 + (Y/ry).^2 <= 1;         
+            elseif(N1==5)
+                rx = ri-wT/75;
+                ry = ra-wT/75;
+                E  = (X/rx).^2 + (Y/ry).^2 <= 1;  
             end
             %E  = (X/rx).^2 + (Y/ry).^2 <= 1;
             [r,c] = find(E);
