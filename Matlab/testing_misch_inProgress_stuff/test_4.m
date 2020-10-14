@@ -15,7 +15,8 @@ r  = W/2;
 numSeg = 200;
 % make wire antenna
 %[sx,sy,sz] = singleEllipticalLoop(ra,ri,numSeg,wT,O);
-[sx,sy,sz] = singleRectLoop(ra,ri,numSeg,wT,O);
+%[sx,sy,sz] = singleRectLoop(ra,ri,numSeg,wT,O);
+[Sx,Sy,Sz] = singleRectLoop_roundEdge(W0,L0,numSeg,wT,O,c);
 figure
 H = plot3(sx/1e-3,sy/1e-3,sz/1e-3,'.');
 grid on; 

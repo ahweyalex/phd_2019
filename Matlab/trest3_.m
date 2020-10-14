@@ -1,5 +1,5 @@
 clear all; close all; clc;
-
+%%%%%%% OLD NO LONGER USING, use test_4 instead %%%%%
 wT = 0.2546e-3;  % 30AWG 
 O  = 1;
 I  = 1;
