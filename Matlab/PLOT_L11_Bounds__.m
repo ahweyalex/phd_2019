@@ -10,7 +10,8 @@ NN=19:1005;
 figure(1)
 %H = plot(NN,abs(L11_circ_r5mm)./1e-9,'.-');
 %H = plot(NN,abs(L11_circ_r10mm)./1e-9,'.-');
-H = plot(NN,abs(L11_sq_L5mm)./1e-9,'.-');
+%H = plot(NN,abs(L11_sq_L5mm)./1e-9,'.-');
+H = plot(NN,abs(L11_sq_L5mm_re)./1e-9,'.-');
 %H = plot(L11_circ_r10mm_mWT2./1e-9,'.-');
 %title('d5mm');
 title('L5mm');
@@ -21,7 +22,8 @@ grid on;
 figure(2)
 %H = plot(NN,abs(L11_wT2_circ_r5mm)./1e-9,'.-');
 %H = plot(NN,abs(L11_wT2_circ_r10mm)./1e-9,'.-');
-H = plot(NN,abs(L11_wT2_sq_L5mm)./1e-9,'.-');
+%H = plot(NN,abs(L11_wT2_sq_L5mm)./1e-9,'.-');
+H = plot(NN,abs(L11_wT2_sq_L5mm_re)./1e-9,'.-');
 %H = plot(L11_wT2_circ_r10mm_mWT2./1e-9,'.-');
 %title('d5mm - wT/2');
 title('L5mm +/- wT/2');
@@ -32,7 +34,8 @@ grid on;
 figure(3)
 %H = plot(NN,abs(L11_wT4_circ_r5mm)./1e-9,'.-');
 %H = plot(NN,abs(L11_wT4_circ_r10mm)./1e-9,'.-');
-H = plot(NN,abs(L11_wT4_sq_L5mm)./1e-9,'.-');
+%H = plot(NN,abs(L11_wT4_sq_L5mm)./1e-9,'.-');
+H = plot(NN,abs(L11_wT4_sq_L5mm_re)./1e-9,'.-');
 %H = plot(L11_wT4_circ_r10mm_mWT2./1e-9,'.-');
 %title('d5mm - wT/4');
 title('L5mm +/- wT/4');
@@ -43,7 +46,8 @@ grid on;
 figure(4)
 %H = plot(NN,abs(L11_wT50_circ_r5mm)./1e-9,'.-');
 %H = plot(NN,abs(L11_wT50_circ_r10mm)./1e-9,'.-');
-H = plot(NN,abs(L11_wT50_sq_L5mm)./1e-9,'.-');
+%H = plot(NN,abs(L11_wT50_sq_L5mm)./1e-9,'.-');
+H = plot(NN,abs(L11_wT50_sq_L5mm_re)./1e-9,'.-');
 %H = plot(L11_wT4_circ_r10mm_mWT2./1e-9,'.-');
 %title('d5mm - wT/50');
 title('L5mm +/- wT/50');
@@ -54,7 +58,8 @@ grid on;
 figure(5)
 %H = plot(NN,abs(L11_wT75_circ_r5mm)./1e-9,'.-');
 %H = plot(NN,abs(L11_wT75_circ_r10mm)./1e-9,'.-');
-H = plot(NN,abs(L11_wT75_sq_L5mm)./1e-9,'.-');
+%H = plot(NN,abs(L11_wT75_sq_L5mm)./1e-9,'.-');
+H = plot(NN,abs(L11_wT75_sq_L5mm_re)./1e-9,'.-');
 %H = plot(L11_wT4_circ_r10mm_mWT2./1e-9,'.-');
 %title('d5mm - wT/75');
 title('L5mm +/- wT/75');
@@ -65,7 +70,8 @@ grid on;
 figure(6)
 %H = plot(NN,abs(L11_wT100_circ_r5mm)./1e-9,'.-');
 %H = plot(NN,abs(L11_wT100_circ_r10mm)./1e-9,'.-');
-H = plot(NN,abs(L11_wT100_sq_L5mm)./1e-9,'.-');
+%H = plot(NN,abs(L11_wT100_sq_L5mm)./1e-9,'.-');
+H = plot(NN,abs(L11_wT100_sq_L5mm_re)./1e-9,'.-');
 %H = plot(L11_wT4_circ_r10mm_mWT2./1e-9,'.-');
 %title('d5mm - wT/100');
 title('L5mm +/- wT/100');
