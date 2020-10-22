@@ -1,337 +1,196 @@
 
-function [xS,yS,zS] = constrRectWire(h,W0,L0,phi,N,O,wT,Nxy)
-    %deltaS    = 200;
-    helixSTEP = phi*(pi/180);
-    start     = 0; 
-    fin       = N*(2*pi) + helixSTEP/2;
-    %cst_xxx   = start:helixSTEP:fin;
-    cst_xxx = linspace(start,fin,phi);
-    cstSize   = floor((numel(cst_xxx)/4)/N);
-    hSize     = floor(cstSize);    % trying to fix it
-    xS=[]; yS=[]; zS=[];
-    
-    if(O==1) %clock wise
-        for nx=1:Nxy
-            % even
-            if(mod(nx,2)~=0)
-                txy =(wT/2); 
-                t0 = (3/2)*(wT)*(nx-1);
-                % set up x-vectors
-                xn = linspace((-W0/2)-(t0),0,hSize)'; 
-                xn(end)=[];
-                xp = linspace(0,(W0/2)+(t0),hSize)';
-                xc = ((W0/2)+(t0))*ones(1,2*hSize-1)';  
-                % set up y-vectors
-                yn  = linspace( (-L0/2)-(t0),0,hSize)'; yn(end)=[];
-                yp  = linspace(0,(L0/2)+(t0),hSize)';
-                yc  = ((L0/2)+(t0))*ones(1,2*hSize-1)';
-                yic = ((L0/2)+(t0))*ones(1,hSize)';
-                % construction of x and y parts
-                x0 = [-xc;  xn;xp; xc; flipud(xp);flipud(xn);];
-                y0 = [yn;yp;   yc; flipud(yp); flipud(yn); -yc];          
-                xS0 = repmat(x0,N,1);   xS0(end-hSize:end)=[]; 
-                yS0 = repmat(y0,N,1);   yS0(end-hSize:end)=[];
-                xS0 = [flipud(xn);xS0]; yS0 = [-yc(1:numel(xn));yS0]; 
-                % z
-                zSize = numel(xS0);
-                zp = linspace(start,fin, zSize)';
-                zS0 = (h*zp)./(2*pi*N);   
-                % combine into arrays
-                xS=[xS;xS0]; 
-                yS=[yS;yS0]; 
-                zS=[zS;zS0];
-                % connetions between the coils along the xy-plane
-                if(nx~=Nxy)
-                    %c = 'c_odd'
-                    %nx
-                    t1 = (3/2)*(wT)*(nx);
-                    LN = 4;
-                    xC = linspace(0,0,LN)';
-                    if(nx==1)
-                        yC = -1*linspace(L0/2,L0/2+t1,LN)';
-                    else
-                        yC = -1*linspace(yc(1),yc(1)+t1,LN)';
-                    end
-                    zC = linspace(zS0(end),zS0(end),LN)';
-                    xS = [xS;xC];
-                    yS = [yS;yC];
-                    zS = [zS;zC];
-                end
-                
-            else
-                txy =(wT/2); 
-                t0 = (3/2)*(wT)*(nx-1);
-                 % set up x-vectors
-                xn = linspace((-W0/2)-(t0),0,hSize)'; xn(end)=[];
-                xp = linspace(0,(W0/2)+(t0),hSize)';
-                xc = ((W0/2)+(t0))*ones(1,2*hSize-1)';    
-                % set up y-vectors
-                yn  = linspace( (-L0/2)-(t0),0,hSize)'; yn(end)=[];
-                yp  = linspace(0,(L0/2)+(t0),hSize)';
-                yc  = ((L0/2)+(t0))*ones(1,2*hSize-1)';
-                % construction of x and y parts
-                x0 = flipud([-xc; xn;xp; xc; flipud(xp);flipud(xn);]);
-                y0 = flipud([yn;yp;   yc; flipud(yp); flipud(yn); -yc]);  
-                xS0 = repmat(x0,N,1); xS0(1:hSize)=[]; 
-                yS0 = repmat(y0,N,1); yS0(1:hSize)=[];
-                xS0 = [xS0;xn];       yS0=[yS0;-yc(1:numel(xn))]; 
-                % z
-                zSize = numel(xS0);
-                zp = linspace(start,fin, zSize)';
-                zS0 = (h*zp)./(2*pi*N);   
-                % combine into arrays
-                xS=[xS;xS0]; 
-                yS=[yS;yS0]; 
-                zS=[zS;zS0];
-                if(nx~=Nxy)
-                    %c = 'c_even'
-                    %nx
-                    t0 = (3/2)*(wT)*(nx);
-                    LN = 4;
-                    xC = linspace(0,0,LN)';
-                    if(nx==1)
-                        yC = -1*linspace(L0/2,L0/2+t1,LN)';
-                    else
-                        yC = -1*linspace(L0/2+t0,L0/2+t1,LN)';
-                    end
-                    zC = linspace(0,0,LN)';
-                    xS = [xS;xC];
-                    yS = [yS;yC];
-                    zS = [zS;zC];
-                end
+function [xS,yS,zS] = constrRectWire(h,W0,L0,wT,numSeg,N,Nxy,O,gap)
+%-----------------------initialize variables -----------------------------%    
+    xS=[]; yS=[]; zS=[]; zEnd = h*N*2*pi*wT;
+%=========================================================================%
+%======================= construct multi-coil ============================%   
+%=========================================================================%
+
+%------------ most inner coil begins counter clock-wise (ccw) ------------%
+    if(O==1)
+        for nxy=1:Nxy
+            % z begins at 0 and goes up to zEnd
+            if(mod(nxy,2)==1)
+                W = W0 + (nxy-1)*(2*wT);
+                L = L0 + (nxy-1)*(2*wT);
+                [sx,sy] = ccwRectWire(W,L,numSeg,N,gap);
+                sz = linspace(0,zEnd,numel(sx))';
+                xS = [xS;sx];
+                yS = [yS;sy];
+                zS = [zS;sz];
+                sx=[];sy=[];sz=[];           
+            % z begins at zEnd and goes down to 0
+            elseif(mod(nxy,2)==0)
+                W = W0 + (nxy-1)*(2*wT);
+                L = L0 + (nxy-1)*(2*wT);
+                [sx,sy] = ccwRectWire(W,L,numSeg,N,gap);
+                sz = linspace(zEnd,0,numel(sx))';
+                %sz = linspace(0,zEnd,numel(sx))';
+                xS = [xS;sx];
+                yS = [yS;sy];
+                zS = [zS;sz];
+                sx=[];sy=[];sz=[];
             end
-            %{
-            % +z
-            xn = linspace((-W0/2)-(t0),0,hSize)'; xn(end)=[];
-            xp = linspace(0,(W0/2)+(t0),hSize)';
-            xc = ((W0/2)+(t0))*ones(1,2*hSize-1)';  
-            yn  = linspace( (-L0/2)-(t0),0,hSize)'; yn(end)=[];
-            yp  = linspace(0,(L0/2)+(t0),hSize)';
-            yc  = ((L0/2)+(t0))*ones(1,2*hSize-1)';
-            yic = ((L0/2)+(t0))*ones(1,hSize)';
-            x0 = [-xc;  xn;xp; xc; flipud(xp);flipud(xn);];
-            y0 = [yn;yp;   yc; flipud(yp); flipud(yn); -yc];          
-            xS0 = repmat(x0,N,1);   xS0(end-hSize:end)=[]; 
-            yS0 = repmat(y0,N,1);   yS0(end-hSize:end)=[];
-            xS0 = [flipud(xn);xS0]; yS0 = [-yc(1:numel(xn));yS0]; 
-            zSize = numel(xS0);
-            zp = linspace(start,fin, zSize)';
-            zS0 = (h*zp)./(2*pi*N);   zS0 = zS0+(wT/2);
-            xS=[xS;xS0]; yS=[yS;yS0]; zS=[zS;zS0];
-            % -z
-            xn = linspace((-W0/2)-(t0),0,hSize)'; xn(end)=[];
-            xp = linspace(0,(W0/2)+(t0),hSize)';
-            xc = ((W0/2)+(t0))*ones(1,2*hSize-1)';    
-            yn  = linspace( (-L0/2)-(t0),0,hSize)'; yn(end)=[];
-            yp  = linspace(0,(L0/2)+(t0),hSize)';
-            yc  = ((L0/2)+(t0))*ones(1,2*hSize-1)';
-            yic = ((L0/2)+(t0))*ones(1,hSize)';                        
-            x0 = [-xc;  xn;xp; xc; flipud(xp);flipud(xn);];
-            y0 = [yn;yp;   yc; flipud(yp); flipud(yn); -yc];    
-            xS0 = repmat(x0,N,1);   xS0(end-hSize:end)=[]; 
-            yS0 = repmat(y0,N,1);   yS0(end-hSize:end)=[];
-            xS0 = [flipud(xn);xS0]; yS0 = [-yc(1:numel(xn));yS0]; 
-            zSize = numel(xS0);
-            zp = linspace(start,fin, zSize)';
-            zS0 = (h*zp)./(2*pi*N);   zS0 = zS0-(wT/2);
-            xS=[xS;xS0]; yS=[yS;yS0]; zS=[zS;zS0]; 
-            % +xy  
-            % set up x&y segments 
-            xn = linspace(-(W0/2)-(t0+txy),0,hSize)'; xn(end)=[];
-            xp = linspace(0,(W0/2)+(t0+txy),hSize)';
-            xc = ((W0/2)+(t0+txy))*ones(1,2*hSize-1)'; 
-            yn  = linspace(-(L0/2)-(t0+txy),0,hSize)'; yn(end)=[];
-            yp  = linspace(0,(L0/2)+(t0+txy),hSize)';
-            yc  = ((L0/2) + (t0+txy))*ones(1,2*hSize-1)';        
-            % set points that will be repmat
-            x0 = [-xc;  xn;xp; xc; flipud(xp);flipud(xn);];
-            y0 = [yn;yp;   yc; flipud(yp); flipud(yn); -yc];    
-            xS0 = repmat(x0,N,1);   xS0(end-hSize:end)=[]; 
-            yS0 = repmat(y0,N,1);   yS0(end-hSize:end)=[];
-            xS0 = [flipud(xn);xS0]; yS0 = [-yc(1:numel(xn));yS0]; 
-            zSize = numel(xS0);
-            zp = linspace(start,fin, zSize)';
-            zS0 = (h*zp)./(2*pi*N);
-            xS=[xS;xS0]; yS=[yS;yS0]; zS=[zS;zS0];  
-            % -xy  
-            % set up x&y segments 
-            xn = linspace((-W0/2)-(t0)+txy,0,hSize)'; xn(end)=[];
-            xp = linspace(0,(W0/2)+(t0)-txy,hSize)';
-            xc = ((W0/2)+(t0)-txy)*ones(1,2*hSize-1)';     
-            yn  = linspace( (-L0/2)-(t0)+txy,0,hSize)'; yn(end)=[];
-            yp  = linspace(0,(L0/2)+(t0)-txy,hSize)';
-            yc  = ((L0/2)+(t0)-txy)*ones(1,2*hSize-1)';    
-            % set points that will be repmat
-            x0 = [-xc;  xn;xp; xc; flipud(xp);flipud(xn);];
-            y0 = [yn;yp;   yc; flipud(yp); flipud(yn); -yc]; 
-            xS0 = repmat(x0,N,1);   xS0(end-hSize:end)=[]; 
-            yS0 = repmat(y0,N,1);   yS0(end-hSize:end)=[];
-            xS0 = [flipud(xn);xS0]; yS0=[-yc(1:numel(xn));yS0]; 
-            zSize = numel(xS0);
-            zp = linspace(start,fin, zSize)';
-            zS0 = (h*zp)./(2*pi*N);
-            xS=[xS;xS0]; yS=[yS;yS0]; zS=[zS;zS0];  
-            %}
+            
+        end %END: FOR LOOP
+        
+%---------------most inner coil begins clock-wise (cw)--------------------%
+    elseif(O==0)
+      for nxy=1:Nxy
+        % z begins at 0 and goes up to zEnd
+        if(mod(nxy,2)==1)
+            W = W0 + (nxy-1)*(2*wT);
+            L = L0 + (nxy-1)*(2*wT);
+            [sx,sy] = cwRectWire(W,L,numSeg,N,gap);
+            sz = linspace(0,zEnd,numel(sx))';
+            xS = [xS;sx];
+            yS = [yS;sy];
+            zS = [zS;sz];            
+            sx=[];sy=[];sz=[];
+        % z begins at zEnd and goes down to 0
+        elseif(mod(nxy,2)==0)
+            W = W0 + (nxy-1)*(2*wT);
+            L = L0 + (nxy-1)*(2*wT);
+            [sx,sy] = cwRectWire(W,L,numSeg,N,gap);
+            sz = linspace(zEnd,0,numel(sx))';
+            xS = [xS;sx];
+            yS = [yS;sy];
+            zS = [zS;sz];
+            sx=[];sy=[];sz=[];
         end
-        % END: LOOP: NXY
-    %counter clock wise
-    else
-        for nx=1:Nxy
-            if(mod(nx,2)~=0)
-                txy =(wT/2); 
-                t0 = (3/2)*(wT)*(nx-1);
-                 % set up x-vectors
-                xn = linspace((-W0/2)-(t0),0,hSize)'; xn(end)=[];
-                xp = linspace(0,(W0/2)+(t0),hSize)';
-                xc = ((W0/2)+(t0))*ones(1,2*hSize-1)';    
-                % set up y-vectors
-                yn  = linspace( (-L0/2)-(t0),0,hSize)'; yn(end)=[];
-                yp  = linspace(0,(L0/2)+(t0),hSize)';
-                yc  = ((L0/2)+(t0))*ones(1,2*hSize-1)';
-                % construction of x and y parts
-                x0 = flipud([-xc; xn;xp; xc; flipud(xp);flipud(xn);]);
-                y0 = flipud([yn;yp;   yc; flipud(yp); flipud(yn); -yc]);  
-                xS0 = repmat(x0,N,1); xS0(1:hSize)=[]; 
-                yS0 = repmat(y0,N,1); yS0(1:hSize)=[];
-                xS0 = [xS0;xn];       yS0=[yS0;-yc(1:numel(xn))]; 
-                % z
-                zSize = numel(xS0);
-                zp = linspace(start,fin, zSize)';
-                zS0 = (h*zp)./(2*pi*N);   
-                % combine into arrays
-                xS=[xS;xS0]; 
-                yS=[yS;yS0]; 
-                zS=[zS;zS0];   
-            else
-                txy =(wT/2); 
-                t0 = (3/2)*(wT)*(nx-1);
-                % set up x-vectors
-                xn = linspace((-W0/2)-(t0),0,hSize)'; xn(end)=[];
-                xp = linspace(0,(W0/2)+(t0),hSize)';
-                xc = ((W0/2)+(t0))*ones(1,2*hSize-1)';  
-                % set up y-vectors
-                yn  = linspace( (-L0/2)-(t0),0,hSize)'; yn(end)=[];
-                yp  = linspace(0,(L0/2)+(t0),hSize)';
-                yc  = ((L0/2)+(t0))*ones(1,2*hSize-1)';
-                yic = ((L0/2)+(t0))*ones(1,hSize)';
-                % construction of x and y parts
-                x0 = [-xc;  xn;xp; xc; flipud(xp);flipud(xn);];
-                y0 = [yn;yp;   yc; flipud(yp); flipud(yn); -yc];          
-                xS0 = repmat(x0,N,1);   xS0(end-hSize:end)=[]; 
-                yS0 = repmat(y0,N,1);   yS0(end-hSize:end)=[];
-                xS0 = [flipud(xn);xS0]; yS0 = [-yc(1:numel(xn));yS0]; 
-                % z
-                zSize = numel(xS0);
-                zp = linspace(start,fin, zSize)';
-                zS0 = (h*zp)./(2*pi*N);   
-                % combine into arrays
-                xS=[xS;xS0]; 
-                yS=[yS;yS0]; 
-                zS=[zS;zS0];
-            end
-            %{
-            % +z
-            xn = linspace((-W0/2)-(t0),0,hSize)'; xn(end)=[];
-            xp = linspace(0,(W0/2)+(t0),hSize)';
-            xc = ((W0/2)+(t0))*ones(1,2*hSize-1)';    
-            yn  = linspace( (-L0/2)-(t0),0,hSize)'; yn(end)=[];
-            yp  = linspace(0,(L0/2)+(t0),hSize)';
-            yc  = ((L0/2)+(t0))*ones(1,2*hSize-1)';
-            x0 = flipud([-xc; xn;xp; xc; flipud(xp);flipud(xn);]);
-            y0 = flipud([yn;yp;   yc; flipud(yp); flipud(yn); -yc]);  
-            xS0 = repmat(x0,N,1); xS0(1:hSize)=[]; 
-            yS0 = repmat(y0,N,1); yS0(1:hSize)=[];
-            xS0 = [xS0;xn];       yS0=[yS0;-yc(1:numel(xn))]; 
-            zSize = numel(xS0);
-            zp = linspace(start,fin, zSize)';
-            zS0 = (h*zp)./(2*pi*N);   zS0 = zS0+txy;
-            xS=[xS;xS0]; yS=[yS;yS0]; zS=[zS;zS0]; 
-            % -z
-            xn = linspace((-W0/2)-(t0),0,hSize)'; xn(end)=[];
-            xp = linspace(0,(W0/2)+(t0),hSize)';
-            xc = ((W0/2)+(t0))*ones(1,2*hSize-1)';    
-            % y   = linspace(-L0/2,L0/2,cstSize)';  
-            yn  = linspace( (-L0/2)-(t0),0,hSize)'; yn(end)=[];
-            yp  = linspace(0,(L0/2)+(t0),hSize)';
-            yc  = ((L0/2)+(t0))*ones(1,2*hSize-1)';
-            x0 = flipud([-xc;  xn;xp; xc; flipud(xp);flipud(xn);]);
-            y0 = flipud([yn;yp;   yc; flipud(yp); flipud(yn); -yc]);  
-            xS0 = repmat(x0,N,1); xS0(1:hSize)=[]; 
-            yS0 = repmat(y0,N,1); yS0(1:hSize)=[];
-            xS0 = [xS0;xn];       yS0=[yS0;-yc(1:numel(xn))]; 
-            zSize = numel(xS0);
-            zp = linspace(start,fin, zSize)';
-            zS0 = (h*zp)./(2*pi*N);   zS0 = zS0-txy;
-            xS=[xS;xS0]; yS=[yS;yS0]; zS=[zS;zS0];  
-            % +xy 
-            xn = linspace(-(W0/2)-(t0+txy),0,hSize)';
-            xp = linspace(0,(W0/2)+(t0+txy),hSize)';
-            xc = ((W0/2)+(t0+txy))*ones(1,2*hSize-1)'; 
-            yn = linspace(-(L0/2)-(t0+txy),0,hSize)'; 
-            yp = linspace(0,(L0/2)+(t0+txy),hSize)';
-            yc = ((L0/2) + (t0+txy))*ones(1,2*hSize-1)';        
-            % set points that will be repmat
-            x0 = flipud([-xc; xn;xp; xc; flipud(xp);flipud(xn);]);
-            y0 = flipud([yn;yp;   yc; flipud(yp); flipud(yn); -yc]); 
-            xS0 = repmat(x0,N,1); xS0(1:hSize)=[]; 
-            yS0 = repmat(y0,N,1); yS0(1:hSize)=[];
-            xS0 = [xS0;xn];       yS0=[yS0;-yc(1:numel(xn))]; 
-            zSize = numel(xS0);
-            zp = linspace(start,fin, zSize)';
-            zS0 = (h*zp)./(2*pi*N);   zS0 = zS0;
-            xS=[xS;xS0]; yS=[yS;yS0]; zS=[zS;zS0]; 
-            % -xy    
-            xn = linspace((-W0/2)-(t0)+txy,0,hSize)'; xn(end)=[];
-            xp = linspace(0,(W0/2)+(t0)-txy,hSize)';
-            xc = ((W0/2)+(t0)-txy)*ones(1,2*hSize-1)';    
-            yn  = linspace( (-L0/2)-(t0)+txy,0,hSize)'; yn(end)=[];
-            yp  = linspace(0,(L0/2)+(t0)-txy,hSize)';
-            yc  = ((L0/2)+(t0)-txy)*ones(1,2*hSize-1)';            
-            % set points that will be repmat
-            x0 = flipud([-xc; xn;xp; xc; flipud(xp);flipud(xn);]);
-            y0 = flipud([yn;yp;    yc; flipud(yp); flipud(yn); -yc]); 
-            xS0 = repmat(x0,N,1);  xS0(1:hSize)=[]; 
-            yS0 = repmat(y0,N,1);  yS0(1:hSize)=[];
-            xS0 = [xS0;xn];        yS0=[yS0;-yc(1:numel(xn))]; 
-            zSize = numel(xS0);
-            zp = linspace(start,fin, zSize)';
-            zS0 = (h*zp)./(2*pi*N);   zS0 = zS0;
-            xS=[xS;xS0]; yS=[yS;yS0]; zS=[zS;zS0];   
-            %}
-        end  % END: LOOP: NXY
-    end %      
+        
+      end %END: FOR LOOP
+      
+    end % END: Choosing starting orientation 
     
-    % add feed lines, single coil
-   if(Nxy==1 && O==1)
-        LN = 20;
-        t0 = (3/2)*wT;
-        % top (last)
-        xf_top = linspace(t0,t0,LN)';
-        yf_top = linspace(-W0/2,-W0,LN)';
-        zf_top = linspace(zS(end),zS(end),LN)';
-        % bottom (first)
-        xf_bot = linspace(0,0,LN)';
-        yf_bot = linspace(-W0/2,-W0,LN)';
-        zf_bot = linspace(0,0,LN)';
-        % unit all
-        xS=[xf_bot;xS;xf_top];
-        yS=[yf_bot;yS;yf_top];
-        zS=[zf_bot;zS;zf_top];   
-   elseif(Nxy==1 && O==0)
-        LN = 20;
-        t0 = (3/2)*wT;
-        % top (last)
-        xf_bot = linspace(-t0,-t0,LN)';
-        yf_bot = linspace(-W0/2,-W0,LN)';
-        zf_bot = linspace(zS(end),zS(end),LN)';
-        % bottom (first)
-        xf_top = linspace(0,0,LN)';
-        yf_top = linspace(-W0/2,-W0,LN)';
-        zf_top = linspace(0,0,LN)';
-        % unit all
-        xS=[xf_bot;xS;xf_top];
-        yS=[yf_bot;yS;yf_top];
-        zS=[zf_bot;zS;zf_top];          
-   end
+end % END FUNCTION constrRectWire_
+%=========================================================================%
+%===================END: construct multi-coil ============================%   
+%=========================================================================%
+
+
+
+%=========================================================================%
+%=========================  cwRectWire  ==================================%   
+%=========================================================================%
+
+function [sx,sy] = cwRectWire(W,L,numSeg,N,gap)
+%--------------------set up initial variables ----------------------------%  
+    %gap  = wT/2;
+    %zEnd = h*N*2*pi;  % final point along the z-direction
+    %armSize = floor((numSeg/4)/N); % number of points along each arm
+    armSize = floor(numSeg/4); % number of points along each arm
+    sx=[]; sy=[]; % initialize final x and y 1-D arrays
+%-------------------------- front arm ------------------------------------%
+    xf = linspace( W/2,  W/2, armSize)';
+    xf = xf(2:end);     % avoid double counting the edges
+    yf = linspace( L/2, -L/2, armSize)';
+    yf = yf(2:end);     % avoid double counting the edges
+%---------------------- front right arm ----------------------------------%
+    xfr = linspace( W/2,  W/2, floor(armSize/2))';
+    yfr = linspace(-gap, -L/2 , floor(armSize/2))';
+%-------------------------- right arm ------------------------------------%
+    xr = linspace( W/2, -W/2, armSize)';
+    xr = xr(2:end);     % avoid double counting the edges
+    yr = linspace(-L/2, -L/2, armSize)';    
+    yr = yr(2:end);     % avoid double counting the edges
+%-------------------------- back arm -------------------------------------%
+    xb = linspace(-W/2, -W/2, armSize)';
+    xb = xb(2:end);     % avoid double counting the edges
+    yb = linspace(-L/2,  L/2, armSize)';   
+    yb = yb(2:end);     % avoid double counting the edges
+%-------------------------- left arm -------------------------------------%
+    xl = linspace(-W/2, W/2, armSize)';
+    xl = xl(2:end);     % avoid double counting the edges
+    yl = linspace( L/2, L/2, armSize)';
+    yl = yl(2:end);     % avoid double counting the edges
+%-------------------- front left arm -------------------------------------%
+    xfl = linspace( W/2,  W/2, floor(armSize/2))';
+    xfl = xfl(2:end);       % avoid double counting the edges
+    yfl = linspace( L/2,  gap, floor(armSize/2))';    
+    yfl = yfl(2:end);       % avoid double counting the edges
+%---------------construct multi-turn rectangle coil-----------------------%
+    for n=1:N
+        % first iteration and not last iteration
+        if(n==1 && n~=N)
+            sx = [sx;xfr;xr;xb];
+            sy = [sy;yfr;yr;yb];
+            t = 't';
+        % first iteration and last iteration
+        elseif(n==1 && n==N)
+            sx = [sx;xfr;xr;xb;xl;xfl];
+            sy = [sy;yfr;yr;yb;yl;yfl];
+            t = 't';
+        % last iteration
+        elseif(n==N)
+            sx = [sx;xr;xb;xl;xfl];
+            sy = [sy;yr;yb;yl;yfl];
+        % in between 
+        else
+            sx = [sx;xf;xr;xb;xl];
+            sy = [sy;yf;yr;yb;yl;];
+        end
+    end
+%-------------------------------------------------------------------------%    
+end
+
+
+%=========================================================================%
+%=========================  ccwRectWire  =================================%   
+%=========================================================================%
+function [sx,sy] = ccwRectWire(W,L,numSeg,N,gap)
+    %gap  = wT/2;
+    %zEnd = h30*N*2*pi;  % final point along the z-direction
+    %armSize = floor((numSeg/4)/N); % number of points along each arm
+    armSize = floor(numSeg/4); % number of points along each arm
+    sx=[]; sy=[]; % initialize final x and y 1-D arrays
+%-------------------------- front arm ------------------------------------%
+    xf = linspace( W/2,  W/2, armSize)';
+    xf = xf(2:end);     % avoid double counting the edges
+    yf = linspace( -L/2, L/2, armSize)';
+    yf = yf(2:end);     % avoid double counting the edges
+%---------------------- front left arm -----------------------------------%
+    xfl = linspace(W/2, W/2, armSize)';
+    yfl = linspace(gap, L/2, armSize)';
+%-------------------------- left arm -------------------------------------%
+    xl = linspace( W/2, -W/2, armSize)';
+    xl = xl(2:end);     % avoid double counting the edges
+    yl = linspace( L/2,  L/2, armSize)';
+    yl = yl(2:end);     % avoid double counting the edges
+%-------------------------- back arm -------------------------------------%
+    xb = linspace(-W/2, -W/2, armSize)';
+    xb = xb(2:end);     % avoid double counting the edges
+    yb = linspace( L/2, -L/2, armSize)';
+    yb = yb(2:end);     % avoid double counting the edges
+%-------------------------- right arm ------------------------------------%
+    xr = linspace(-W/2,  W/2, armSize)';
+    xr = xr(2:end);     % avoid double counting the edges
+    yr = linspace(-L/2, -L/2, armSize)';
+    yr = yr(2:end);     % avoid double counting the edges
+%-------------------- front right arm ------------------------------------%
+    xfr = linspace( W/2, W/2, armSize)';
+    xfr = xfr(2:end);   % avoid double counting the edges
+    yfr = linspace(-L/2, gap, armSize)';
+    yfr = yfr(2:end);   % avoid double counting the edges
+%---------------construct multi-turn rectangle coil-----------------------%
+    for n=1:N
+        % first iteration and not last iteration
+        if(n==1 && n~=N)
+            sx = [sx;xfl;xl;xb;xr];
+            sy = [sy;yfl;yl;yb;yr;];
+        elseif(n==1 && n==N)
+            sx = [sx;xfl;xl;xb;xr;xfr];
+            sy = [sy;yfl;yl;yb;yr;yfr];            
+        % last iteration
+        elseif(n==N)
+            sx = [sx;xf;xl;xb;xr;xfr];
+            sy = [sy;yf;yl;yb;yr;yfr];
+        % in between 
+        else
+            sx = [sx;xf;xl;xb;xr];
+            sy = [sy;yf;yl;yb;yr;];
+        end
+    end
+%-------------------------------------------------------------------------%    
+end
     
-end %% END: constrRectWire

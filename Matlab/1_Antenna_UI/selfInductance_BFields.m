@@ -70,7 +70,7 @@
 % UNITS: [H]  ARRAY: 1x1 TYPE: double 
 %
 %function [L11] = selfInductance_BFields(ri,ra,I,X,Y,BFnorm,G)
-function [L11] = selfInductance_BFields(wT,ri,ra,I,X,Y,BFnorm,N1,G)
+function [L11] = selfInductance_BFields(wT,ri,ra,I,X,Y,BFnorm,N1,N,G)
     L11 = 0;
     u0 = 4*pi*10^-7;        % Permeability of free space
     uc = 1.256629*10^-6;    % Permeability of copper 
@@ -125,8 +125,8 @@ function [L11] = selfInductance_BFields(wT,ri,ra,I,X,Y,BFnorm,N1,G)
         end
         bz    = BF.*A; 
         sumB  = sum(sum(bz,1),2);   % sum of Bz
-        phi11 = abs(sumB);               % phi_11
-        L11   = phi11/I;            % self ind
+        phi11 = abs(sumB);          % phi_11
+        L11   = (phi11/I) * N;      % self ind
 %--------------------------ellipse----------------------------------------%       
     elseif(G=='c' || G=='C' || G=='e' || G=='E')
             if(N1==0)
@@ -171,7 +171,7 @@ function [L11] = selfInductance_BFields(wT,ri,ra,I,X,Y,BFnorm,N1,G)
             end
             bz    = BF.*A;
             sumB  = sum(sum(bz,1),2);   % sum of Bz
-            phi11 = abs(sumB);               % phi_11
-            L11   = phi11/I;            % self ind            
+            phi11 = abs(sumB);          % phi_11
+            L11   = (phi11/I) * N;      % self ind           
     end
 end

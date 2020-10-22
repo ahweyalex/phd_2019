@@ -82,6 +82,7 @@ function [Sx,Sy,Sz] = singleRectLoop_roundEdge(W0,L0,numSeg,wT,O,c)
         Sy = [yF;yrbc;yR;ylbc;yB;yltc;yL;yrtc;];
         Sz = zeros(numel(Sy),1);
         
+<<<<<<< Updated upstream
 %         figure(1)
 %         H = plot3(Sx,Sy,Sz,'o'); grid on; view(0,90);
 %         %hold;
@@ -90,6 +91,17 @@ function [Sx,Sy,Sz] = singleRectLoop_roundEdge(W0,L0,numSeg,wT,O,c)
 %         xlabel('x');
 %         ylabel('y');
 %         
+=======
+        %{
+        figure(1)
+        H = plot3(Sx,Sy,Sz,'o'); grid on; view(0,90);
+        %hold;
+        %H=plot(xrtc,yrtc, xrbc,yrbc, xltc,yltc, xlbc,ylbc);
+        set(H,'Marker','o');
+        xlabel('x');
+        ylabel('y');
+        %}
+>>>>>>> Stashed changes
         t = 't';
         
     elseif(O==1)

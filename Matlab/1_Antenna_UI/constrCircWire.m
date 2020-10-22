@@ -53,16 +53,17 @@
 % ------------------------------------------------------------------------
 % ------------------------------------------------------------------------
 
-function [xS0,yS0,zS0] = constrCircWire(h,ra,ri,phi,N,O,wT,Nxy)
-    helixSTEP = phi*(pi/180);
+function [xS0,yS0,zS0] = constrCircWire(h,ra,ri,numSeg,N,O,wT,Nxy)
+    %helixSTEP = phi*(pi/180);
     start=0; 
     %fin = N*(2*pi) + helixSTEP/2;
     fin = N*(2*pi);
     
     %cst_xxx = start:helixSTEP:fin;
     % phi=numSeg;
-    cst_xxx = linspace(start,fin,phi);
+    cst_xxx = linspace(start,fin,numSeg);
     xS0=[];yS0=[];zS0=[];
+    z0 = linspace(0,N*2*pi*h,numSeg);
    %
    if(O==1) % clock wise
         for nx=1:Nxy
@@ -73,7 +74,9 @@ function [xS0,yS0,zS0] = constrCircWire(h,ra,ri,phi,N,O,wT,Nxy)
             if(mod(nx,2)~=0) 
                 xS0 = [xS0,(ra+txy).*sin(cst_xxx)];
                 yS0 = [yS0,(ri+txy).*cos(cst_xxx)];
-                zS0 = [zS0,((h).*cst_xxx)./(2*pi*N)];
+                %zS0 = [zS0,((h).*cst_xxx)./(2*pi*N)];
+                zS0 = [zS0,z0];
+                
                 %zSn = [zSn,zS0];
                 % connect the coils 
 %                 if(nx~=Nxy)
@@ -89,7 +92,8 @@ function [xS0,yS0,zS0] = constrCircWire(h,ra,ri,phi,N,O,wT,Nxy)
             else
                 xS0 = [xS0,-(ra+txy).*sin(cst_xxx)];
                 yS0 = [yS0, (ri+txy).*cos(cst_xxx)];
-                zS0 = [zS0, ((h).*cst_xxx)./(2*pi*N)];
+                %zS0 = [zS0, ((h).*cst_xxx)./(2*pi*N)];
+                zS0 = [zS0,z0];
                 %zSn = [zSn,zS0];
                 % connect the coils 
 %                 if(nx~=Nxy)
@@ -113,7 +117,8 @@ function [xS0,yS0,zS0] = constrCircWire(h,ra,ri,phi,N,O,wT,Nxy)
                 if(mod(nx,2)~=0)
                     xS0 = [xS0,-(ra+txy).*sin(cst_xxx)];
                     yS0 = [yS0,(ri+txy).*cos(cst_xxx)];
-                    zS0 = [zS0,((h)*cst_xxx)./(2*pi*N)];
+                    %zS0 = [zS0,((h)*cst_xxx)./(2*pi*N)];
+                    zS0 = [zS0,z0];
 %                     if(nx~=Nxy)
 %                         LN  = 4;
 %                         xC  = linspace(0,0,LN);
@@ -126,7 +131,8 @@ function [xS0,yS0,zS0] = constrCircWire(h,ra,ri,phi,N,O,wT,Nxy)
                 else
                     xS0 = [xS0,(ra+txy).*sin(cst_xxx)];
                     yS0 = [yS0,(ri+txy).*cos(cst_xxx)];
-                    zS0 = [zS0,((h)*cst_xxx)./(2*pi*N)];   
+                    %zS0 = [zS0,((h)*cst_xxx)./(2*pi*N)]; 
+                    zS0 = [zS0,z0];
 %                     if(nx~=Nxy)
 %                         LN  = 4;
 %                         xC  = linspace(0,0,LN);
