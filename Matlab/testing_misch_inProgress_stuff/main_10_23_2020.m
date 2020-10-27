@@ -1,4 +1,4 @@
-% run through Nx and Ny
+% run through numSeg
 
 clear all; close all; clc;
 % inputs 
@@ -17,8 +17,11 @@ h30  = wT30*0.35;
 h40  = wT40*0.35;
 Nxy  = 1;
 N    = 1;
-numSeg = 97; % rect (true res is about 4*numSeg)
 gap = 0;
+zEnd = h*N*2*pi;
+
+for NS= 10:1000
+numSeg = NS; % rect (true res is about 4*numSeg)
 % wire 
 %[sx,sy,sz] = singleRectLoop(ra,ri,numSeg,wT,O); G = 'r';
 %[sx,sy,sz] = singleRectLoop_roundEdge(W,L,numSeg,wT,O,c); 
@@ -38,7 +41,7 @@ xlim([-1.1*ri/1e-3,1.1*ri/1e-3]); ylim([-1.1*ri/1e-3,1.1*ri/1e-3]);
 S30 = [sx30,sy30,sz30]';
 view(150,40);
 %S40 = [sx30,sy30,sz30]';
-%%
+
 % bfields and self indutance 
 disp('calc bfields');
 nn=1;
@@ -47,8 +50,8 @@ tic;
 %NN = 20:220;
 %for ns= 20:220
  
-NN = 980:980;
-for ns= 980:980
+%NN = 980:980;
+%for ns= 980:980
    % resolution
     Nx = ns;
     Ny = Nx;
@@ -58,8 +61,8 @@ for ns= 980:980
     xmaxb =  1.01*(ri+wT*Nxy);
     yminb = -1.01*(ri+wT*Nxy); 
     ymaxb =  1.01*(ri+wT*Nxy);   
-    zminb = (h30*N*2*pi)/2;
-    zmaxb = (h30*N*2*pi)/2;  
+    zminb = zEnd/2;
+    zmaxb = zEnd/2;  
     Ns = [Nx,Ny,Nz];
     bBox  = [xminb,yminb,zminb; xmaxb,ymaxb,zmaxb];
     %[X,Y,Z,BX,BY,BZ] = CalcBSLOW(I,S,bBox,Ns);

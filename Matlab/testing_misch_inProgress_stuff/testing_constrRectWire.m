@@ -22,7 +22,7 @@ numSeg = 50;
 gap  = 0;
 zEnd = h30*N*2*pi;
 %
-[sx,sy,sz] = constrRectWire_(h30,W,L,wT,numSeg,N,Nxy,O,gap);
+[sx,sy,sz] = constrRectWire(h30,W,L,wT,numSeg,N,Nxy,O,gap);
 H = plot3(sx,sy,sz,'.-');
 xlabel('x'); ylabel('y'); zlabel('z'); grid on;
 
@@ -33,8 +33,8 @@ sx=[]; sy=[]; % initialize final x and y 1-D arrays
     xf = linspace( W/2,  W/2, armSize)';
     yf = linspace( -L/2, L/2, armSize)';
 %---------------------- front left arm -----------------------------------%
-    xfl = linspace(W/2, W/2, armSize)';
-    yfl = linspace(gap, L/2, armSize)';
+    xfl = linspace(W/2, W/2, floor(armSize/2))';
+    yfl = linspace(gap, L/2, floor(armSize/2))';
 %-------------------------- left arm -------------------------------------%
     xl = linspace( W/2, -W/2, armSize)';
     yl = linspace( L/2,  L/2, armSize)';
@@ -45,8 +45,8 @@ sx=[]; sy=[]; % initialize final x and y 1-D arrays
     xr = linspace(-W/2,  W/2, armSize)';
     yr = linspace(-L/2, -L/2, armSize)';
 %-------------------- front right arm ------------------------------------%
-    xfr = linspace( W/2, W/2, armSize)';
-    yfr = linspace(-L/2, gap, armSize)';
+    xfr = linspace( W/2, W/2, floor(armSize/2))';
+    yfr = linspace(-L/2, gap, floor(armSize/2))';
 %---------------construct multi-turn rectangle coil-----------------------%
     for n=1:N
         % first iteration

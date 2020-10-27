@@ -1,7 +1,8 @@
 
 function [xS,yS,zS] = constrRectWire(h,W0,L0,wT,numSeg,N,Nxy,O,gap)
 %-----------------------initialize variables -----------------------------%    
-    xS=[]; yS=[]; zS=[]; zEnd = h*N*2*pi*wT;
+    xS=[]; yS=[]; zS=[]; 
+    zEnd = h*N*2*pi;
 %=========================================================================%
 %======================= construct multi-coil ============================%   
 %=========================================================================%
@@ -25,7 +26,6 @@ function [xS,yS,zS] = constrRectWire(h,W0,L0,wT,numSeg,N,Nxy,O,gap)
                 L = L0 + (nxy-1)*(2*wT);
                 [sx,sy] = ccwRectWire(W,L,numSeg,N,gap);
                 sz = linspace(zEnd,0,numel(sx))';
-                %sz = linspace(0,zEnd,numel(sx))';
                 xS = [xS;sx];
                 yS = [yS;sy];
                 zS = [zS;sz];
@@ -76,38 +76,38 @@ end % END FUNCTION constrRectWire_
 
 function [sx,sy] = cwRectWire(W,L,numSeg,N,gap)
 %--------------------set up initial variables ----------------------------%  
-    %gap  = wT/2;
-    %zEnd = h*N*2*pi;  % final point along the z-direction
-    %armSize = floor((numSeg/4)/N); % number of points along each arm
+    zEnd = h*N*w*pi;
+    sep_xy = 2.2; 
+    sep_z  = 0.25;
     armSize = floor(numSeg/4); % number of points along each arm
     sx=[]; sy=[]; % initialize final x and y 1-D arrays
 %-------------------------- front arm ------------------------------------%
     xf = linspace( W/2,  W/2, armSize)';
-    xf = xf(2:end);     % avoid double counting the edges
     yf = linspace( L/2, -L/2, armSize)';
+    xf = xf(2:end);     % avoid double counting the edges
     yf = yf(2:end);     % avoid double counting the edges
 %---------------------- front right arm ----------------------------------%
-    xfr = linspace( W/2,  W/2, floor(armSize/2))';
+    xfr = linspace( W/2,  W/2,  floor(armSize/2))';
     yfr = linspace(-gap, -L/2 , floor(armSize/2))';
 %-------------------------- right arm ------------------------------------%
-    xr = linspace( W/2, -W/2, armSize)';
-    xr = xr(2:end);     % avoid double counting the edges
+    xr = linspace( W/2, -W/2, armSize)';    
     yr = linspace(-L/2, -L/2, armSize)';    
+    xr = xr(2:end);     % avoid double counting the edges
     yr = yr(2:end);     % avoid double counting the edges
 %-------------------------- back arm -------------------------------------%
     xb = linspace(-W/2, -W/2, armSize)';
-    xb = xb(2:end);     % avoid double counting the edges
     yb = linspace(-L/2,  L/2, armSize)';   
+    xb = xb(2:end);     % avoid double counting the edges
     yb = yb(2:end);     % avoid double counting the edges
 %-------------------------- left arm -------------------------------------%
     xl = linspace(-W/2, W/2, armSize)';
-    xl = xl(2:end);     % avoid double counting the edges
     yl = linspace( L/2, L/2, armSize)';
+    xl = xl(2:end);     % avoid double counting the edges
     yl = yl(2:end);     % avoid double counting the edges
 %-------------------- front left arm -------------------------------------%
     xfl = linspace( W/2,  W/2, floor(armSize/2))';
-    xfl = xfl(2:end);       % avoid double counting the edges
     yfl = linspace( L/2,  gap, floor(armSize/2))';    
+    xfl = xfl(2:end);       % avoid double counting the edges
     yfl = yfl(2:end);       % avoid double counting the edges
 %---------------construct multi-turn rectangle coil-----------------------%
     for n=1:N
@@ -139,38 +139,39 @@ end
 %=========================  ccwRectWire  =================================%   
 %=========================================================================%
 function [sx,sy] = ccwRectWire(W,L,numSeg,N,gap)
-    %gap  = wT/2;
-    %zEnd = h30*N*2*pi;  % final point along the z-direction
+    zEnd = h*N*w*pi;
+    sep_xy = 2.2; 
+    sep_z  = 0.25;
     %armSize = floor((numSeg/4)/N); % number of points along each arm
     armSize = floor(numSeg/4); % number of points along each arm
     sx=[]; sy=[]; % initialize final x and y 1-D arrays
 %-------------------------- front arm ------------------------------------%
     xf = linspace( W/2,  W/2, armSize)';
-    xf = xf(2:end);     % avoid double counting the edges
     yf = linspace( -L/2, L/2, armSize)';
+    xf = xf(2:end);     % avoid double counting the edges
     yf = yf(2:end);     % avoid double counting the edges
 %---------------------- front left arm -----------------------------------%
-    xfl = linspace(W/2, W/2, armSize)';
-    yfl = linspace(gap, L/2, armSize)';
+    xfl = linspace(W/2, W/2, floor(armSize/2))';
+    yfl = linspace(gap, L/2, floor(armSize/2))';
 %-------------------------- left arm -------------------------------------%
     xl = linspace( W/2, -W/2, armSize)';
-    xl = xl(2:end);     % avoid double counting the edges
     yl = linspace( L/2,  L/2, armSize)';
+    xl = xl(2:end);     % avoid double counting the edges
     yl = yl(2:end);     % avoid double counting the edges
 %-------------------------- back arm -------------------------------------%
     xb = linspace(-W/2, -W/2, armSize)';
-    xb = xb(2:end);     % avoid double counting the edges
     yb = linspace( L/2, -L/2, armSize)';
+    xb = xb(2:end);     % avoid double counting the edges
     yb = yb(2:end);     % avoid double counting the edges
 %-------------------------- right arm ------------------------------------%
     xr = linspace(-W/2,  W/2, armSize)';
-    xr = xr(2:end);     % avoid double counting the edges
     yr = linspace(-L/2, -L/2, armSize)';
+    xr = xr(2:end);     % avoid double counting the edges
     yr = yr(2:end);     % avoid double counting the edges
 %-------------------- front right arm ------------------------------------%
-    xfr = linspace( W/2, W/2, armSize)';
+    xfr = linspace( W/2, W/2, floor(armSize/2))';
+    yfr = linspace(-L/2, gap, floor(armSize/2))';
     xfr = xfr(2:end);   % avoid double counting the edges
-    yfr = linspace(-L/2, gap, armSize)';
     yfr = yfr(2:end);   % avoid double counting the edges
 %---------------construct multi-turn rectangle coil-----------------------%
     for n=1:N
