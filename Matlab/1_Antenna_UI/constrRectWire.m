@@ -76,7 +76,7 @@ end % END FUNCTION constrRectWire_
 
 function [sx,sy] = cwRectWire(W,L,numSeg,N,gap)
 %--------------------set up initial variables ----------------------------%  
-    zEnd = h*N*w*pi;
+    %zEnd = h*N*w*pi;
     sep_xy = 2.2; 
     sep_z  = 0.25;
     armSize = floor(numSeg/4); % number of points along each arm
@@ -139,7 +139,7 @@ end
 %=========================  ccwRectWire  =================================%   
 %=========================================================================%
 function [sx,sy] = ccwRectWire(W,L,numSeg,N,gap)
-    zEnd = h*N*w*pi;
+    %zEnd = h*N*w*pi;
     sep_xy = 2.2; 
     sep_z  = 0.25;
     %armSize = floor((numSeg/4)/N); % number of points along each arm

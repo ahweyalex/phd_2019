@@ -710,7 +710,7 @@ def ThickenWire(fnList):
 #                     FUNCTION NAME: MAIN
 ############################################################################
 O   = 0 
-Nxy = 3
+Nxy = 2
 N   = 3
 wT0 = 0.2546
 wT  = str(wT0) + "mm"
