@@ -70,7 +70,7 @@
 % UNITS: [H]  ARRAY: 1x1 TYPE: double 
 %
 %function [L11] = selfInductance_BFields(ri,ra,I,X,Y,BFnorm,G)
-function [L11] = selfInductance_BFields(wT,ri,ra,I,X,Y,BFnorm,N1,N,G)
+function [L11] = selfInductance_BFields_2(wT,ri,ra,I,X,Y,BFnorm,N1,N,G)
     L11 = 0;
     u0 = 4*pi*10^-7;        % Permeability of free space
     uc = 1.256629*10^-6;    % Permeability of copper 
@@ -87,13 +87,7 @@ function [L11] = selfInductance_BFields(wT,ri,ra,I,X,Y,BFnorm,N1,N,G)
             x2 =  ri/2;
             y1 = -ra/2;
             y2 =  ra/2;
-            R = (X>=x1 & X<=x2 & Y>=y1 & Y<=y2);
-            
-%             figure(1)
-%             imagesc(xa,ya,R.')
-%             axis equal tight;
-%             colorbar;
-          
+            R = (X>=x1 & X<=x2 & Y>=y1 & Y<=y2);   
         elseif(N1==1)
             x1 = -ri/2+wT/2;
             x2 =  ri/2-wT/2;
@@ -125,14 +119,20 @@ function [L11] = selfInductance_BFields(wT,ri,ra,I,X,Y,BFnorm,N1,N,G)
             y2 =  ra/2-wT/75;
             R = (X>=x1 & X<=x2 & Y>=y1 & Y<=y2);  
         end
-        [r,c] = find(R);
-        for n=1:numel(r)
-            BF(n) = BFnorm(r(n),c(n))';
+        %----
+        %[r,c] = find(R);
+        [idx] = find(R);
+        for zn=1:N
+            BFn = squeeze(BFnorm(:,:,zn));
+            BF(:,:,zn) = BFn(idx);
         end
-        bz    = BF.*A; 
-        sumB  = sum(sum(bz,1),2);   % sum of Bz
+        bz   = BF.*A; 
+        sumB  = sum(sum(sum(bz,1),2),3);
         phi11 = abs(sumB);          % phi_11
-        L11   = (phi11/I) * N;      % self ind
+        L11   = (phi11/I);      % self ind
+%        L11   = (phi11/I) * N;      % self ind
+
+
 %--------------------------ellipse----------------------------------------%       
     elseif(G=='c' || G=='C' || G=='e' || G=='E')
             if(N1==0)

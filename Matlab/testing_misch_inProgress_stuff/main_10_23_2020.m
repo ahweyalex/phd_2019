@@ -15,7 +15,7 @@ ri   = W;
 c    = 1;
 h30  = wT30*0.35;
 h40  = wT40*0.35;
-Nxy  = 1;
+Nxy  = 2;
 N    = 1;
 gap = 0;
 zEnd = h*N*2*pi;
@@ -52,6 +52,8 @@ tic;
  
 %NN = 980:980;
 %for ns= 980:980
+NN = 980;
+for ns=980:980
    % resolution
     Nx = ns;
     Ny = Nx;
@@ -74,35 +76,35 @@ tic;
     Y2 = squeeze(Y(:,:,1));   
 %------------------------------ CIRCLE    
     N1 = 0;
-    L11_squ_r5mm_30AWG_Nxy1_N1(nn) = selfInductance_BFields(wT,ri,ra,I,X2,Y2,BZ,N1,N,G);
+    L11_squ_r5mm_30AWG_Nxy2_N1(nn) = selfInductance_BFields(wT,ri,ra,I,X2,Y2,BZ,N1,N,G);
     %L11_circ_r5mm_30AWG_Nxy1_N3(nn) = selfInductance_BFields(wT,ri,ra,I,X2,Y2,BZ,N1,N,G);
     %L11_circ_r5mm_40AWG(nn) = selfInductance_BFields(wT40,ri,ra,I,X2,Y2,BZ,N1,N,G);
     
     N1 = 1;
-    L11_wT2_squ_r5mm_30AWG_Nxy1_N1(nn) = selfInductance_BFields(wT,ri,ra,I,X2,Y2,BZ,N1,N,G);
+    L11_wT2_squ_r5mm_30AWG_Nxy2_N1(nn) = selfInductance_BFields(wT,ri,ra,I,X2,Y2,BZ,N1,N,G);
     %L11_wT2_circ_r5mm_30AWG_Nxy1_N3(nn) = selfInductance_BFields(wT,ri,ra,I,X2,Y2,BZ,N1,N,G);
     %L11_wT2_circ_r5mm_40AWG(nn) = selfInductance_BFields(wT40,ri,ra,I,X2,Y2,BZ,N1,N,G);
     
     N1 = 2;
-    L11_wT4_squ_r5mm_30AWG_Nxy1_N1(nn) = selfInductance_BFields(wT,ri,ra,I,X2,Y2,BZ,N1,N,G);
+    L11_wT4_squ_r5mm_30AWG_Nxy2_N1(nn) = selfInductance_BFields(wT,ri,ra,I,X2,Y2,BZ,N1,N,G);
     %L11_wT4_circ_r5mm_30AWG_Nxy1_N3(nn) = selfInductance_BFields(wT,ri,ra,I,X2,Y2,BZ,N1,N,G);
     %L11_wT4_circ_r5mm_40AWG(nn) = selfInductance_BFields(wT40,ri,ra,I,X2,Y2,BZ,N1,N,G);
     
     N1 = 3;
-    L11_wT100_squ_r5mm_30AWG_Nxy1_N1(nn) = selfInductance_BFields(wT,ri,ra,I,X2,Y2,BZ,N1,N,G);  
+    L11_wT100_squ_r5mm_30AWG_Nxy2_N1(nn) = selfInductance_BFields(wT,ri,ra,I,X2,Y2,BZ,N1,N,G);  
     %L11_wT100_circ_r5mm_30AWG_Nxy1_N3(nn) = selfInductance_BFields(wT,ri,ra,I,X2,Y2,BZ,N1,N,G);   
     %L11_wT100_circ_r5mm_40AWG(nn) = selfInductance_BFields(wT40,ri,ra,I,X2,Y2,BZ,N1,N,G);   
     
     N1 = 4;
-    L11_wT50_squ_r5mm_30AWG_Nxy1_N1(nn) = selfInductance_BFields(wT,ri,ra,I,X2,Y2,BZ,N1,N,G); 
+    L11_wT50_squ_r5mm_30AWG_Nxy2_N1(nn) = selfInductance_BFields(wT,ri,ra,I,X2,Y2,BZ,N1,N,G); 
     %L11_wT50_circ_r5mm_30AWG_Nxy1_N3(nn) = selfInductance_BFields(wT,ri,ra,I,X2,Y2,BZ,N1,N,G);    
     %L11_wT50_circ_r5mm_40AWG(nn) = selfInductance_BFields(wT40,ri,ra,I,X2,Y2,BZ,N1,N,G);    
     
     N1 = 5;
-    L11_wT75_squ_r5mm_30AWG_Nxy1_N1(nn) = selfInductance_BFields(wT,ri,ra,I,X2,Y2,BZ,N1,N,G); 
+    L11_wT75_squ_r5mm_30AWG_Nxy2_N1(nn) = selfInductance_BFields(wT,ri,ra,I,X2,Y2,BZ,N1,N,G); 
     %L11_wT75_circ_r5mm_30AWG_Nxy1_N3(nn) = selfInductance_BFields(wT,ri,ra,I,X2,Y2,BZ,N1,N,G); 
     %L11_wT75_circ_r5mm_40AWG(nn) = selfInductance_BFields(wT40,ri,ra,I,X2,Y2,BZ,N1,N,G); 
-
+   
 %{
 % %   RECT
 %     N1 = 0;

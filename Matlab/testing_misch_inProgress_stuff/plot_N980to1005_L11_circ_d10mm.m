@@ -1,9 +1,9 @@
-clear all; close all; clc;
+%clear all; close all; clc;
 
 % DATE: 10-21-2020
 
 % Nxy1 N1
-%
+%{
 load('L11_circ_r5mm_30AWG_Nxy1_N1_matlab.mat');
 
 figure(1)
@@ -141,8 +141,8 @@ suptitle('Circle d:10mm N:3 Nxy:1');
 %}
 
 % Nxy2 N1
-%{
-load('L11_circ_r5mm_30AWG_Nxy2_N1_matlab.mat');
+%
+%load('L11_circ_r5mm_30AWG_Nxy2_N1_matlab.mat');
 
 figure(1)
 title('t')
