@@ -12,8 +12,12 @@ function [xS,yS,zS] = constrRectWire(h,W0,L0,wT,numSeg,N,Nxy,O,gap)
         for nxy=1:Nxy
             % z begins at 0 and goes up to zEnd
             if(mod(nxy,2)==1)
-                W = W0 + (nxy-1)*(2*wT);
-                L = L0 + (nxy-1)*(2*wT);
+                %W = W0 + (nxy-1)*(2*wT); % old
+                %L = L0 + (nxy-1)*(2*wT); % old
+                
+                W = W0 + wT*((nxy^2 + nxy)/2);
+                L = L0 + wT*((nxy^2 + nxy)/2);
+                %numSeg = numSeg*nxy;
                 [sx,sy] = ccwRectWire(W,L,numSeg,N,gap);
                 sz = linspace(0,zEnd,numel(sx))';
                 xS = [xS;sx];
@@ -22,8 +26,11 @@ function [xS,yS,zS] = constrRectWire(h,W0,L0,wT,numSeg,N,Nxy,O,gap)
                 sx=[];sy=[];sz=[];           
             % z begins at zEnd and goes down to 0
             elseif(mod(nxy,2)==0)
-                W = W0 + (nxy-1)*(2*wT);
-                L = L0 + (nxy-1)*(2*wT);
+                %W = W0 + (nxy-1)*(2*wT);
+                %L = L0 + (nxy-1)*(2*wT);
+                W = W0 + wT*((nxy^2 + nxy)/2);
+                L = L0 + wT*((nxy^2 + nxy)/2);   
+                %numSeg = numSeg*nxy;
                 [sx,sy] = ccwRectWire(W,L,numSeg,N,gap);
                 sz = linspace(zEnd,0,numel(sx))';
                 xS = [xS;sx];
@@ -31,7 +38,7 @@ function [xS,yS,zS] = constrRectWire(h,W0,L0,wT,numSeg,N,Nxy,O,gap)
                 zS = [zS;sz];
                 sx=[];sy=[];sz=[];
             end
-            
+          t = 't';  
         end %END: FOR LOOP
         
 %---------------most inner coil begins clock-wise (cw)--------------------%
@@ -39,8 +46,10 @@ function [xS,yS,zS] = constrRectWire(h,W0,L0,wT,numSeg,N,Nxy,O,gap)
       for nxy=1:Nxy
         % z begins at 0 and goes up to zEnd
         if(mod(nxy,2)==1)
-            W = W0 + (nxy-1)*(2*wT);
-            L = L0 + (nxy-1)*(2*wT);
+            %W = W0 + (nxy-1)*(2*wT);
+            %L = L0 + (nxy-1)*(2*wT);
+            W = W0 + (1/2)*wT*((nxy^2 + nxy)/2);
+            L = L0 + (1/2)*wT*((nxy^2 + nxy)/2);            
             [sx,sy] = cwRectWire(W,L,numSeg,N,gap);
             sz = linspace(0,zEnd,numel(sx))';
             xS = [xS;sx];
@@ -49,8 +58,10 @@ function [xS,yS,zS] = constrRectWire(h,W0,L0,wT,numSeg,N,Nxy,O,gap)
             sx=[];sy=[];sz=[];
         % z begins at zEnd and goes down to 0
         elseif(mod(nxy,2)==0)
-            W = W0 + (nxy-1)*(2*wT);
-            L = L0 + (nxy-1)*(2*wT);
+            %W = W0 + (nxy-1)*(2*wT);
+            %L = L0 + (nxy-1)*(2*wT);
+            W = W0 + (1/2)*wT*((nxy^2 + nxy)/2);
+            L = L0 + (1/2)*wT*((nxy^2 + nxy)/2);            
             [sx,sy] = cwRectWire(W,L,numSeg,N,gap);
             sz = linspace(zEnd,0,numel(sx))';
             xS = [xS;sx];
@@ -62,7 +73,19 @@ function [xS,yS,zS] = constrRectWire(h,W0,L0,wT,numSeg,N,Nxy,O,gap)
       end %END: FOR LOOP
       
     end % END: Choosing starting orientation 
-    
+%     % feed lines
+%     LN   = 20;
+%     outY = linspace(0,0,LN)';
+%     outX = linspace(W0/2,2*(W0/2),LN)';
+%     outZ = linspace(zEnd,zEnd,LN)';
+%     inY  = linspace(0,0,LN)';
+%     inX  = linspace(W0/2,2*(W0/2),LN)';
+%     inZ  = linspace(0,0,LN)';
+%     
+%     xS = [inX;xS;outX];
+%     yS = [inY;yS;outY];
+%     zS = [inZ;zS;outZ];
+%     %
 end % END FUNCTION constrRectWire_
 %=========================================================================%
 %===================END: construct multi-coil ============================%   

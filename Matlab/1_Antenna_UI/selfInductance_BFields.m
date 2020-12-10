@@ -88,6 +88,12 @@ function [L11] = selfInductance_BFields(wT,ri,ra,I,X,Y,BFnorm,N1,N,G)
             y1 = -ra/2;
             y2 =  ra/2;
             R = (X>=x1 & X<=x2 & Y>=y1 & Y<=y2);
+            
+%             figure(1)
+%             imagesc(xa,ya,R.')
+%             axis equal tight;
+%             colorbar;
+          
         elseif(N1==1)
             x1 = -ri/2+wT/2;
             x2 =  ri/2-wT/2;
