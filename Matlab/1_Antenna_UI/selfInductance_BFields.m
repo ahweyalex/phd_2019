@@ -75,8 +75,8 @@ function [L11] = selfInductance_BFields(wT,ri,ra,I,X,Y,BFnorm,N1,N,G)
     u0 = 4*pi*10^-7;        % Permeability of free space
     uc = 1.256629*10^-6;    % Permeability of copper 
     u  = u0*uc;
-    xdel  = X(1,1) - X(1,2);  % del x
-    ydel  = Y(1,1) - Y(2,1);  % del y
+    xdel  = abs(X(1,1) - X(1,2));  % del x
+    ydel  = abs(Y(1,1) - Y(2,1));  % del y
     A     = xdel*ydel;        % Area (ds)
 %-------------------------------rectangle---------------------------------%
 %    switch G
@@ -125,53 +125,59 @@ function [L11] = selfInductance_BFields(wT,ri,ra,I,X,Y,BFnorm,N1,N,G)
         end
         bz    = BF.*A; 
         sumB  = sum(sum(bz,1),2);   % sum of Bz
-        phi11 = abs(sumB);          % phi_11
-        L11   = (phi11/I) * N;      % self ind
+        phi_11 = abs(sumB);          % phi_11
+        L11   = (phi_11/I) * N;      % self ind
 %--------------------------ellipse----------------------------------------%       
     elseif(G=='c' || G=='C' || G=='e' || G=='E')
+        %ra = 15e-3;   % y-axis
+        %ri = 10e-3;   % x-axis
             if(N1==0)
                 rx = ri;
                 ry = ra; 
-                E  = (X/rx).^2 + (Y/ry).^2 <= 1;
+                %E  = (X./rx).^2 + (Y./ry).^2 <= 1;
+                E  = (X./rx).^2 + (Y./ry).^2 <= 1;
 %                 figure
 %                 imagesc(rx,ry,E.');
 %                 title('at ri');
             elseif(N1==1)
                 rx = ri-wT/2;
                 ry = ra-wT/2;
-                E  = (X/rx).^2 + (Y/ry).^2 <= 1;
+                E  = (X./rx).^2 + (Y./ry).^2 <= 1;
 %                 figure
 %                 imagesc(rx,ry,E.');
 %                 title('wT/2')
             elseif(N1==2)
                 rx = ri-wT/4;
                 ry = ra-wT/4;
-                E  = (X/rx).^2 + (Y/ry).^2 <= 1;
+                E  = (X./rx).^2 + (Y./ry).^2 <= 1;
 %                 figure
 %                 imagesc(rx,ry,E.');
 %                 title('wT/2')
-
             elseif(N1==3)
                 rx = ri-wT/100;
                 ry = ra-wT/100;
-                E  = (X/rx).^2 + (Y/ry).^2 <= 1;     
+                E  = (X./rx).^2 + (Y./ry).^2 <= 1;     
             elseif(N1==4)
                 rx = ri-wT/50;
                 ry = ra-wT/50;
-                E  = (X/rx).^2 + (Y/ry).^2 <= 1;         
+                E  = (X./rx).^2 + (Y./ry).^2 <= 1;         
             elseif(N1==5)
                 rx = ri-wT/75;
                 ry = ra-wT/75;
-                E  = (X/rx).^2 + (Y/ry).^2 <= 1;  
+                E  = (X./rx).^2 + (Y./ry).^2 <= 1;  
             end
-            %E  = (X/rx).^2 + (Y/ry).^2 <= 1;
+            %E  = (X./rx).^2 + (Y./ry).^2 <= 1;
             [r,c] = find(E);
-            for n=1:numel(r)
-                BF(n) = BFnorm(r(n),c(n))';
-            end
+            [idx] = find(E);
+            BF = BFnorm(idx)';           
+            %for n=1:numel(r)
+            %    BF(n) = BFnorm(r(n),c(n))';
+            %end
+            
             bz    = BF.*A;
-            sumB  = sum(sum(bz,1),2);   % sum of Bz
-            phi11 = abs(sumB);          % phi_11
-            L11   = (phi11/I) * N;      % self ind           
+            sumB  = sum(sum(sum(bz,1),2),3);   % sum of Bz
+            phi_11 = abs(sumB);          % phi_11
+            L11   = (phi_11/I) * N;      % self ind         
+            t = 't';
     end
 end

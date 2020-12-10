@@ -138,7 +138,7 @@ suptitle('Rect ri10mm ra15mm Nxy:1 N:3');
 
 
 % Nxy2 N1
-%{
+%
 load('L11_rec_ri10_ra15_30AWG_Nxy2_N1');
 
 figure(1)

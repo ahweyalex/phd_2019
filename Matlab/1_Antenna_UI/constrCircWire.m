@@ -59,12 +59,19 @@ function [xS0,yS0,zS0] = constrCircWire(h,ra,ri,numSeg,N,O,wT,Nxy)
     %fin = N*(2*pi) + helixSTEP/2;
     fin = N*(2*pi);
     
+    % new
+    zEnd = h*N*2*pi;
+    %fin = zEnd;
+    
     %cst_xxx = start:helixSTEP:fin;
     % phi=numSeg;
     cst_xxx = linspace(start,fin,numSeg);
     xS0=[];yS0=[];zS0=[];
-    z0 = linspace(0,N*2*pi*h,numSeg);
+    z0 = linspace(0,zEnd,numSeg);
    %
+   % iterations 1st, 2nd, 3rd, 4th
+   coil_sep = [0, 3.2, 5.5, 7.6];
+   
    if(O==1) % clock wise
         for nx=1:Nxy
             % checking: 1st iteration 
@@ -76,7 +83,7 @@ function [xS0,yS0,zS0] = constrCircWire(h,ra,ri,numSeg,N,O,wT,Nxy)
                 yS0 = [yS0,(ri+txy).*cos(cst_xxx)];
                 %zS0 = [zS0,((h).*cst_xxx)./(2*pi*N)];
                 zS0 = [zS0,z0];
-                
+               
                 %zSn = [zSn,zS0];
                 % connect the coils 
 %                 if(nx~=Nxy)
@@ -94,6 +101,7 @@ function [xS0,yS0,zS0] = constrCircWire(h,ra,ri,numSeg,N,O,wT,Nxy)
                 yS0 = [yS0, (ri+txy).*cos(cst_xxx)];
                 %zS0 = [zS0, ((h).*cst_xxx)./(2*pi*N)];
                 zS0 = [zS0,z0];
+                
                 %zSn = [zSn,zS0];
                 % connect the coils 
 %                 if(nx~=Nxy)
@@ -107,18 +115,25 @@ function [xS0,yS0,zS0] = constrCircWire(h,ra,ri,numSeg,N,O,wT,Nxy)
 %                 end
                 %a='1';
             end % END: IF
+           z0 = fliplr(z0); 
         end %END: FOR
         
-       % counter clock wise 
+% counter clock wise 
         else 
             for nx=1:Nxy
                 t   = wT/2;
                 txy = (3/2)*wT*(nx-1);
                 if(mod(nx,2)~=0)
-                    xS0 = [xS0,-(ra+txy).*sin(cst_xxx)];
-                    yS0 = [yS0,(ri+txy).*cos(cst_xxx)];
+                    % older
+                    %xS0 = [xS0,-(ra+txy).*sin(cst_xxx)];
+                    %yS0 = [yS0, (ri+txy).*cos(cst_xxx)];
+                    % "newer"
+                    xS0 = [xS0,-(ra+wT*coil_sep(nx)).*sin(cst_xxx)];
+                    yS0 = [yS0, (ri+wT*coil_sep(nx)).*cos(cst_xxx)];
+                    
                     %zS0 = [zS0,((h)*cst_xxx)./(2*pi*N)];
                     zS0 = [zS0,z0];
+                    
 %                     if(nx~=Nxy)
 %                         LN  = 4;
 %                         xC  = linspace(0,0,LN);
@@ -129,10 +144,16 @@ function [xS0,yS0,zS0] = constrCircWire(h,ra,ri,numSeg,N,O,wT,Nxy)
 %                         zS0 = [zS0,zC];
 %                     end
                 else
-                    xS0 = [xS0,(ra+txy).*sin(cst_xxx)];
-                    yS0 = [yS0,(ri+txy).*cos(cst_xxx)];
+                    % older
+                    %xS0 = [xS0,-(ra+txy).*sin(cst_xxx)];
+                    %yS0 = [yS0, (ri+txy).*cos(cst_xxx)];
+                    % "newer"
+                    xS0 = [xS0,-(ra+wT*coil_sep(nx)).*sin(cst_xxx)];
+                    yS0 = [yS0, (ri+wT*coil_sep(nx)).*cos(cst_xxx)];
+                   
                     %zS0 = [zS0,((h)*cst_xxx)./(2*pi*N)]; 
                     zS0 = [zS0,z0];
+                   
 %                     if(nx~=Nxy)
 %                         LN  = 4;
 %                         xC  = linspace(0,0,LN);
@@ -143,16 +164,17 @@ function [xS0,yS0,zS0] = constrCircWire(h,ra,ri,numSeg,N,O,wT,Nxy)
 %                         zS0 = [zS0,zC];
 %                     end
                 end % END: IF
+                z0 = fliplr(z0);
             end % END: FOR        
     end % END: 
     
     %% add feed lines
-    %zEnd = h*N*2*pi;
-    %
+    zEnd = h*N*2*pi;
+%{
     LN = 20;
     outX = linspace(0,0,LN);
     outY = linspace(ri,2*ri,LN); 
-    outZ = linspace(zS0(end),zS0(end),LN);
+    outZ = linspace(zEnd,zEnd,LN);
     inX  = linspace(0,0,LN);
     inY  = linspace(ri,2*ri,LN);
     inZ  = linspace(0,0,LN);
@@ -164,7 +186,7 @@ function [xS0,yS0,zS0] = constrCircWire(h,ra,ri,numSeg,N,O,wT,Nxy)
     xS0 = xS0';
     yS0 = yS0';
     zS0 = zS0';
-%end % end of constrWireAnt_10_25_2018
+%end 
 %}
 
 %{
