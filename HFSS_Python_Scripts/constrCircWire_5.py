@@ -12,7 +12,7 @@ oEditor = oDesign.SetActiveEditor("3D Modeler")
 # define parameters within python script
 ############################################################################
 # current code needs nxySize to be equal or greater than 3
-nxySize = 1
+nxySize = 3
 Nxy = []
 # starts at 0, step size is 2
 for x in range(0,(nxySize)*2,2):
@@ -24,7 +24,7 @@ for x in range(0,(nxySize)*2,2):
 wT = "0.2546mm"
 ra = "5mm"
 ri = "5mm"
-N  = "1"
+N  = "2"
 numSeg = "200"
 O = 0
 u = "mm"
@@ -726,6 +726,7 @@ for n in range(nxySize):
 		eqC = eqC + cStr + str(n) + c
 		poL = poL + pStr + str(n) + c
 selNames = eqC + poL
+
 # unite lines into one
 oEditor.Unite(
 	[
