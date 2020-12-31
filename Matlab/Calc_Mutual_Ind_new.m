@@ -31,7 +31,7 @@
 %     
 %   X
 %   Description: spatial points of the B-Fields along the x-coordinates 
-%   Units: [T]
+%   Units: [m]
 %   DIM: [Ny by Nx by Nz]
 %
 %   Y
@@ -98,7 +98,9 @@
 %=========================================================================%
 
 %function [M12] = Calc_Mutual_Ind_new(BX,BY,BZ,X,Y,Nxy,N,I,tag)
-function [M12] = Calc_Mutual_Ind_new(BZ,X,Y,Nxy,N,I,tag)
+function [M12] = Calc_Mutual_Ind_new(B0,tag,I)
+%tag = struct('r',r,'l',l,'N',N,'AZ',AZ,'EL',EL,'Z',Z,...
+%             'xpos',xpos,'ypos',ypos);
 %tag = struct('r',r,'l',l,'N',N,'AZ',AZ,'EL',EL,'Z',Z,...
 %             'xpos',xpos,'ypos',ypos);
 
@@ -121,7 +123,7 @@ function [M12] = Calc_Mutual_Ind_new(BZ,X,Y,Nxy,N,I,tag)
 %-------------------locate bfields within location of tag-----------------%
     % E is matrix compose of 0s and 1s. The 1s indicate the tag's location
     % and 0s indicated tag's is not located. 
-    E = ( ((X+tag.xpos)./tag.r)^.2 + ((Y+tag.ypos)./tag.r)^.2 ) <=1;
+    E = ( ((X+tag.xpos)./tag.rx)^.2 + ((Y+tag.ypos)./tag.ry)^.2 ) <=1;
     [idx] = find(E);    % finds the indices of tag's spatial location
     % Find b-fields related to tag's spatial location
     %BFx = BX(idx)';

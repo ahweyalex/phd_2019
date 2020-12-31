@@ -1,7 +1,6 @@
 % MAIN AS OF
-% 12-12-2020
+% 12-28-2020
 %
-
 clear all; close all; clc;
 %%
 % inputs 
@@ -17,18 +16,17 @@ ra   = 15e-3;   % y-axis
 ri   = 10e-3;   % x-axis
 L    = ra;      % y-axis
 W    = ri;      % x-axis
-Nxy  = 4;
-N    = 4;
+Nxy  = 1;
+N    = 3;
 %--------------------%
 c    = 1;
 h30  = wT30*0.35;
-h40  = wT40*0.35;
 numSeg = 200; 
 zEnd = h30*N*2*pi;
 gap = 0;
 
-%[sx30,sy30,sz30] = constrCircWire(h30,ra,ri,numSeg,N,O,wT30,Nxy);G = 'c';
-[sx30,sy30,sz30] = constrRectWire(h30,W,L,wT30,numSeg,N,Nxy,O,gap);G = 'r';
+[sx30,sy30,sz30] = constrCircWire(h30,ra,ri,numSeg,N,O,wT30,Nxy);G = 'c';
+%[sx30,sy30,sz30] = constrRectWire(h30,W,L,wT30,numSeg,N,Nxy,O,gap);G = 'r';
 
 figure
 H = plot3(sx30/1e-3,sy30/1e-3,sz30/1e-3,'.-');
@@ -67,7 +65,6 @@ bBox  = [xminb,yminb,zminb; xmaxb,ymaxb,zmaxb];
 [X,Y,Z,BX,BY,BZ] = CalcBSLOW(I,S30,bBox,Ns);
 %[X,Y,Z,BX,BY,BZ] = CalcFAST(I,S30,bBox,Ns);   
 
-
 %% 
 %--------- self indutance ---------%
 BZ = squeeze(BZ(:,:,1));
@@ -83,14 +80,7 @@ elseif(G=='c')
 end
 N1 = 1;
 L11_wT2_ri10_ra15_30AWG(nn) = ... 
-                        selfInductance_BFields(wT,ri,ra,I,X2,Y2,BZ,N1,N,G);
-N1 = 2;
-L11_wT4_ri10_ra15_30AWG(nn) =....
-                        selfInductance_BFields(wT,ri,ra,I,X2,Y2,BZ,N1,N,G);
-N1 = 4;
-L11_wT50_ri10_ra15_30AWG(nn) =....
-                        selfInductance_BFields(wT,ri,ra,I,X2,Y2,BZ,N1,N,G);
-                    
+                 selfInductance_BFields(wT,ri,ra,I,X2,Y2,BZ,N1,N,G);               
 %% Test Calc_Mutual_Ind_new
 %-------------------------[INPUT PARAMETERS]-------------------------%
 global tag;
@@ -100,7 +90,8 @@ global tag;
 rx   = 15e-3;   % y-axis
 ry   = 10e-3;   % x-axis
 l  = 7e-3;
-N  = 250;
+%N  = 250;
+N = 3;
 AZ = 0;
 EL = 0;
 xpos = 0;
