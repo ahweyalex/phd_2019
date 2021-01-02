@@ -80,15 +80,15 @@ elseif(ra==ri2)
     b = ra;
 end
 % lower bounds
-xminb = -1.01*b; 
-yminb = -1.01*b;
-zminb11 = zEnd/2;   % self-inductance
-zminb12 = zpos;     % mutual-inductance
+xminb = -1.01*b;    % lower x-bound
+yminb = -1.01*b;    % lower y-bound
+zminb11 = zEnd/2;   % lower z-bound (self-inductance)
+zminb12 = zpos;     % lower z-bound (mutual-inductance)
 % upper bounds 
-xmaxb = 1.01*b;
-ymaxb = 1.01*b;
-zmaxb11 = zEnd/2;   % self-inductance
-zminb12 = zpos;     % mutual-inductance
+xmaxb = 1.01*b;     % maximum x-bound
+ymaxb = 1.01*b;     % maximum y-bound
+zmaxb11 = zEnd/2;   % maximum z-bound (self-inductance)
+zminb12 = zpos;     % maximum z-bound (mutual-inductance)
 Ns    = [Nx,Ny,Nz];
 % self-inductance
 bbox11  = [xminb,yminb,zminb11; xmaxb,ymaxb,zmaxb11];
@@ -100,7 +100,7 @@ bbox12  = [xminb,yminb,zminb11; xmaxb,ymaxb,zmaxb12];
 
 %% -----------------------------[COMPUTE]---------------------------------%
 %--------------------------COMPUTE BFIELDS--------------------------------%
-[X11,Y11,Z11,BX11,BY11,BZ11] = CalcBSLOW(I,S30,bBox1,Ns);
+[X11,Y11,Z11,BX11,BY11,BZ11] = CalcBSLOW(I,S30,bBox1,Ns); 
 %[X11,Y11,Z11,BX11,BY11,BZ11] = CalcFAST(I,S30,bBox1,Ns);
 SELF_IND = struct('X11',  X11,'Y11',  Y11,'Z11',  Z11,...
                   'BX11',BX11,'BY11',BY11,'BZ11',BZ11);
@@ -110,15 +110,19 @@ SELF_IND = struct('X11',  X11,'Y11',  Y11,'Z11',  Z11,...
 MULT_IND = struct('X12',  X12,'Y12',  Y12,'Z12',  Z12,...
                   'BX12',BX12,'BY12',BY12,'BZ12',BZ12);
 %---------------------------SELF-INDUCTANCE-------------------------------%
-X2    = squeeze(X11(:,:,1));
-Y2    = squeeze(Y11(:,:,1));
-Bnorm = squeeze(BZ11(:,:,1));
+zn    = 1; % choose which XY-Plane do you want to use 
+X2    = squeeze(X11(:,:,zn));
+Y2    = squeeze(Y11(:,:,zn));
+% BFields normal to a loop 1 is in z-direction, assuming the coils are only
+% upon the xy-plane
+Bnorm = squeeze(BZ11(:,:,zn));  
 SEL   = 0;
 L11 = selfInductance_BFields(wT,ri1,ra1,I,X2,Y2,Bnorm,SEL,N,G);
 %---------------------------MUTUAL-INDUCTANCE-----------------------------%
-X2    = squeeze(X11(:,:,1));
-Y2    = squeeze(Y11(:,:,1));
-Bnorm = squeeze(BZ11(:,:,1));
+zn    = 1; % choose which XY-PLane do you want to use 
+X2    = squeeze(X11(:,:,zn));
+Y2    = squeeze(Y11(:,:,zn));
+Bnorm = squeeze(BZ11(:,:,zn));
 SEL2   = 0;
 M12 = multInductance_BFields(wT,ri1,ra1,I,X2,Y2,Bnorm,SEL,N,G);
 %=========================================================================%

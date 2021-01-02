@@ -1,4 +1,3 @@
-
 clear all; close all; clc;
 % define grid
 Sx = 10;
@@ -95,12 +94,28 @@ colorbar;
 title('object');
 
 %% build a ellipse
+Sx = 10;
+Sy = 10;
+Nx = 100;
+Ny = round(Nx*Sy/Sx);
+%meshgrid
+dx = Sx/Nx;
+dy = Sy/Ny;
+xa = [0.5:Nx-0.5]*dx;       xa = xa-mean(xa);
+ya = [0.5:Ny-0.5]*dy;       ya = ya-mean(ya);
+[Y,X] = meshgrid(ya,xa);
+
 x0 = -2.5;
 y0 = -3; 
 rx = 4;
 ry = 2;
+degrees = pi/180;
+phi     = 0*degrees;
+[THETA,R] = cart2pol(X,Y);
+[X,Y]   = pol2cart(THETA +phi,R);
 E = ((X-x0)/rx).^2 + ((Y-y0)/ry).^2 <= 1;
-subplot(2,2,2);
+%subplot(2,2,2);
+figure
 imagesc(xa,ya,E.');
 axis equal tight;
 colorbar;
