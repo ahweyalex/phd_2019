@@ -15,9 +15,11 @@ Nxy1    = 1;            % number of coils <scalar>
 N       = 3;            % number of turns in z-direction <scalar>
 numSeg  = 200;          % number of points along each coil <scalar>
 gap     = 0;            % gap <scalar> [m]
+h       = wT*0.35;      % height of structure
 zEnd    = N*2*pi*h;     % final z-value 
+ANT1    = struct('NXY',Nxy1,'N',N,'ra',ra1,'ri',ri1);
 %----------------------------INPUTS:LOOP2---------------------------------%
-I2      = 1;           % current <scalar> [A]
+I2      = 1;            % current <scalar> [A]
 ur      = 2.7;          % <scalar> 
 ra2     = 15e-3;        % y-axis <scalar> [m]
 ri2     = 10e-3;        % x-axis <scalar> [m]
@@ -32,9 +34,11 @@ zpos    = 4*zEnd;       % center z-postion of loop 2 <scalar> [m]
 a       = 0;            % yaw   <scalar> [deg] 
 b       = 0;            % pitch <scalar> [deg] 
 g       = 0;            % roll  <scalar> [deg] 
-SEL2     = 'e';          % selector ellipse: 'e' or rect: 'r'
-tag = struct('I',I2,'ur',ur,'rx',ri2,'ry',ra2,'l',l,'Nxy',Nxy2,'N',N2,...
-             'xpos',xpos,'ypos',ypos,'zpos',zpos,...
+SEL2    = 'e';          % selector ellipse: 'e' or rect: 'r'
+TAG = struct('xpos',xpos,'ypos',ypos,'zpos',zpos,...
+             'ri',ri2,'ra',ra2,'l',l,...
+             'NXY',Nxy2,'N',N2,...
+             'ur',ur,...
              'a',a,'b',b,'g',g);
 %--------------------------INPUTS:INDUCTANCE------------------------------%
 % self-inductance
@@ -53,17 +57,19 @@ MULT_IND = struct('X12',  X12,'Y12',  Y12,'Z12',  Z12,...
 %% ----------------------------[CONSTRUCT]--------------------------------%
 %--------------------------CONSTRUCT:LOOP1--------------------------------%
 % construct ellipse multi-coil wire 
-G='c';  % indicator for self or mutual inductance 
-[sx30,sy30,sz30] = constrCircWire(h,ra,ri2,numSeg,N,O,wT,Nxy);
+SEL1='e';  % indicator for ellipse self or mutual inductance 
+[sx30,sy30,sz30] = constrCircWire(h,ra1,ri1,numSeg,N,O,wT,Nxy1);
 % construct rect multi-coil wire 
-%G='r';
+%SEL1='r'; % indicator for rectangle self or mutual inductance 
 %[sx30,sy30,sz30] = constrRectWire(h30,W,L,wT30,numSeg,N,Nxy,O,gap);
+%---------------------------PLOTTING--------------------------------------%
+FS=14;
 figure(1)
 H = plot3(sx30/1e-3,sy30/1e-3,sz30/1e-3,'.-');
 xlabel('x[mm]','FontSize', FS, 'Color', 'g', 'FontWeight', 'bold'); 
 ylabel('y[mm]','FontSize', FS, 'Color', 'r', 'FontWeight', 'bold');
 zlabel('z[mm]','FontSize', FS, 'Color', 'b', 'FontWeight', 'bold');
-title('Rect ri10mm ra15mm N:3 Nxy:1');
+title('Rect ri10mm ra15mm N:3 Nxy:1','FontSize', FS,'FontWeight', 'bold');
 view(45,45); grid on; 
 S30 = [sx30,sy30,sz30]';
 %-----------------------CONSTRUCT:SPATIAL PTS-----------------------------%
@@ -72,74 +78,69 @@ Nx = 1000;  % resolution along x-direction  <scalar> [int]
 Ny = 1000;  % resolution along y-direction  <scalar> [int]
 Nz = 2;     % resolution along z-direction  <scalar> [int]
 % upper/lower bounds based off the largest dim of loop
-if(ri2>ra)
-    b = ri2;
-elseif(ra>ri2)
-    b = ra;
-elseif(ra==ri2)
-    b = ra;
+% loop 1 (self)
+if(ri1>ra1)
+    b1 = ri1;
+elseif(ra1>ri1)
+    b1 = ra1;
+elseif(ra1==ri1)
+    b1 = ra1;
 end
+% loop 2 (mutual)
+if(ri2>ra2)
+    b2 = ri2;
+elseif(ra2>ri2)
+    b2 = ra2;
+elseif(ra2==ri2)
+    b2 = ra2;
+end
+%-------------------min/max bounds for spatial points---------------------%
 % lower bounds
-xminb = -1.01*b;    % lower x-bound
-yminb = -1.01*b;    % lower y-bound
-zminb11 = zEnd/2;   % lower z-bound (self-inductance)
-zminb12 = zpos;     % lower z-bound (mutual-inductance)
+xminb   = -1.01*b1;   % lower x-bound
+yminb   = -1.01*b1;   % lower y-bound
+zminb11 = zEnd/2;     % lower z-bound (self-inductance)
+zminb12 = zpos;       % lower z-bound (mutual-inductance)
 % upper bounds 
-xmaxb = 1.01*b;     % maximum x-bound
-ymaxb = 1.01*b;     % maximum y-bound
-zmaxb11 = zEnd/2;   % maximum z-bound (self-inductance)
-zminb12 = zpos;     % maximum z-bound (mutual-inductance)
-Ns    = [Nx,Ny,Nz];
+xmaxb   = 1.01*b1;    % maximum x-bound
+ymaxb   = 1.01*b1;    % maximum y-bound
+zmaxb11 = zEnd/2;     % maximum z-bound (self-inductance)
+zmaxb12 = zpos;       % maximum z-bound (mutual-inductance)
+Ns      = [Nx,Ny,Nz];
 % self-inductance
-bbox11  = [xminb,yminb,zminb11; xmaxb,ymaxb,zmaxb11];
+bBox11  = [xminb,yminb,zminb11; xmaxb,ymaxb,zmaxb11];
 % mutual-inductance
-bbox12  = [xminb,yminb,zminb11; xmaxb,ymaxb,zmaxb12];
+bBox12  = [xminb,yminb,zminb12; xmaxb,ymaxb,zmaxb12];
+% EITHER BEFORE OR INSIDE CalcBSLOW/CalcBFAST
+% APPLY rotation of tag
+
 %=========================================================================%
 %============================[END:CONSTRUCT]==============================%
 %=========================================================================%
 
 %% -----------------------------[COMPUTE]---------------------------------%
 %--------------------------COMPUTE BFIELDS--------------------------------%
-[X11,Y11,Z11,BX11,BY11,BZ11] = CalcBSLOW(I,S30,bBox1,Ns); 
-%[X11,Y11,Z11,BX11,BY11,BZ11] = CalcFAST(I,S30,bBox1,Ns);
-SELF_IND = struct('X11',  X11,'Y11',  Y11,'Z11',  Z11,...
-                  'BX11',BX11,'BY11',BY11,'BZ11',BZ11);
-              
-[X12,Y12,Z12,BX12,BY12,BZ12] = CalcBSLOW(I,S30,bBox1,Ns);
-%[X12,Y12,Z12,BX12,BY12,BZ12] = CalcFAST(I,S30,bBox1,Ns);
-MULT_IND = struct('X12',  X12,'Y12',  Y12,'Z12',  Z12,...
-                  'BX12',BX12,'BY12',BY12,'BZ12',BZ12);
+[X11,Y11,Z11,BX11,BY11,BZ11] = CalcBSLOW(I1,S30,bBox11,Ns); 
+%[X11,Y11,Z11,BX11,BY11,BZ11] = CalcFAST(I1,S30,bBox11,Ns);
+SELF_IND = struct('X',  X11,'Y',  Y11,'Z',  Z11,...
+                  'BX',BX11,'BY',BY11,'BZ',BZ11);
+t = 't';   
+%%           
+[X12,Y12,Z12,BX12,BY12,BZ12] = CalcBSLOW(I1,S30,bBox12,Ns);
+%[X12,Y12,Z12,BX12,BY12,BZ12] = CalcFAST(I1,S30,bBox12,Ns);
+MULT_IND = struct('X',  X12,'Y',  Y12, 'Z', Z12,...
+                  'BX',BX12,'BY',BY12,'BZ',BZ12);
+t = 't';
+%%
 %---------------------------SELF-INDUCTANCE-------------------------------%
-zn    = 1; % choose which XY-Plane do you want to use 
-X2    = squeeze(X11(:,:,zn));
-Y2    = squeeze(Y11(:,:,zn));
 % BFields normal to a loop 1 is in z-direction, assuming the coils are only
 % upon the xy-plane
-Bnorm = squeeze(BZ11(:,:,zn));  
-SEL   = 0;
-L11 = selfInductance_BFields(wT,ri1,ra1,I,X2,Y2,Bnorm,SEL,N,G);
+[L11] = self_Inductance_BFields(SELF_IND,ANT1,I1,SEL1);
+%L11 = selfInductance_BFields(wT,ri1,ra1,I,X2,Y2,Bnorm,SEL,N,G); %OLD VER
+t = 't';
+%%
 %---------------------------MUTUAL-INDUCTANCE-----------------------------%
-zn    = 1; % choose which XY-PLane do you want to use 
-X2    = squeeze(X11(:,:,zn));
-Y2    = squeeze(Y11(:,:,zn));
-Bnorm = squeeze(BZ11(:,:,zn));
-SEL2   = 0;
-M12 = multInductance_BFields(wT,ri1,ra1,I,X2,Y2,Bnorm,SEL,N,G);
+[M12] = mutual_Inductance_BFields(MULT_IND,ANT1,TAG,I1,SEL2);
+t = 't';
 %=========================================================================%
 %=============================[END:COMPUTE]===============================%
 %=========================================================================%
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

@@ -186,4 +186,3 @@ function [L11] = selfInductance_BFields(wT,ri,ra,I,X,Y,BFnorm,N1,N,Nxy,G)
             L11   = (phi_11/I)*N*Nxy;   % self ind         
             t = 't';
     end
-end

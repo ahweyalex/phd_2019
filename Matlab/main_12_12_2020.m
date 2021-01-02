@@ -7,7 +7,7 @@ clear all; close all; clc;
 % inputs 
 wT   = 0.2546e-3;  % 30AWG 
 wT30 = 0.2546e-3;  % 30AWG 
-%wT40 = 0.07874e-3;  % 40AWG
+wT40 = 0.07874e-3;  % 40AWG
 O    = 1; %rect
 %O    = 0; %circ/elli
 I    = 1;
@@ -76,11 +76,12 @@ Y2 = squeeze(Y(:,:,1));
 N1 = 0;
 if(G=='r')
     L11_ri10_ra15_30AWG(nn) =... 
-                    selfInductance_BFields(wT,ri,ra,I,X2,Y2,BZ,N1,N,G);
+                 selfInductance_BFields(wT,ri,ra,I,X2,Y2,BZ,N1,N,Nxy,G)
 elseif(G=='c')
     L11_30AWG(nn) = ...
-                selfInductance_BFields(wT,ra,ri,I,X2,Y2,BZ,N1,N,G);
+                 selfInductance_BFields(wT,ri,ra,I,X2,Y2,BZ,N1,N,Nxy,G)
 end
+%{
 N1 = 1;
 L11_wT2_ri10_ra15_30AWG(nn) = ... 
                         selfInductance_BFields(wT,ri,ra,I,X2,Y2,BZ,N1,N,G);
@@ -90,9 +91,10 @@ L11_wT4_ri10_ra15_30AWG(nn) =....
 N1 = 4;
 L11_wT50_ri10_ra15_30AWG(nn) =....
                         selfInductance_BFields(wT,ri,ra,I,X2,Y2,BZ,N1,N,G);
-                    
+%}                    
 %% Test Calc_Mutual_Ind_new
 %-------------------------[INPUT PARAMETERS]-------------------------%
+%{
 global tag;
 % example
 % radius = 0.5 [mm], length = 7 [mm], N = 250, AZ/EL = 0 [deg]
@@ -115,3 +117,4 @@ BZ1 = BZ;
 
 %M12 = Calc_Mutual_Ind_new(BX1,BY1,BZ1,X1,Y1,I2,tag);
 [M12] = Calc_Mutual_Ind_new(BZ,X,Y,Nxy,N,I,tag);
+%}
