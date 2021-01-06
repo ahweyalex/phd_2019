@@ -71,7 +71,7 @@
 %   DIM: [Ny by Nx by Nz]
 % ------------------------------------------------------------------------%
 %
-function [X,Y,Z,BX,BY,BZ] = CalcBSLOW(I,S,bBox,Ns)
+function [X,Y,Z,BX,BY,BZ] = CalcBSLOW(I,S,bBox,Ns,rotM,d)
 %----------------------[Initialize variables]-----------------------------%
     mu0 = 4*pi*1e-7;        % free space permeability <scalar> [H/m]
     uc  = 1.256629*10^-6;   % Permeability of copper 
@@ -81,6 +81,9 @@ function [X,Y,Z,BX,BY,BZ] = CalcBSLOW(I,S,bBox,Ns)
     %xP=[];yP=[];zP=[];     % empty arrays to be filled with
     [dl] = compute_dl(S);   % compute delta l 
     coef = (mu0*I)/(4*pi);  %
+    a = rotM.a;
+    b = rotM.b;
+    g = rotM.g;  
 %--------------[B-Fields spatial lower and upper bounds]------------------%
     % lower bounds
     xminb = bBox(1,1);
@@ -98,12 +101,26 @@ function [X,Y,Z,BX,BY,BZ] = CalcBSLOW(I,S,bBox,Ns)
     BX = zeros(Ny,Nx,Nz);
     BY = zeros(Ny,Nx,Nz);
     BZ = zeros(Ny,Nx,Nz);
-    % create 1D arrays for each axis
-    x_M = linspace(xminb, xmaxb, Nx);
-    y_M = linspace(yminb, ymaxb, Ny);
-    z_M = linspace(zminb, zmaxb, Nz);
-    % create multi-dim arrays with the 1D arrays 
-    [X,Y,Z]=meshgrid(x_M,y_M,z_M);
+    if (d=='SELF_IND')
+        % create 1D arrays for each axis
+        x_M = linspace(xminb, xmaxb, Nx);
+        y_M = linspace(yminb, ymaxb, Ny);
+        z_M = linspace(zminb, zmaxb, Nz);
+        % create multi-dim arrays with the 1D arrays 
+        [X,Y,Z]=meshgrid(x_M,y_M,z_M);
+    elseif(d=='MULT_IND')
+        % create 1D arrays for each axis
+        x_M = linspace(xminb, xmaxb, Nx);
+        y_M = linspace(yminb, ymaxb, Ny);
+        z_M = linspace(zminb, zmaxb, Nz);
+        zn = 1;
+        [X0,Y0,Z0]=meshgrid(x_M,y_M,z_M);
+        X2 = squeeze(X0(:,:,zn));
+        Y2 = squeeze(Y0(:,:,zn));
+        Z2 = squeeze(Z0(:,:,zn));
+        [X,Y,Z] = rotate_loop2(X2,Y2,Z2,a,b,g);
+        t='t';
+    end
 %--------------------------[Compute B-Fields]-----------------------------%
     for yn=1:Ny             % iterate y-points (points of interest)
         for xn=1:Nx         % iterate x-points (points of interest)

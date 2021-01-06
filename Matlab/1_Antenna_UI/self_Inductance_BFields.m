@@ -105,16 +105,43 @@ elseif(SEL=='r' || SEL=='R' || SEL=='s' || SEL=='S') % rectangle
     ANT_LOC = ( X>=x1 & X<=x2 & Y>=y1 & Y<=y2);
 end
 %% -------------------------[SELF-INDUCTANCE]-----------------------------%
-% normal bfields 
-Bnorm  = BZ(:,:,zn);
+%                               [OLD]
+% % normal bfields 
+% Bnorm  = BZ(:,:,zn);
+% % find indices assoicated with normal bfields at tag/loop's location upon
+% % the plane
+% [idx]  = find(ANT_LOC)';     % indices 
+% % loop's bfields at indices associated with loop 1's location
+% BF     = Bnorm(idx);     
+% % multiply loop's bfields by delta surface area
+% BFA    = BF.*dA;              
+% % sum all product(BF,dA) together 
+% sumB   = sum(sum(sum(BFA,1),2),3); 
+% phi_11 = abs(sumB);
+% [L11]  = (phi_11/I1)*N*NXY; % self inductance 
+%-------------------------------------------------------------------------%
+%                               [NEW]
+% obtain bfields of cutplane of interests 
+% self-inductance will be where z value is at the half way point of the
+% mutli-coil's height
+BNX = BX(:,:,zn);
+BNY = BY(:,:,zn);
+BNZ = BZ(:,:,zn);
 % find indices assoicated with normal bfields at tag/loop's location upon
 % the plane
-[idx]  = find(ANT_LOC)';     % indices 
+[idx]  = find(ANT_LOC)';    % indices 
 % loop's bfields at indices associated with loop 1's location
-BF     = Bnorm(idx);     
+BFx = BNX(idx); 
+BFy = BNY(idx); 
+BFz = BNZ(idx);
 % multiply loop's bfields by delta surface area
-BFA    = BF.*dA;              
-% sum all product(BF,dA) together 
-sumB   = sum(sum(sum(BFA,1),2),3); 
-phi_11 = abs(sumB);
-[L11]  = (phi_11/I1)*N*NXY; % self inductance 
+BFAx = BFx.*dA;  
+BFAy = BFy.*dA;  
+BFAz = BFz.*dA;
+% sum all product(BF,dA) for each component together 
+sumBx = abs(sum(sum(sum(BFAx,1),2),3)); 
+sumBy = abs(sum(sum(sum(BFAy,1),2),3));
+sumBz = abs(sum(sum(sum(BFAz,1),2),3));
+sumB  = [sumBx,sumBy,sumBz];
+normV = [0,0,1];
+L11 = dot(sumB,normV)*N*NXY*(1/I1);

@@ -71,7 +71,7 @@
 %   DIM: [Ny by Nx by Nz]
 % ------------------------------------------------------------------------%
 %
-function [X,Y,Z,BX,BY,BZ] = CalcFAST(I,S,bBox,Ns)
+function [X,Y,Z,BX,BY,BZ] = CalcFAST(I,S,bBox,Ns,rotM,d)
 %----------------------[Initialize variables]-----------------------------%
     mu0    = 4*pi*1e-7;         % free space permeability <scalar> [H/m]
     uc     = 1.256629*10^-6;    % Permeability of copper 
@@ -98,7 +98,7 @@ function [X,Y,Z,BX,BY,BZ] = CalcFAST(I,S,bBox,Ns)
     Ny=Ns(2);
     Nz=Ns(3);
     NXYZ = Nx*Ny*Nz;
-    %{
+%{
     % initialize matrices/arrays to reduce time
     % R
     Rdiff_x = zeros(Ny,Nx,Nz,NS);
@@ -118,7 +118,7 @@ function [X,Y,Z,BX,BY,BZ] = CalcFAST(I,S,bBox,Ns)
     BX  = zeros(Ny,Nx,Nz);
     BY  = zeros(Ny,Nx,Nz);
     BZ  = zeros(Ny,Nx,Nz);
-    %}
+%}
     % construct 3-D grid coordinates defined by the vectors x, y, and z
     x_M = linspace(xminb, xmaxb, Nx);
     y_M = linspace(yminb, ymaxb, Ny);

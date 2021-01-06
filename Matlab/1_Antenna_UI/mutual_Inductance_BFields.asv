@@ -8,7 +8,7 @@ u     = mu0*uc;
 zn    = 1;                      % select which xy-plane on z location
 BX    = squeeze(MULT_IND.BX(:,:,zn)); % x-directed b-fields from loop 1
 BY    = squeeze(MULT_IND.BY(:,:,zn)); % y-directed b-fields from loop 1
-BZ    = squeeze(MULT_IND.BZ(:,:,zn)); % z-directed b-fields from loop 1
+BZ    = squeeze(MULT_IND.BZ(:,BZ:,zn)); % z-directed b-fields from loop 1
 X0    = squeeze(MULT_IND.X(:,:,zn));  % b-fields' spatial location (x-dir)
 Y0    = squeeze(MULT_IND.Y(:,:,zn));  % b-fields' spatial location (y-dir)
 Z0    = squeeze(MULT_IND.Z(:,:,zn));  % b-fields' spatial location (z-dir)   
@@ -30,7 +30,10 @@ tx = 0;
 ty = 0;
 tz = 1;
 [tx1,ty1,tz1] = rotate_loop2(tx,ty,tz,a,b,g);
-normV = [tx1,ty1,tz1];
+normV = [tx1,ty1,tz1]
+
+[tx2,ty2,tz2] = rotate_loop2(tx1,ty1,tz1,a,b,g);
+normV2 = [tx2,ty2,tz2]
 t ='t';
 %-------------------------------DELTA AREA--------------------------------%
 if(abs(normV)==[0,0,1])
@@ -64,7 +67,7 @@ elseif(abs(normV)==[1, 0, 0])
     P2    = Z0;                     % Plane 2
     p1    = yp;                     % shift tag placement by y-direction
     p2    = zp;                     % shift tag placement by z-direction
-    nV    = [0,1,0];                % normal vector
+    nV    = [0,]
 else
     % Bnorm is in mix (x,y,z)-direction
     xdel  = abs(X0(1,1) - X0(1,2)); % del x from loop 1
@@ -126,7 +129,7 @@ elseif(SEL=='r' || SEL=='R' || SEL=='s' || SEL=='S') % rectangle
     x1        = -rx/2;
     x2        =  rx/2;
     y1        = -ry/2;
-    y2        =  ry/2;  
+    y2        =  ry/2;
     TAG_LOC   = ( X>=x1+p1 & X<=x2+p1 & Y>=y1+p2 & Y<=y2+p2);
 end
 %% -------------------[COMPUTE MUTUAL INDUCTANCE]-------------------------%
@@ -153,5 +156,4 @@ phi_12  = [sumBx,sumBy,sumBz];
 [M12(1)]  = abs(dot(phi_12,normV)*N2*NXY2*(1/I1)); % mutual inductance 
 [M12(2)]  = abs(dot([0,0,sumBz],normV)*N2*NXY2*(1/I1)); % mutual inductance 
 [M12(3)]  = abs(dot(phi_12,[1,0,0])*N2*NXY2*(1/I1)); % mutual inductance
-[M12(4)]  = abs(dot(phi_12,nV)*N2*NXY2*(1/I1)); % mutual inductance
 %[M12]  = (phi_12/I1)*N2*NXY2; % mutual inductance 
