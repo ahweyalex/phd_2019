@@ -84,6 +84,9 @@ function [X,Y,Z,BX,BY,BZ] = CalcBSLOW(I,S,bBox,Ns,rotM,d)
     a = rotM.a;
     b = rotM.b;
     g = rotM.g;  
+    xshift = rotM.xshift;
+    yshift = rotM.yshift;
+    zshift = rotM.zshift;
 %--------------[B-Fields spatial lower and upper bounds]------------------%
     % lower bounds
     xminb = bBox(1,1);
@@ -101,6 +104,7 @@ function [X,Y,Z,BX,BY,BZ] = CalcBSLOW(I,S,bBox,Ns,rotM,d)
     BX = zeros(Ny,Nx,Nz);
     BY = zeros(Ny,Nx,Nz);
     BZ = zeros(Ny,Nx,Nz);
+%-------------------------self inductance---------------------------------%
     if (d=='SELF_IND')
         % create 1D arrays for each axis
         x_M = linspace(xminb, xmaxb, Nx);
@@ -108,18 +112,24 @@ function [X,Y,Z,BX,BY,BZ] = CalcBSLOW(I,S,bBox,Ns,rotM,d)
         z_M = linspace(zminb, zmaxb, Nz);
         % create multi-dim arrays with the 1D arrays 
         [X,Y,Z]=meshgrid(x_M,y_M,z_M);
+        t = 't';
+%-------------------------mutual inductance-------------------------------%
     elseif(d=='MULT_IND')
         % create 1D arrays for each axis
         x_M = linspace(xminb, xmaxb, Nx);
         y_M = linspace(yminb, ymaxb, Ny);
         z_M = linspace(zminb, zmaxb, Nz);
+        % get a single plane
         zn = 1;
         [X0,Y0,Z0]=meshgrid(x_M,y_M,z_M);
         X2 = squeeze(X0(:,:,zn));
         Y2 = squeeze(Y0(:,:,zn));
         Z2 = squeeze(Z0(:,:,zn));
-        [X,Y,Z] = rotate_loop2(X2,Y2,Z2,a,b,g);
-        t='t';
+        [Xr,Yr,Zr] = rotate_loop2(X2,Y2,Z2,a,b,g);
+        %xshift=0; yshift=0; zshift=0;
+        X = Xr + xshift;
+        Y = Yr + yshift;
+        Z = Zr + zshift;
     end
 %--------------------------[Compute B-Fields]-----------------------------%
     for yn=1:Ny             % iterate y-points (points of interest)
@@ -147,7 +157,6 @@ function [X,Y,Z,BX,BY,BZ] = CalcBSLOW(I,S,bBox,Ns,rotM,d)
            disp(num2str(yn));
         end
     end % END:Y
-t = 't';
 end % END: CalcBSLOW
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 

@@ -54,141 +54,73 @@
 % ------------------------------------------------------------------------
 
 function [xS0,yS0,zS0] = constrCircWire(h,ra,ri,numSeg,N,O,wT,Nxy)
-    %helixSTEP = phi*(pi/180);
     start=0; 
-    %fin = N*(2*pi) + helixSTEP/2;
     fin = N*(2*pi);
-    
-    % new
     zEnd = h*N*2*pi;
-    %fin = zEnd;
-    
-    %cst_xxx = start:helixSTEP:fin;
-    % phi=numSeg;
     cst_xxx = linspace(start,fin,numSeg);
     xS0=[];yS0=[];zS0=[];
     z0 = linspace(0,zEnd,numSeg);
-   %
+   
    % iterations 1st, 2nd, 3rd, 4th
    coil_sep = [0, 3.2, 5.5, 7.6];
-   
-   if(O==1) % clock wise
+%% CW   
+   if(O==0) % clock wise
         for nx=1:Nxy
             % checking: 1st iteration 
             t    = wT/2;
             txy  = (3/2)*wT*(nx-1);
             txy1 = (3/2)*wT*(nx);
             if(mod(nx,2)~=0) 
-                xS0 = [xS0,(ra+txy).*sin(cst_xxx)];
+                xS0 = [xS0,-(ra+txy).*sin(cst_xxx)];
                 yS0 = [yS0,(ri+txy).*cos(cst_xxx)];
-                %zS0 = [zS0,((h).*cst_xxx)./(2*pi*N)];
                 zS0 = [zS0,z0];
-               
-                %zSn = [zSn,zS0];
-                % connect the coils 
-%                 if(nx~=Nxy)
-%                     LN  = 4;
-%                     xC  = linspace(0,0,LN);
-%                     yC  = linspace(ra+txy,ra+txy1,LN);
-%                     zC  = linspace(zS0(end),zS0(end),LN);
-%                     xS0 = [xS0,xC];
-%                     yS0 = [yS0,yC];
-%                     zS0 = [zS0,zC];
-%                 end
-                %a='1';
+                t='t';
             else
                 xS0 = [xS0,-(ra+txy).*sin(cst_xxx)];
                 yS0 = [yS0, (ri+txy).*cos(cst_xxx)];
-                %zS0 = [zS0, ((h).*cst_xxx)./(2*pi*N)];
                 zS0 = [zS0,z0];
-                
-                %zSn = [zSn,zS0];
-                % connect the coils 
-%                 if(nx~=Nxy)
-%                     LN  = 4;
-%                     xC  = linspace(0,0,LN);
-%                     yC  = linspace(ra+txy,ra+txy1,LN);
-%                     zC  = linspace(0,0,LN);
-%                     xS0 = [xS0,xC];
-%                     yS0 = [yS0,yC];
-%                     zS0 = [zS0,zC];
-%                 end
-                %a='1';
+                t='t';
             end % END: IF
            z0 = fliplr(z0); 
+           t='t';
         end %END: FOR
-        
-% counter clock wise 
-        else 
-            for nx=1:Nxy
-                t   = wT/2;
-                txy = (3/2)*wT*(nx-1);
-                if(mod(nx,2)~=0)
-                    % older
-                    %xS0 = [xS0,-(ra+txy).*sin(cst_xxx)];
-                    %yS0 = [yS0, (ri+txy).*cos(cst_xxx)];
-                    % "newer"
-                    xS0 = [xS0,-(ra+wT*coil_sep(nx)).*sin(cst_xxx)];
-                    yS0 = [yS0, (ri+wT*coil_sep(nx)).*cos(cst_xxx)];
-                    
-                    %zS0 = [zS0,((h)*cst_xxx)./(2*pi*N)];
-                    zS0 = [zS0,z0];
-                    
-%                     if(nx~=Nxy)
-%                         LN  = 4;
-%                         xC  = linspace(0,0,LN);
-%                         yC  = linspace(ra+txy,ra+txy1,LN);
-%                         zC  = linspace(zS0(end),zS0(end),LN);
-%                         xS0 = [xS0,xC];
-%                         yS0 = [yS0,yC];
-%                         zS0 = [zS0,zC];
-%                     end
-                else
-                    % older
-                    %xS0 = [xS0,-(ra+txy).*sin(cst_xxx)];
-                    %yS0 = [yS0, (ri+txy).*cos(cst_xxx)];
-                    % "newer"
-                    xS0 = [xS0,-(ra+wT*coil_sep(nx)).*sin(cst_xxx)];
-                    yS0 = [yS0, (ri+wT*coil_sep(nx)).*cos(cst_xxx)];
-                   
-                    %zS0 = [zS0,((h)*cst_xxx)./(2*pi*N)]; 
-                    zS0 = [zS0,z0];
-                   
-%                     if(nx~=Nxy)
-%                         LN  = 4;
-%                         xC  = linspace(0,0,LN);
-%                         yC  = linspace(ra+txy,ra+txy1,LN);
-%                         zC  = linspace(0,0,LN);
-%                         xS0 = [xS0,xC];
-%                         yS0 = [yS0,yC];
-%                         zS0 = [zS0,zC];
-%                     end
-                end % END: IF
-                z0 = fliplr(z0);
-            end % END: FOR        
+        t='t';
+%% counter clock wise (CCW) 
+       elseif(O==1)
+       for nx=1:Nxy
+            t   = wT/2;
+            txy = (3/2)*wT*(nx-1);
+            if(mod(nx,2)~=0)
+                xS0 = [xS0,-(ra+wT*coil_sep(nx)).*cos(cst_xxx)];
+                yS0 = [yS0, (ri+wT*coil_sep(nx)).*sin(cst_xxx)];
+                zS0 = [zS0,z0];
+            else
+                xS0 = [xS0,-(ra+wT*coil_sep(nx)).*cos(cst_xxx)];
+                yS0 = [yS0, (ri+wT*coil_sep(nx)).*sin(cst_xxx)];
+                zS0 = [zS0,z0];
+            end % END: IF
+            z0 = fliplr(z0);
+        end % END: FOR      
+
     end % END: 
-    
     %% add feed lines
     zEnd = h*N*2*pi;
-%{
-    LN = 20;
-    outX = linspace(0,0,LN);
-    outY = linspace(ri,2*ri,LN); 
-    outZ = linspace(zEnd,zEnd,LN);
-    inX  = linspace(0,0,LN);
-    inY  = linspace(ri,2*ri,LN);
-    inZ  = linspace(0,0,LN);
+% feed lines    
+%     LN = 20;
+%     outX = linspace(0,0,LN);
+%     outY = linspace(ri,2*ri,LN); 
+%     outZ = linspace(zEnd,zEnd,LN);
+%     inX  = linspace(0,0,LN);
+%     inY  = linspace(ri,2*ri,LN);
+%     inZ  = linspace(0,0,LN);
+%     xS0 = [inX,xS0,outX];
+%     yS0 = [inY,yS0,outY];
+%     zS0 = [inZ,zS0,outZ];
     
-    xS0 = [inX,xS0,outX];
-    yS0 = [inY,yS0,outY];
-    zS0 = [inZ,zS0,outZ];
-    %}
     xS0 = xS0';
     yS0 = yS0';
     zS0 = zS0';
-%end 
-%}
-
+end
 %{
 % adds more points to create "thickness"
     if(O==1) % clock wise

@@ -4,15 +4,15 @@ clear all; close all; clc;
 %% --------------------------------[INPUTS]-------------------------------%
 %----------------------------INPUTS:LOOP1---------------------------------%
 wT      = 0.2546e-3;    % 30AWG wire gauge <scalar> [m]
-O       = 1;            % starting orientation: <scalar> [unitless] 1/0
+O       = 0;            % starting orientation: <scalar> [unitless] 1/0
 I1      = 1;            % current <scalar> [A]
 u0      = 4*pi*10^-7;   % free space permeability <scalar> [H/m]
 ra1     = 10e-3;        % y-axis <scalar> [m]
 ri1     = 15e-3;        % x-axis <scalar> [m]
 L1      = ra1;          % y-axis <scalar> [m]
 W1      = ri1;          % x-axis <scalar> [m]
-Nxy1    = 1;            % number of coils <scalar>
-N       = 3;            % number of turns in z-direction <scalar>
+Nxy1    = 2;            % number of coils <scalar>
+N       = 4;            % number of turns in z-direction <scalar>
 numSeg  = 200;          % number of points along each coil <scalar>
 gap     = 0;            % gap <scalar> [m]
 h       = wT*0.35;      % height of structure
@@ -20,6 +20,7 @@ zEnd    = N*2*pi*h;     % final z-value
 ANT1    = struct('NXY',Nxy1,'N',N,'ra',ra1,'ri',ri1);
 %----------------------------INPUTS:LOOP2---------------------------------%
 I2      = 1;            % current <scalar> [A]
+wT2     = 0.2546e-3;    % 30AWG wire gauge <scalar> [m]
 ur      = 2.7;          % <scalar> 
 ra2     = 10e-3;         % y-axis <scalar> [m]
 ri2     = 15e-3;         % x-axis <scalar> [m]
@@ -35,22 +36,27 @@ ypos    = 0;            % center y-postion of loop 2 <scalar> [m]
 %zpos    = 4*zEnd + zEnd/2;  % center z-postion of loop 2 <scalar> [m]
 %zpos    = 4*zEnd2;  % center z-postion of loop 2 <scalar> [m]
 zpos    = 4*zEnd + ri1/2;
+xshift  = 0;
+yshift  = 0;
+zshift  = 4*zEnd + ri1 -zEnd/2;
+%zpos   = -zEnd2;
 a       = 0;            % yaw   <scalar> [deg] 
 b       = 0;            % pitch <scalar> [deg] 
-g       = 0;            % roll  <scalar> [deg] 
+g       = 45;            % roll  <scalar> [deg] 
 SEL2    = 'e';          % selector ellipse: 'e' or rect: 'r'
 TAG = struct('xpos',xpos,'ypos',ypos,'zpos',zpos,...
              'ri',ri2,'ra',ra2,'l',l,...
              'NXY',Nxy2,'N',N2,...
              'ur',ur,...
              'a',a,'b',b,'g',g);
-a=[];b=[];g=[];
-rotM = struct('a',a,'b',b,'g',g);
+rotM = struct('a',a,'b',b,'g',g,...
+              'xshift',xshift,'yshift',yshift,'zshift',zshift);
 %--------------------------INPUTS:INDUCTANCE------------------------------%
 % self-inductance
-X11=[];Y11=[];Z11=[]; BX11=[];BY11=[];BZ11=[];
-SELF_IND = struct('X11',  X11,'Y11',  Y11,'Z11',  Z11,...
-                  'BX11',BX11,'BY11',BY11,'BZ11',BZ11);
+%X11=[];Y11=[];Z11=[]; BX11=[];BY11=[];BZ11=[];
+%SELF_IND = struct('X11',  X11,'Y11',  Y11,'Z11',  Z11,...
+%                  'BX11',BX11,'BY11',BY11,'BZ11',BZ11);
+
 % mutual-inductance
 X12=[];Y12=[];Z12=[]; BX12=[];BY12=[];BZ12=[];
 MULT_IND = struct('X12',  X12,'Y12',  Y12,'Z12',  Z12,...
@@ -64,29 +70,59 @@ MULT_IND = struct('X12',  X12,'Y12',  Y12,'Z12',  Z12,...
 %--------------------------CONSTRUCT:LOOP1--------------------------------%
 % construct ellipse multi-coil wire 
 SEL1='e';  % indicator for ellipse self or mutual inductance 
-[sx30,sy30,sz30] = constrCircWire(h,ra1,ri1,numSeg,N,O,wT,Nxy1);
+%[sx30,sy30,sz30] = constrCircWire(h,ra1,ri1,numSeg,N,O,wT,Nxy1);
+[sx30,sy30,sz30] = constrRectWire(h,ra1,ri1,numSeg,N,O,wT,Nxy1,gap);
+
+SEL2='e';  % indicator for ellipse self or mutual inductance 
+[sx30_2,sy30_2,sz30_2]  = constrCircWire(h2,ra2,ri2,numSeg,N2,O,wT2,Nxy2);
+
+[sx30_2r,sy30_2r,sz30_2r] = rotate_loop2(sx30_2,sy30_2,sz30_2,a,b,g);
+sx30_2r = sx30_2r + xshift;
+sy30_2r = sy30_2r + yshift;
+sz30_2r = sz30_2r + zshift;
 % construct rect multi-coil wire 
 %SEL1='r'; % indicator for rectangle self or mutual inductance 
 %[sx30,sy30,sz30] = constrRectWire(h30,W,L,wT30,numSeg,N,Nxy,O,gap);
+%SEL2='r'; % indicator for rectangle self or mutual inductance 
+%[sx30_2,sy30_2,sz30_2] = constrRectWire(h30,W,L,wT30,numSeg,N,Nxy,O,gap);
+
+%%
 %---------------------------PLOTTING--------------------------------------%
-FS=14;
+
+FS=10;
+
 figure(1)
-H = plot3(sx30/1e-3,sy30/1e-3,sz30/1e-3,'.-');
-xlabel('x[mm]','FontSize', FS, 'Color', 'g', 'FontWeight', 'bold'); 
-ylabel('y[mm]','FontSize', FS, 'Color', 'r', 'FontWeight', 'bold');
+H = plot3(sx30/1e-3,sy30/1e-3,sz30/1e-3,'o');
+xlabel('x[mm]','FontSize', FS, 'Color', 'r', 'FontWeight', 'bold'); 
+ylabel('y[mm]','FontSize', FS, 'Color', 'g', 'FontWeight', 'bold'); 
 zlabel('z[mm]','FontSize', FS, 'Color', 'b', 'FontWeight', 'bold');
 title('Rect ri10mm ra15mm N:3 Nxy:1','FontSize', FS,'FontWeight', 'bold');
-view(45,45); grid on; 
 S30 = [sx30,sy30,sz30]';
+view(140,45); grid on;
+view(0,90);
+%hold on;
+%%
+figure(2);
+H = plot3(sx30_2r/1e-3,sy30_2r/1e-3,sz30_2r/1e-3,'.-');
+xlabel('x[mm]','FontSize', FS, 'Color', 'r', 'FontWeight', 'bold'); 
+ylabel('y[mm]','FontSize', FS, 'Color', 'g', 'FontWeight', 'bold');
+zlabel('z[mm]','FontSize', FS, 'Color', 'b', 'FontWeight', 'bold');
+title('Rect ri10mm ra15mm N:3 Nxy:1','FontSize', FS,'FontWeight', 'bold');
+view(140,45); grid on;
+view(0,90);
+S30 = [sx30,sy30,sz30]'; 
+%xlim([-20 20]); ylim([-20 20]); view(90,90); clc;
+%legend('ANT1','ANT2');
+%%
 %-----------------------CONSTRUCT:SPATIAL PTS-----------------------------%
 %-------------------------TO SOLVE BFIELDS--------------------------------%
-Nx = 1000;  % resolution along x-direction  <scalar> [int]
-Ny = 1000;  % resolution along y-direction  <scalar> [int]
+Nx = 2000;  % resolution along x-direction  <scalar> [int]
+Ny = 2000;  % resolution along y-direction  <scalar> [int]
 Nz = 2;     % resolution along z-direction  <scalar> [int]
 
 %Nx = 10;  % resolution along x-direction  <scalar> [int]
 %Ny = 10;  % resolution along y-direction  <scalar> [int]
-%Nz = 10;
+%Nz = 2;
 % upper/lower bounds based off the largest dim of loop
 % loop 1 (self)
 if(ri1>ra1)
@@ -104,36 +140,62 @@ end
 % elseif(ra2==ri2)
 %     b2 = ra2;
 % end
-b2 = 2*zpos;
+%b2 = 2*zpos;
 %-------------------min/max bounds for spatial points---------------------%
 %---------------------------self-inductance-------------------------------% 
 % lower bounds
-xminb11 = -1.01*b1;   % lower x-bound
-yminb11 = -1.01*b1;   % lower y-bound
+xminb11 = -1.02*b1;   % lower x-bound
+yminb11 = -1.02*b1;   % lower y-bound
 zminb11 = zEnd/2;     % lower z-bound (self-inductance)
 % upper bounds 
-xmaxb11 = 1.01*b1;    % maximum x-bound
-ymaxb11 = 1.01*b1;    % maximum y-bound
+xmaxb11 = 1.02*b1;    % maximum x-bound
+ymaxb11 = 1.02*b1;    % maximum y-bound
 zmaxb11 = zEnd/2;     % maximum z-bound (self-inductance)
 %-------------------------mutual-inductance-------------------------------% 
 % lower bounds
-xminb12 = -1.01*b2;   % lower x-bound
-yminb12 = -1.01*b2;   % lower y-bound
-zminb12 = zpos;      % lower z-bound (mutual-inductance)
-% upper bounds 
-xmaxb12 = 1.01*b2;    % maximum x-bound
-ymaxb12 = 1.01*b2;    % maximum y-bound
-zmaxb12 = zpos;    % maximum y-bound
-a  = 0;
-b  = 0;
-g  = -90;
-rotM = struct('a',a,'b',b,'g',g);
+if(max(sx30_2)>max(sy30_2))
+    b2 = max(sx30_2);
+elseif(max(sy30_2)>max(sx30_2))
+    b2 = max(sy30_2);
+else
+    b2 = max(sx30_2);
+end
+b_offst = 1.5;
+xminb12 = -b2*b_offst;
+xmaxb12 =  b2*b_offst;
+yminb12 = -b2*b_offst;
+ymaxb12 =  b2*b_offst;
+zminb12 = max(sz30_2)*0.5;
+zmaxb12 = max(sz30_2)*0.5;
+% zminb12 = min(sz30_2)*1.2;
+% zmaxb12 = max(sz30_2)*0.5;
 %-------------------------------------------------------------------------%
 Ns      = [Nx,Ny,Nz];
 % self-inductance
 bBox11  = [xminb11,yminb11,zminb11; xmaxb11,ymaxb11,zmaxb11];
 % mutual-inductance
 bBox12  = [xminb12,yminb12,zminb12; xmaxb12,ymaxb12,zmaxb12];
+%%
+%--------------------------PLOT BFIELD LOC--------------------------------%
+%{
+        x_M = linspace(xminb12, xmaxb12, Nx);
+        y_M = linspace(yminb12, ymaxb12, Ny);
+        z_M = linspace(zminb12, zmaxb12, Nz);
+        zn = 1;
+        [X0,Y0,Z0]=meshgrid(x_M,y_M,z_M);
+        X2 = squeeze(X0(:,:,zn));
+        Y2 = squeeze(Y0(:,:,zn));
+        Z2 = squeeze(Z0(:,:,zn));
+        [X,Y,Z] = rotate_loop2(X2,Y2,Z2,a,b,g);
+        figure(2)
+        H2 = surf(X,Y,Z);
+xlabel('x[mm]','FontSize', FS, 'Color', 'r', 'FontWeight', 'bold'); 
+ylabel('y[mm]','FontSize', FS, 'Color', 'g', 'FontWeight', 'bold');
+zlabel('z[mm]','FontSize', FS, 'Color', 'b', 'FontWeight', 'bold');
+title('BF LOC ROT','FontSize', FS,'FontWeight', 'bold');
+view(110,45); grid on; 
+%}
+
 %=========================================================================%
 %============================[END:CONSTRUCT]==============================%
 %=========================================================================%
@@ -158,8 +220,8 @@ MULT_IND = struct('X',  X12,'Y',  Y12, 'Z', Z12,...
 % %L11 = selfInductance_BFields(wT,ri1,ra1,I,X2,Y2,Bnorm,SEL,N,G); %OLD VER
 %%
 %---------------------------MUTUAL-INDUCTANCE-----------------------------%
-clc;
-[M12] = mutual_Inductance_BFields(MULT_IND,ANT1,TAG,I1,SEL2,rotM);
+clc;   
+[M12] = mutual_Inductance_BFields(MULT_IND,ANT1,TAG,I1,SEL2,rotM)
 %=========================================================================%
 %=============================[END:COMPUTE]===============================%
 %=========================================================================%

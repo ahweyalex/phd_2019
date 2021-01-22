@@ -103,5 +103,4 @@ function [RX,RY,RZ] = rotate_loop2(X,Y,Z,a,b,g)
     RX = reshape(RXYZ(1,:,:),Nx,Ny);
     RY = reshape(RXYZ(2,:,:),Nx,Ny);
     RZ = reshape(RXYZ(3,:,:),Nx,Ny);
-    t = 't';
 end

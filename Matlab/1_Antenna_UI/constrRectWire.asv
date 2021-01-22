@@ -1,8 +1,5 @@
-% older
-%function [xS,yS,zS] = constrRectWire(h,W0,L0,wT,numSeg,N,Nxy,O,gap)
-
-% newer 
-function [xS,yS,zS] = constrRectWire(h,W0,L0,numSeg,N,O,wT,Nxy,gap)
+% function [xS0,yS0,zS0] = constrCircWire(h,ra,ri,numSeg,N,O,wT,Nxy)
+  function [xS,yS,zS] = constrRectWire(h,W0,L0,wT,numSeg,N,Nxy,O,gap)
 %-----------------------initialize variables -----------------------------%    
     xS=[]; yS=[]; zS=[]; 
     zEnd = h*N*2*pi;
@@ -15,6 +12,9 @@ function [xS,yS,zS] = constrRectWire(h,W0,L0,numSeg,N,O,wT,Nxy,gap)
         for nxy=1:Nxy
             % z begins at 0 and goes up to zEnd
             if(mod(nxy,2)==1)
+                %W = W0 + (nxy-1)*(2*wT); % old
+                %L = L0 + (nxy-1)*(2*wT); % old
+                
                 W = W0 + wT*((nxy^2 + nxy)/2);
                 L = L0 + wT*((nxy^2 + nxy)/2);
                 %numSeg = numSeg*nxy;
@@ -26,6 +26,8 @@ function [xS,yS,zS] = constrRectWire(h,W0,L0,numSeg,N,O,wT,Nxy,gap)
                 sx=[];sy=[];sz=[];           
             % z begins at zEnd and goes down to 0
             elseif(mod(nxy,2)==0)
+                %W = W0 + (nxy-1)*(2*wT);
+                %L = L0 + (nxy-1)*(2*wT);
                 W = W0 + wT*((nxy^2 + nxy)/2);
                 L = L0 + wT*((nxy^2 + nxy)/2);   
                 %numSeg = numSeg*nxy;
@@ -44,6 +46,8 @@ function [xS,yS,zS] = constrRectWire(h,W0,L0,numSeg,N,O,wT,Nxy,gap)
       for nxy=1:Nxy
         % z begins at 0 and goes up to zEnd
         if(mod(nxy,2)==1)
+            %W = W0 + (nxy-1)*(2*wT);
+            %L = L0 + (nxy-1)*(2*wT);
             W = W0 + (1/2)*wT*((nxy^2 + nxy)/2);
             L = L0 + (1/2)*wT*((nxy^2 + nxy)/2);            
             [sx,sy] = cwRectWire(W,L,numSeg,N,gap);
@@ -52,7 +56,6 @@ function [xS,yS,zS] = constrRectWire(h,W0,L0,numSeg,N,O,wT,Nxy,gap)
             yS = [yS;sy];
             zS = [zS;sz];            
             sx=[];sy=[];sz=[];
-            t = 't';
         % z begins at zEnd and goes down to 0
         elseif(mod(nxy,2)==0)
             %W = W0 + (nxy-1)*(2*wT);
@@ -65,11 +68,9 @@ function [xS,yS,zS] = constrRectWire(h,W0,L0,numSeg,N,O,wT,Nxy,gap)
             yS = [yS;sy];
             zS = [zS;sz];
             sx=[];sy=[];sz=[];
-            t = 't';
         end
         
       end %END: FOR LOOP
-      t = 't';
       
     end % END: Choosing starting orientation 
 %     % feed lines
@@ -135,8 +136,8 @@ function [sx,sy] = cwRectWire(W,L,numSeg,N,gap)
     for n=1:N
         % first iteration and not last iteration
         if(n==1 && n~=N)
-            sx = [sx;xfr;xr;xb;xl];
-            sy = [sy;yfr;yr;yb;yl];
+            sx = [sx;xfr;xr;xb];
+            sy = [sy;yfr;yr;yb];
             t = 't';
         % first iteration and last iteration
         elseif(n==1 && n==N)
@@ -145,12 +146,12 @@ function [sx,sy] = cwRectWire(W,L,numSeg,N,gap)
             t = 't';
         % last iteration
         elseif(n==N)
-            sx = [sx;xf;xr;xb;xl;xfl];
-            sy = [sy;yf;yr;yb;yl;yfl];
+            sx = [sx;xr;xb;xl;xfl];
+            sy = [sy;yr;yb;yl;yfl];
         % in between 
         else
             sx = [sx;xf;xr;xb;xl];
-            sy = [sy;yf;yr;yb;yl];
+            sy = [sy;yf;yr;yb;yl;];
         end
     end
 %-------------------------------------------------------------------------%    
@@ -200,7 +201,7 @@ function [sx,sy] = ccwRectWire(W,L,numSeg,N,gap)
         % first iteration and not last iteration
         if(n==1 && n~=N)
             sx = [sx;xfl;xl;xb;xr];
-            sy = [sy;yfl;yl;yb;yr];
+            sy = [sy;yfl;yl;yb;yr;];
         elseif(n==1 && n==N)
             sx = [sx;xfl;xl;xb;xr;xfr];
             sy = [sy;yfl;yl;yb;yr;yfr];            
@@ -211,7 +212,7 @@ function [sx,sy] = ccwRectWire(W,L,numSeg,N,gap)
         % in between 
         else
             sx = [sx;xf;xl;xb;xr];
-            sy = [sy;yf;yl;yb;yr];
+            sy = [sy;yf;yl;yb;yr;];
         end
     end
 %-------------------------------------------------------------------------%    
