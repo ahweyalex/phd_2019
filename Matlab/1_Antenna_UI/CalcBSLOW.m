@@ -131,6 +131,7 @@ function [X,Y,Z,BX,BY,BZ] = CalcBSLOW(I,S,bBox,Ns,rotM,d)
         Y = Yr + yshift;
         Z = Zr + zshift;
     end
+    t = 't';
 %--------------------------[Compute B-Fields]-----------------------------%
     for yn=1:Ny             % iterate y-points (points of interest)
         for xn=1:Nx         % iterate x-points (points of interest)

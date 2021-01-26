@@ -11,8 +11,8 @@ ra1     = 10e-3;        % y-axis <scalar> [m]
 ri1     = 15e-3;        % x-axis <scalar> [m]
 L1      = ra1;          % y-axis <scalar> [m]
 W1      = ri1;          % x-axis <scalar> [m]
-Nxy1    = 2;            % number of coils <scalar>
-N       = 4;            % number of turns in z-direction <scalar>
+Nxy1    = 1;            % number of coils <scalar>
+N       = 3;            % number of turns in z-direction <scalar>
 numSeg  = 200;          % number of points along each coil <scalar>
 gap     = 0;            % gap <scalar> [m]
 h       = wT*0.35;      % height of structure
@@ -29,20 +29,29 @@ W1      = ri2;          % x-axis <scalar> [m]
 l       = 7e-3;         % length of loop 2 <scalar> [m]
 Nxy2    = 1;            % number of coils <scalar>
 N2      = 3;            % number of turns in z-direction <scalar>
-h2       = wT*0.35;      % height of structure
-zEnd2    = N2*2*pi*h;     % final z-value 
+h2      = wT*0.35;      % height of structure
+zEnd2   = N2*2*pi*h;     % final z-value 
+
 xpos    = 0;            % center x-postion of loop 2 <scalar> [m]
 ypos    = 0;            % center y-postion of loop 2 <scalar> [m]
-%zpos    = 4*zEnd + zEnd/2;  % center z-postion of loop 2 <scalar> [m]
-%zpos    = 4*zEnd2;  % center z-postion of loop 2 <scalar> [m]
-zpos    = 4*zEnd + ri1/2;
+%ypos    = 5e-3;            % center y-postion of loop 2 <scalar> [m]
+% 45 deg rotation
+zpos    = (4*zEnd + ri1/2)*2;
+% no rotation
+%zpos    = (4*zEnd + ri1/2)*(1/4);
+%zpos    = (4*zEnd + ri1/2)*(1/2);
+%zpos    = (4*zEnd + ri1/2);
 xshift  = 0;
 yshift  = 0;
-zshift  = 4*zEnd + ri1 -zEnd/2;
-%zpos   = -zEnd2;
-a       = 0;            % yaw   <scalar> [deg] 
-b       = 0;            % pitch <scalar> [deg] 
-g       = 45;            % roll  <scalar> [deg] 
+zshift  = zEnd2/2;
+%%zshift  = 4*zEnd + ri1;
+% a       = 0;            % yaw   <scalar> [deg] 
+% b       = 0;            % pitch <scalar> [deg] 
+% g       = 0;            % roll  <scalar> [deg] 
+a = 0;            % yaw   <scalar> [deg] 
+b = 0;            % pitch <scalar> [deg] 
+g = 45;            % roll  <scalar> [deg] 
+
 SEL2    = 'e';          % selector ellipse: 'e' or rect: 'r'
 TAG = struct('xpos',xpos,'ypos',ypos,'zpos',zpos,...
              'ri',ri2,'ra',ra2,'l',l,...
@@ -70,16 +79,16 @@ MULT_IND = struct('X12',  X12,'Y12',  Y12,'Z12',  Z12,...
 %--------------------------CONSTRUCT:LOOP1--------------------------------%
 % construct ellipse multi-coil wire 
 SEL1='e';  % indicator for ellipse self or mutual inductance 
-%[sx30,sy30,sz30] = constrCircWire(h,ra1,ri1,numSeg,N,O,wT,Nxy1);
-[sx30,sy30,sz30] = constrRectWire(h,ra1,ri1,numSeg,N,O,wT,Nxy1,gap);
+[sx30,sy30,sz30] = constrCircWire(h,ra1,ri1,numSeg,N,O,wT,Nxy1);
+%[sx30,sy30,sz30] = constrRectWire(h,ra1,ri1,numSeg,N,O,wT,Nxy1,gap);
 
 SEL2='e';  % indicator for ellipse self or mutual inductance 
 [sx30_2,sy30_2,sz30_2]  = constrCircWire(h2,ra2,ri2,numSeg,N2,O,wT2,Nxy2);
 
 [sx30_2r,sy30_2r,sz30_2r] = rotate_loop2(sx30_2,sy30_2,sz30_2,a,b,g);
-sx30_2r = sx30_2r + xshift;
-sy30_2r = sy30_2r + yshift;
-sz30_2r = sz30_2r + zshift;
+sx30_2r = sx30_2r + xpos;
+sy30_2r = sy30_2r + ypos;
+sz30_2r = sz30_2r + zpos;
 % construct rect multi-coil wire 
 %SEL1='r'; % indicator for rectangle self or mutual inductance 
 %[sx30,sy30,sz30] = constrRectWire(h30,W,L,wT30,numSeg,N,Nxy,O,gap);
@@ -92,7 +101,7 @@ sz30_2r = sz30_2r + zshift;
 FS=10;
 
 figure(1)
-H = plot3(sx30/1e-3,sy30/1e-3,sz30/1e-3,'o');
+H = plot3(sx30/1e-3,sy30/1e-3,sz30/1e-3,'.-');
 xlabel('x[mm]','FontSize', FS, 'Color', 'r', 'FontWeight', 'bold'); 
 ylabel('y[mm]','FontSize', FS, 'Color', 'g', 'FontWeight', 'bold'); 
 zlabel('z[mm]','FontSize', FS, 'Color', 'b', 'FontWeight', 'bold');
@@ -100,24 +109,26 @@ title('Rect ri10mm ra15mm N:3 Nxy:1','FontSize', FS,'FontWeight', 'bold');
 S30 = [sx30,sy30,sz30]';
 view(140,45); grid on;
 view(0,90);
-%hold on;
-%%
-figure(2);
+hold on;
+
+%figure(5);
 H = plot3(sx30_2r/1e-3,sy30_2r/1e-3,sz30_2r/1e-3,'.-');
 xlabel('x[mm]','FontSize', FS, 'Color', 'r', 'FontWeight', 'bold'); 
 ylabel('y[mm]','FontSize', FS, 'Color', 'g', 'FontWeight', 'bold');
 zlabel('z[mm]','FontSize', FS, 'Color', 'b', 'FontWeight', 'bold');
 title('Rect ri10mm ra15mm N:3 Nxy:1','FontSize', FS,'FontWeight', 'bold');
-view(140,45); grid on;
-view(0,90);
+view(140,45);
+view(90,0);
+grid on;
 S30 = [sx30,sy30,sz30]'; 
 %xlim([-20 20]); ylim([-20 20]); view(90,90); clc;
 %legend('ANT1','ANT2');
+t = 't';
 %%
 %-----------------------CONSTRUCT:SPATIAL PTS-----------------------------%
 %-------------------------TO SOLVE BFIELDS--------------------------------%
-Nx = 2000;  % resolution along x-direction  <scalar> [int]
-Ny = 2000;  % resolution along y-direction  <scalar> [int]
+Nx = 1e3;  % resolution along x-direction  <scalar> [int]
+Ny = 1e3;  % resolution along y-direction  <scalar> [int]
 Nz = 2;     % resolution along z-direction  <scalar> [int]
 
 %Nx = 10;  % resolution along x-direction  <scalar> [int]
@@ -153,6 +164,25 @@ ymaxb11 = 1.02*b1;    % maximum y-bound
 zmaxb11 = zEnd/2;     % maximum z-bound (self-inductance)
 %-------------------------mutual-inductance-------------------------------% 
 % lower bounds
+% if(max(sx30_2r)>max(sy30_2r))
+%     b2mx = max(sx30_2r);
+% elseif(max(sy30_2r)>max(sx30_2r))
+%     b2mx = max(sy30_2r);
+% else
+%     b2mx = max(sx30_2r);
+% end
+% upper bounds
+% if(min(sx30_2r)>min(sy30_2r))
+%     b2mn = max(sy30_2r);
+% elseif(min(sy30_2r)>min(sx30_2r))
+%     b2mn = min(sx30_2r);
+% else
+%     b2mn = min(sx30_2r);
+% end
+%
+% b2mn = b2mx;
+
+% rotated 45 deg
 if(max(sx30_2)>max(sy30_2))
     b2 = max(sx30_2);
 elseif(max(sy30_2)>max(sx30_2))
@@ -160,15 +190,16 @@ elseif(max(sy30_2)>max(sx30_2))
 else
     b2 = max(sx30_2);
 end
-b_offst = 1.5;
-xminb12 = -b2*b_offst;
-xmaxb12 =  b2*b_offst;
-yminb12 = -b2*b_offst;
-ymaxb12 =  b2*b_offst;
-zminb12 = max(sz30_2)*0.5;
-zmaxb12 = max(sz30_2)*0.5;
-% zminb12 = min(sz30_2)*1.2;
-% zmaxb12 = max(sz30_2)*0.5;
+b2mn = b2;
+b2mx = b2;
+
+b_offst = 1.1;
+xminb12 = -b2mn*b_offst;
+xmaxb12 = b2mx*b_offst;
+yminb12 = -b2mn*b_offst;
+ymaxb12 = b2mx*b_offst;
+zminb12 = min(sz30_2);
+zmaxb12 = min(sz30_2);
 %-------------------------------------------------------------------------%
 Ns      = [Nx,Ny,Nz];
 % self-inductance
@@ -177,25 +208,31 @@ bBox11  = [xminb11,yminb11,zminb11; xmaxb11,ymaxb11,zmaxb11];
 bBox12  = [xminb12,yminb12,zminb12; xmaxb12,ymaxb12,zmaxb12];
 %%
 %--------------------------PLOT BFIELD LOC--------------------------------%
-%{
-        x_M = linspace(xminb12, xmaxb12, Nx);
-        y_M = linspace(yminb12, ymaxb12, Ny);
-        z_M = linspace(zminb12, zmaxb12, Nz);
-        zn = 1;
-        [X0,Y0,Z0]=meshgrid(x_M,y_M,z_M);
-        X2 = squeeze(X0(:,:,zn));
-        Y2 = squeeze(Y0(:,:,zn));
-        Z2 = squeeze(Z0(:,:,zn));
-        [X,Y,Z] = rotate_loop2(X2,Y2,Z2,a,b,g);
-        figure(2)
-        H2 = surf(X,Y,Z);
+%
+% create 1D arrays for each axis
+x_M = linspace(xminb12, xmaxb12, Nx);
+y_M = linspace(yminb12, ymaxb12, Ny);
+z_M = linspace(zminb12, zmaxb12, Nz);
+% get a single plane
+zn = 1;
+[X0,Y0,Z0]=meshgrid(x_M,y_M,z_M);
+X2 = squeeze(X0(:,:,zn));
+Y2 = squeeze(Y0(:,:,zn));
+Z2 = squeeze(Z0(:,:,zn));
+[Xr,Yr,Zr] = rotate_loop2(X2,Y2,Z2,a,b,g);
+%xshift=0; yshift=0; zshift=0;
+X = Xr + xshift;
+Y = Yr + yshift;
+Z = Zr + zshift;
+H = surf(X,Y,Z);
+FS = 14;
 xlabel('x[mm]','FontSize', FS, 'Color', 'r', 'FontWeight', 'bold'); 
 ylabel('y[mm]','FontSize', FS, 'Color', 'g', 'FontWeight', 'bold');
 zlabel('z[mm]','FontSize', FS, 'Color', 'b', 'FontWeight', 'bold');
 title('BF LOC ROT','FontSize', FS,'FontWeight', 'bold');
 view(110,45); grid on; 
+t = 't';
 %}
-
 %=========================================================================%
 %============================[END:CONSTRUCT]==============================%
 %=========================================================================%
