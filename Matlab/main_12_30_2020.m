@@ -33,24 +33,24 @@ h2      = wT*0.35;      % height of structure
 zEnd2   = N2*2*pi*h;     % final z-value 
 
 xpos    = 0;            % center x-postion of loop 2 <scalar> [m]
-ypos    = 0;            % center y-postion of loop 2 <scalar> [m]
-%ypos    = 5e-3;            % center y-postion of loop 2 <scalar> [m]
+%ypos    = 0;            % center y-postion of loop 2 <scalar> [m]
+ypos    = 5e-3;            % center y-postion of loop 2 <scalar> [m]
 % 45 deg rotation
-zpos    = (4*zEnd + ri1/2)*2;
+%zpos    = (4*zEnd + ri1/2)*2;
 % no rotation
-%zpos    = (4*zEnd + ri1/2)*(1/4);
+zpos    = (4*zEnd + ri1/2)*(1/4);
 %zpos    = (4*zEnd + ri1/2)*(1/2);
 %zpos    = (4*zEnd + ri1/2);
 xshift  = 0;
 yshift  = 0;
-zshift  = zEnd2/2;
-%%zshift  = 4*zEnd + ri1;
-% a       = 0;            % yaw   <scalar> [deg] 
-% b       = 0;            % pitch <scalar> [deg] 
-% g       = 0;            % roll  <scalar> [deg] 
-a = 0;            % yaw   <scalar> [deg] 
-b = 0;            % pitch <scalar> [deg] 
-g = 45;            % roll  <scalar> [deg] 
+zshift  = zpos + zEnd2/2;
+%%zshift  = 4*zEnd + ri1; 
+a       = 0;            % yaw   <scalar> [deg] 
+b       = 0;            % pitch <scalar> [deg] 
+g       = 0;            % roll  <scalar> [deg] 
+%a = 0;            % yaw   <scalar> [deg] 
+%b = 0;            % pitch <scalar> [deg] 
+%g = 45;            % roll  <scalar> [deg] 
 
 SEL2    = 'e';          % selector ellipse: 'e' or rect: 'r'
 TAG = struct('xpos',xpos,'ypos',ypos,'zpos',zpos,...
@@ -163,15 +163,15 @@ xmaxb11 = 1.02*b1;    % maximum x-bound
 ymaxb11 = 1.02*b1;    % maximum y-bound
 zmaxb11 = zEnd/2;     % maximum z-bound (self-inductance)
 %-------------------------mutual-inductance-------------------------------% 
-% lower bounds
-% if(max(sx30_2r)>max(sy30_2r))
-%     b2mx = max(sx30_2r);
-% elseif(max(sy30_2r)>max(sx30_2r))
-%     b2mx = max(sy30_2r);
-% else
-%     b2mx = max(sx30_2r);
-% end
 % upper bounds
+if(max(sx30_2r)>max(sy30_2r))
+    b2mx = max(sx30_2r);
+elseif(max(sy30_2r)>max(sx30_2r))
+    b2mx = max(sy30_2r);
+else
+    b2mx = max(sx30_2r);
+end
+% % lower bounds
 % if(min(sx30_2r)>min(sy30_2r))
 %     b2mn = max(sy30_2r);
 % elseif(min(sy30_2r)>min(sx30_2r))
@@ -179,27 +179,28 @@ zmaxb11 = zEnd/2;     % maximum z-bound (self-inductance)
 % else
 %     b2mn = min(sx30_2r);
 % end
-%
-% b2mn = b2mx;
 
-% rotated 45 deg
-if(max(sx30_2)>max(sy30_2))
-    b2 = max(sx30_2);
-elseif(max(sy30_2)>max(sx30_2))
-    b2 = max(sy30_2);
-else
-    b2 = max(sx30_2);
-end
-b2mn = b2;
-b2mx = b2;
+b2mn = b2mx;
 
-b_offst = 1.1;
+% % rotated 45 deg
+% if(max(sx30_2)>max(sy30_2))
+%     b2 = max(sx30_2);
+% elseif(max(sy30_2)>max(sx30_2))
+%     b2 = max(sy30_2);
+% else
+%     b2 = max(sx30_2);
+% end
+% b2mn = b2;
+% b2mx = b2;
+
+b_offst = 1.01;
 xminb12 = -b2mn*b_offst;
 xmaxb12 = b2mx*b_offst;
-yminb12 = -b2mn*b_offst;
-ymaxb12 = b2mx*b_offst;
-zminb12 = min(sz30_2);
-zmaxb12 = min(sz30_2);
+yminb12 = -b2mn*b_offst +ypos;
+ymaxb12 = b2mx*b_offst +ypos;
+zminb12 = zpos;
+zmaxb12 = zpos;
+t = 't'
 %-------------------------------------------------------------------------%
 Ns      = [Nx,Ny,Nz];
 % self-inductance
