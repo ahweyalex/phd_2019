@@ -120,7 +120,7 @@ function [X,Y,Z,BX,BY,BZ] = CalcBSLOW(I,S,bBox,Ns,rotM,d)
         y_M = linspace(yminb, ymaxb, Ny);
         z_M = linspace(zminb, zmaxb, Nz);
         % get a single plane
-        zn = 1;
+        zn = 1; Nz = 1;
         [X0,Y0,Z0]=meshgrid(x_M,y_M,z_M);
         X2 = squeeze(X0(:,:,zn));
         Y2 = squeeze(Y0(:,:,zn));
@@ -130,6 +130,7 @@ function [X,Y,Z,BX,BY,BZ] = CalcBSLOW(I,S,bBox,Ns,rotM,d)
         X = Xr + xshift;
         Y = Yr + yshift;
         Z = Zr + zshift;
+        t = 't';
     end
     t = 't';
 %--------------------------[Compute B-Fields]-----------------------------%
@@ -138,7 +139,9 @@ function [X,Y,Z,BX,BY,BZ] = CalcBSLOW(I,S,bBox,Ns,rotM,d)
             for zn=1:Nz     % iterate z-points (points of interest)                
                 %for n=1:length(xP)-1   % iterate through Source (points)
                 % Compute the R(s)
-                r     = [x_M(xn);y_M(yn);z_M(zn)];  
+                % r     = [x_M(xn);y_M(yn);z_M(zn)]; % old
+                t = 't';
+                r     = [X(yn,xn,zn);Y(yn,xn,zn);Z(yn,xn,zn)]; 
                %r_SLOW(yn,xn,zn) =  [x_M(xn);y_M(yn);z_M(zn)]; 
                 Rdiff = r - S;  % Calc R (distance betweewn source and 
                 % point of interest)

@@ -1,7 +1,7 @@
 % Alexander Moreno
 % DATE: 12-30-2020
 clear all; close all; clc;
-%% --------------------------------[INPUTS]-------------------------------%
+% --------------------------------[INPUTS]-------------------------------%
 %----------------------------INPUTS:LOOP1---------------------------------%
 wT      = 0.2546e-3;    % 30AWG wire gauge <scalar> [m]
 O       = 0;            % starting orientation: <scalar> [unitless] 1/0
@@ -24,6 +24,8 @@ wT2     = 0.2546e-3;    % 30AWG wire gauge <scalar> [m]
 ur      = 2.7;          % <scalar> 
 ra2     = 10e-3;         % y-axis <scalar> [m]
 ri2     = 15e-3;         % x-axis <scalar> [m]
+%ra2     = 5e-3;         % y-axis <scalar> [m]
+%ri2     = 7e-3;         % x-axis <scalar> [m]
 L1      = ra2;          % y-axis <scalar> [m]
 W1      = ri2;          % x-axis <scalar> [m]
 l       = 7e-3;         % length of loop 2 <scalar> [m]
@@ -35,23 +37,39 @@ zEnd2   = N2*2*pi*h;     % final z-value
 xpos    = 0;            % center x-postion of loop 2 <scalar> [m]
 %ypos    = 0;            % center y-postion of loop 2 <scalar> [m]
 ypos    = 5e-3;            % center y-postion of loop 2 <scalar> [m]
-% 45 deg rotation
-%zpos    = (4*zEnd + ri1/2)*2;
 % no rotation
-zpos    = (4*zEnd + ri1/2)*(1/4);
+%zpos    = (4*zEnd + ri1/2)*(1/4);
 %zpos    = (4*zEnd + ri1/2)*(1/2);
 %zpos    = (4*zEnd + ri1/2);
+%zpos    = (4*zEnd + ri1/2)*(1/2) + zEnd;
+% rot 45
+%zpos = (4*zEnd+ri1/2);
+% zpos = (4*zEnd + ri1/2)*2
+%zpos = (4*zEnd+ri1/2)*(1.5);
+%zpos = (4*zEnd+ri1/2)*(2);
+%zpos    = (4*zEnd + ri1/2);
+% rot 90
+zpos = (4*zEnd + ri1/2)*1.5;
+%zpos = (4*zEnd + ri1/2)*2;
 xshift  = 0;
-yshift  = 0;
-zshift  = zpos + zEnd2/2;
-%%zshift  = 4*zEnd + ri1; 
-a       = 0;            % yaw   <scalar> [deg] 
-b       = 0;            % pitch <scalar> [deg] 
-g       = 0;            % roll  <scalar> [deg] 
-%a = 0;            % yaw   <scalar> [deg] 
-%b = 0;            % pitch <scalar> [deg] 
-%g = 45;            % roll  <scalar> [deg] 
+%yshift  = 0;
+yshift  = ypos;
+zshift = zpos;
+%zshift  = zpos + ra2;
 
+%zshift  = zpos + zEnd2/2;
+%%zshift  = 4*zEnd + ri1; 
+% a       = 0;            % yaw   <scalar> [deg] 
+% b       = 0;            % pitch <scalar> [deg] 
+% g       = 0;            % roll  <scalar> [deg] 
+% a =  0;     % yaw   <scalar> [deg] 
+% b =  0;     % pitch <scalar> [deg] 
+% g = 45;     % roll  <scalar> [deg] 
+% rot 90
+a = 0;     % yaw   <scalar> [deg] 
+b = 0;     % pitch <scalar> [deg] 
+%g =  0;
+g = 90;     % roll  <scalar> [deg] 
 SEL2    = 'e';          % selector ellipse: 'e' or rect: 'r'
 TAG = struct('xpos',xpos,'ypos',ypos,'zpos',zpos,...
              'ri',ri2,'ra',ra2,'l',l,...
@@ -75,7 +93,7 @@ MULT_IND = struct('X12',  X12,'Y12',  Y12,'Z12',  Z12,...
 %=========================================================================%
 
 
-%% ----------------------------[CONSTRUCT]--------------------------------%
+% ----------------------------[CONSTRUCT]--------------------------------%
 %--------------------------CONSTRUCT:LOOP1--------------------------------%
 % construct ellipse multi-coil wire 
 SEL1='e';  % indicator for ellipse self or mutual inductance 
@@ -95,7 +113,7 @@ sz30_2r = sz30_2r + zpos;
 %SEL2='r'; % indicator for rectangle self or mutual inductance 
 %[sx30_2,sy30_2,sz30_2] = constrRectWire(h30,W,L,wT30,numSeg,N,Nxy,O,gap);
 
-%%
+%
 %---------------------------PLOTTING--------------------------------------%
 
 FS=10;
@@ -118,11 +136,12 @@ ylabel('y[mm]','FontSize', FS, 'Color', 'g', 'FontWeight', 'bold');
 zlabel('z[mm]','FontSize', FS, 'Color', 'b', 'FontWeight', 'bold');
 title('Rect ri10mm ra15mm N:3 Nxy:1','FontSize', FS,'FontWeight', 'bold');
 view(140,45);
-view(90,0);
+%view(90,0);
+%view(180,0);
 grid on;
 S30 = [sx30,sy30,sz30]'; 
 %xlim([-20 20]); ylim([-20 20]); view(90,90); clc;
-%legend('ANT1','ANT2');
+legend('ANT1','ANT2');
 t = 't';
 %%
 %-----------------------CONSTRUCT:SPATIAL PTS-----------------------------%
@@ -193,13 +212,21 @@ b2mn = b2mx;
 % b2mn = b2;
 % b2mx = b2;
 
-b_offst = 1.01;
-xminb12 = -b2mn*b_offst;
-xmaxb12 = b2mx*b_offst;
-yminb12 = -b2mn*b_offst +ypos;
-ymaxb12 = b2mx*b_offst +ypos;
-zminb12 = zpos;
-zmaxb12 = zpos;
+%b_offst = 1.01; % no rot
+b_offst1 = 1.65; % rot
+b_offst2 = 1.50; % rot
+xminb12 = -b2mn*b_offst1 +xpos;
+xmaxb12 =  b2mx*b_offst1 +xpos;
+yminb12 = -b2mn*b_offst2 +ypos;
+ymaxb12 =  b2mx*b_offst2 +ypos;
+%
+% xminb12 = -6e-3;
+% xmaxb12 = +6e-3;
+% yminb12 = -22e-3;
+% ymaxb12 = +22e-3;
+
+zminb12 = 0;
+zmaxb12 = 0;
 t = 't'
 %-------------------------------------------------------------------------%
 Ns      = [Nx,Ny,Nz];

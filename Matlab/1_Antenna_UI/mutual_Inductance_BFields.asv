@@ -35,7 +35,7 @@ normV_int = [tx,ty,tz];
 [rtx,rty,rtz] = rotate_loop2(tx,ty,tz,a,b,g);
 normV_rot = [rtx,rty,rtz];
 t ='t';
-normV = abs(normV_rot);
+normV = normV_rot;
 %-------------------------------DELTA AREA--------------------------------%
 t = 't';
 % may delete this code vvv
@@ -78,8 +78,8 @@ if(isequal(abs(normV),[0,0,1]))
     P2    = Y0;                     % Plane 2
     p1    = xp;                     % shift tag placement by x-direction
     p2    = yp;                     % shift tag placement by y-direction
-    %nV    = [0,0,1];                % normal vector
-    %normV = nV;
+    nV    = [0,0,1];                % normal vector
+    normV = nV;
     t = 't';
     
 elseif(isequal(abs(normV),[0, 1, 0]))
@@ -105,8 +105,8 @@ elseif(isequal(abs(normV),[0, 1, 0]))
     p1    = xp;                     % shift tag placement by x-direction
     p2    = zshift;                     % shift tag placement by z-direction
     %p2 = 0;
-    %nV    = [0,1,0];                % normal vector
-    %normV = nV;
+    nV    = [1,0,0];                % normal vector
+    normV = nV;
     t = 't';
         
 elseif(isequal(abs(normV),[1, 0, 0]))
@@ -130,8 +130,8 @@ elseif(isequal(abs(normV),[1, 0, 0]))
     %p2    = zp;                     % shift tag placement by z-direction
     p1 = yshift;
     p2 = zshift;
-    %nV    = [1,0,0];                % normal vector
-    %normV = nV;
+    nV    = [0,1,0];                % normal vector
+    normV = nV;
     t = 't';
     
 else
@@ -185,10 +185,9 @@ if(SEL=='c' || SEL=='C' || SEL=='e' || SEL=='E') % ellipse
     phi       = 0*degrees; % will be replace with [a,b,g]
     [THETA,R] = cart2pol(P1,P2);
     [X,Y]     = pol2cart(THETA +phi,R);
-    X = P1;
-    Y = P2;
-    %p2 = zp + ra*2; 
-    p2 = zp + ra*1/2;
+    %X = P1;
+    %Y = P2;
+    %p2 = 1/2*zp;
     %TAG_LOC   = ( ((X+p1)./rx).^2 + ((Y+p2)./ry).^2 ) <=1;
     TAG_LOC   = ( ((X-p1)./rx).^2 + ((Y-p2)./ry).^2 ) <=1;
     x_M = P1(:,1);
@@ -234,6 +233,7 @@ elseif(SEL=='r' || SEL=='R' || SEL=='s' || SEL=='S') % rectangle
     %[THETA,R] = cart2pol(X,Y);
     [THETA,R] = cart2pol(P1,P2);
     [X,Y]     = pol2cart(THETA +phi,R);
+    
     rx        = TAG.ri;     %
     ry        = TAG.ra;     %
     x1        = -rx/2;
