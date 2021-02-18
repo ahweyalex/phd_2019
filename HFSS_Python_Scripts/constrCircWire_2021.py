@@ -12,12 +12,13 @@ oEditor = oDesign.SetActiveEditor("3D Modeler")
 ############################################################################
 #                       FUNCTION NAME: createSingleCoil
 ############################################################################
-def create_CCW_Coil(N,O,nxy,sep_xy,sep_z,fnList):
+def create_CCW_Coil(NXY,N,O,nxy,sep_xy,sep_z,fnList):
+    # ellipse line
     oEditor.CreateEquationCurve(
         [
             "NAME:EquationBasedCurveParameters",
-            "XtFunction:="		, "(ra + wT) * sin(_t)",
-            "YtFunction:="		, "(ri + wT) * cos(_t)",
+            "XtFunction:="		, "(ra + wT*("+str(nxy)+"*2.2+1)) * sin(_t)",
+            "YtFunction:="		, "(ri + wT*("+str(nxy)+"*2.2+1)) * cos(_t)",
             "ZtFunction:="		, "h*(_t)",
             "tStart:="		, "0",
             "tEnd:="		, "N*2*pi",
@@ -49,13 +50,163 @@ def create_CCW_Coil(N,O,nxy,sep_xy,sep_z,fnList):
             "UseMaterialAppearance:=", False,
             "IsLightweight:="	, False
         ])
+    # create connection line
+    if(nxy<(NXY-1)):
+        oEditor.CreatePolyline(
+        [
+            "NAME:PolylineParameters",
+            "IsPolylineCovered:="	, True,
+            "IsPolylineClosed:="	, False,
+            [
+                "NAME:PolylinePoints",
+                [
+                    "NAME:PLPoint",
+                    "X:="			, "0mm",
+                    "Y:="			, "(ri + wT*("+str(nxy)+"*2.2+1))",
+                    "Z:="			, "zEnd"
+                ],
+                [
+                    "NAME:PLPoint",
+                    "X:="			, "0mm",
+                    "Y:="			, "(ri + wT*("+str(nxy+1)+"*2.2+1))",
+                    "Z:="			, "zEnd"
+                ]
+            ],
+            [
+                "NAME:PolylineSegments",
+                [
+                    "NAME:PLSegment",
+                    "SegmentType:="		, "Line",
+                    "StartIndex:="		, 0,
+                    "NoOfPoints:="		, 2
+                ]
+            ],
+            [
+                "NAME:PolylineXSection",
+                "XSectionType:="	, "None",
+                "XSectionOrient:="	, "Auto",
+                "XSectionWidth:="	, "0mm",
+                "XSectionTopWidth:="	, "0mm",
+                "XSectionHeight:="	, "0mm",
+                "XSectionNumSegments:="	, "0",
+                "XSectionBendType:="	, "Corner"
+            ]
+        ], 
+        [
+            "NAME:Attributes",
+            "Name:="		, "CCW_Polyline_"+str(nxy),
+            "Flags:="		, "",
+            "Color:="		, "(143 175 143)",
+            "Transparency:="	, 0,
+            "PartCoordinateSystem:=", "Global",
+            "UDMId:="		, "",
+            "MaterialValue:="	, "\"vacuum\"",
+            "SurfaceMaterialValue:=", "\"\"",
+            "SolveInside:="		, True,
+            "IsMaterialEditable:="	, True,
+            "UseMaterialAppearance:=", False,
+            "IsLightweight:="	, False
+        ])
+    elif(nxy<NXY):
+        oEditor.CreatePolyline(
+        [
+            "NAME:PolylineParameters",
+            "IsPolylineCovered:="	, True,
+            "IsPolylineClosed:="	, False,
+            [
+                "NAME:PolylinePoints",
+                [
+                    "NAME:PLPoint",
+                    "X:="			, "0mm",
+                    "Y:="			, "(ri + wT*("+str(nxy)+"*2.2+1))",
+                    "Z:="			, "zEnd"
+                ],
+                [
+                    "NAME:PLPoint",
+                    "X:="			, "0mm",
+                    "Y:="			, "(1.5*ri + wT*("+str(nxy+1)+"*2.2+1))",
+                    "Z:="			, "zEnd"
+                ],
+                [
+                    "NAME:PLPoint",
+                    "X:="			, "0mm",
+                    "Y:="			, "(1.5*ri + wT*("+str(nxy+1)+"*2.2+1))",
+                    "Z:="			, "-4*wT"
+                ],
+                [
+                    "NAME:PLPoint",
+                    "X:="			, "0mm",
+                    "Y:="			, "(ri + wT*("+str(0)+"*2.2+1))",
+                    "Z:="			, "-4*wT"
+                ],
+                [
+                    "NAME:PLPoint",
+                    "X:="			, "0mm",
+                    "Y:="			, "(ri + wT*("+str(0)+"*2.2+1))",
+                    "Z:="			, "0mm"
+                ]
+            ],
+            [
+                "NAME:PolylineSegments",
+                [
+                    "NAME:PLSegment",
+                    "SegmentType:="		, "Line",
+                    "StartIndex:="		, 0,
+                    "NoOfPoints:="		, 2
+                ],
+                [
+                    "NAME:PLSegment",
+                    "SegmentType:="		, "Line",
+                    "StartIndex:="		, 1,
+                    "NoOfPoints:="		, 2
+                ],
+                [
+                    "NAME:PLSegment",
+                    "SegmentType:="		, "Line",
+                    "StartIndex:="		, 2,
+                    "NoOfPoints:="		, 2
+                ],
+                [
+                    "NAME:PLSegment",
+                    "SegmentType:="		, "Line",
+                    "StartIndex:="		, 3,
+                    "NoOfPoints:="		, 2
+                ]
+            ],
+            [
+                "NAME:PolylineXSection",
+                "XSectionType:="	, "None",
+                "XSectionOrient:="	, "Auto",
+                "XSectionWidth:="	, "0mm",
+                "XSectionTopWidth:="	, "0mm",
+                "XSectionHeight:="	, "0mm",
+                "XSectionNumSegments:="	, "0",
+                "XSectionBendType:="	, "Corner"
+            ]
+        ], 
+        [
+            "NAME:Attributes",
+            "Name:="		, "FEED_"+str(nxy),
+            "Flags:="		, "",
+            "Color:="		, "(143 175 143)",
+            "Transparency:="	, 0,
+            "PartCoordinateSystem:=", "Global",
+            "UDMId:="		, "",
+            "MaterialValue:="	, "\"vacuum\"",
+            "SurfaceMaterialValue:=", "\"\"",
+            "SolveInside:="		, True,
+            "IsMaterialEditable:="	, True,
+            "UseMaterialAppearance:=", False,
+            "IsLightweight:="	, False
+        ])  
         
-def create_CW_Coil(N,O,nxy,sep_xy,sep_z,fnList):
+def create_CW_Coil(NXY,N,O,nxy,sep_xy,sep_z,fnList):
+    # ellipse line
     oEditor.CreateEquationCurve(
         [
             "NAME:EquationBasedCurveParameters",
-            "XtFunction:="		, "(ri + wT) * cos(_t)",
-            "YtFunction:="		, "(ra + wT) * sin(_t)",
+            "XtFunction:="		, "(ri + wT*("+str(nxy)+"*2.2+1)) * cos(_t)",
+            "YtFunction:="		, "(ra + wT*("+str(nxy)+"*2.2+1)) * sin(_t)",
             "ZtFunction:="		, "h*(_t)",
             "tStart:="		, "0",
             "tEnd:="		, "N*2*pi",
@@ -87,7 +238,7 @@ def create_CW_Coil(N,O,nxy,sep_xy,sep_z,fnList):
             "UseMaterialAppearance:=", False,
             "IsLightweight:="	, False
         ])
-        # rotate
+    # rotate
     oEditor.Rotate(
         [
             "NAME:Selections",
@@ -99,6 +250,154 @@ def create_CW_Coil(N,O,nxy,sep_xy,sep_z,fnList):
             "RotateAxis:="		, "Z",
             "RotateAngle:="		, "90deg"
         ])
+    if(nxy<(NXY-1)):
+        oEditor.CreatePolyline(
+        [
+            "NAME:PolylineParameters",
+            "IsPolylineCovered:="	, True,
+            "IsPolylineClosed:="	, False,
+            [
+                "NAME:PolylinePoints",
+                [
+                    "NAME:PLPoint",
+                    "X:="			, "0mm",
+                    "Y:="			, "(ri + wT*("+str(nxy)+"*2.2+1))",
+                    "Z:="			, "0"
+                ],
+                [
+                    "NAME:PLPoint",
+                    "X:="			, "0mm",
+                    "Y:="			, "(ri + wT*("+str(nxy+1)+"*2.2+1))",
+                    "Z:="			, "0"
+                ]
+            ],
+            [
+                "NAME:PolylineSegments",
+                [
+                    "NAME:PLSegment",
+                    "SegmentType:="		, "Line",
+                    "StartIndex:="		, 0,
+                    "NoOfPoints:="		, 2
+                ]
+            ],
+            [
+                "NAME:PolylineXSection",
+                "XSectionType:="	, "None",
+                "XSectionOrient:="	, "Auto",
+                "XSectionWidth:="	, "0mm",
+                "XSectionTopWidth:="	, "0mm",
+                "XSectionHeight:="	, "0mm",
+                "XSectionNumSegments:="	, "0",
+                "XSectionBendType:="	, "Corner"
+            ]
+        ], 
+        [
+            "NAME:Attributes",
+            "Name:="		, "CW_Polyline_"+str(nxy),
+            "Flags:="		, "",
+            "Color:="		, "(143 175 143)",
+            "Transparency:="	, 0,
+            "PartCoordinateSystem:=", "Global",
+            "UDMId:="		, "",
+            "MaterialValue:="	, "\"vacuum\"",
+            "SurfaceMaterialValue:=", "\"\"",
+            "SolveInside:="		, True,
+            "IsMaterialEditable:="	, True,
+            "UseMaterialAppearance:=", False,
+            "IsLightweight:="	, False
+        ])
+    elif(nxy<NXY):
+        oEditor.CreatePolyline(
+        [
+            "NAME:PolylineParameters",
+            "IsPolylineCovered:="	, True,
+            "IsPolylineClosed:="	, False,
+            [
+                "NAME:PolylinePoints",
+                [
+                    "NAME:PLPoint",
+                    "X:="			, "0mm",
+                    "Y:="			, "(ri + wT*("+str(nxy)+"*2.2+1))",
+                    "Z:="			, "0"
+                ],
+                [
+                    "NAME:PLPoint",
+                    "X:="			, "0mm",
+                    "Y:="			, "(1.5*ri + wT*("+str(nxy+1)+"*2.2+1))",
+                    "Z:="			, "0"
+                ],
+                [
+                    "NAME:PLPoint",
+                    "X:="			, "0mm",
+                    "Y:="			, "(1.5*ri + wT*("+str(nxy+1)+"*2.2+1))",
+                    "Z:="			, "-4*wT"
+                ],
+                [
+                    "NAME:PLPoint",
+                    "X:="			, "0mm",
+                    "Y:="			, "(ri + wT*("+str(0)+"*2.2+1))",
+                    "Z:="			, "-4*wT"
+                ],
+                [
+                    "NAME:PLPoint",
+                    "X:="			, "0mm",
+                    "Y:="			, "(ri + wT*("+str(0)+"*2.2+1))",
+                    "Z:="			, "0mm"
+                ]
+            ],
+            [
+                "NAME:PolylineSegments",
+                [
+                    "NAME:PLSegment",
+                    "SegmentType:="		, "Line",
+                    "StartIndex:="		, 0,
+                    "NoOfPoints:="		, 2
+                ],
+                [
+                    "NAME:PLSegment",
+                    "SegmentType:="		, "Line",
+                    "StartIndex:="		, 1,
+                    "NoOfPoints:="		, 2
+                ],
+                [
+                    "NAME:PLSegment",
+                    "SegmentType:="		, "Line",
+                    "StartIndex:="		, 2,
+                    "NoOfPoints:="		, 2
+                ],
+                [
+                    "NAME:PLSegment",
+                    "SegmentType:="		, "Line",
+                    "StartIndex:="		, 3,
+                    "NoOfPoints:="		, 2
+                ]
+            ],
+            [
+                "NAME:PolylineXSection",
+                "XSectionType:="	, "None",
+                "XSectionOrient:="	, "Auto",
+                "XSectionWidth:="	, "0mm",
+                "XSectionTopWidth:="	, "0mm",
+                "XSectionHeight:="	, "0mm",
+                "XSectionNumSegments:="	, "0",
+                "XSectionBendType:="	, "Corner"
+            ]
+        ], 
+        [
+            "NAME:Attributes",
+            "Name:="		, "FEED_"+str(nxy),
+            "Flags:="		, "",
+            "Color:="		, "(143 175 143)",
+            "Transparency:="	, 0,
+            "PartCoordinateSystem:=", "Global",
+            "UDMId:="		, "",
+            "MaterialValue:="	, "\"vacuum\"",
+            "SurfaceMaterialValue:=", "\"\"",
+            "SolveInside:="		, True,
+            "IsMaterialEditable:="	, True,
+            "UseMaterialAppearance:=", False,
+            "IsLightweight:="	, False
+        ])
 #==========================================================================#
 #==========================================================================#
 #==========================================================================#
@@ -107,7 +406,7 @@ def create_CW_Coil(N,O,nxy,sep_xy,sep_z,fnList):
 #                       FUNCTION NAME: MAIN
 ############################################################################
 O   = 'CW' # O=1
-NXY = 2
+NXY = 5
 Nxy = []
 for idx in range(0,NXY):
     Nxy.append(idx)
@@ -126,10 +425,10 @@ fnList = []
 
 for nxy in range(0,NXY):
     if(O=='CW'):
-        create_CCW_Coil(N,O,nxy,sep_xy,sep_z,fnList)
+        create_CCW_Coil(NXY,N,O,nxy,sep_xy,sep_z,fnList)
         O = 'CCW' # switch orientation
     elif(O=='CCW'):
-        create_CW_Coil(N,O,nxy,sep_xy,sep_z,fnList)
+        create_CW_Coil(NXY,N,O,nxy,sep_xy,sep_z,fnList)
         O = 'CW' # switch orientation
 
 
