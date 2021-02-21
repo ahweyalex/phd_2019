@@ -398,6 +398,124 @@ def create_CW_Coil(NXY,N,O,nxy,sep_xy,sep_z,fnList):
             "UseMaterialAppearance:=", False,
             "IsLightweight:="	, False
         ])
+
+
+############################################################################
+#               FUNCTION NAME: CREATE CIRCLE AND CYLINDER
+############################################################################
+def create_circ_cylind():
+    
+    # circle to sweep along wires to thicken the wire 
+    oEditor.CreateCircle(
+        [
+            "NAME:CircleParameters",
+            "IsCovered:="		, True,
+            "XCenter:="		, "0mm",
+            "YCenter:="		, "(ri*1.5 + wT*(0*2.2+1))",
+            "ZCenter:="		, "-4*wT",
+            "Radius:="		, "wT",
+            "WhichAxis:="		, "Y",
+            "NumSegments:="		, "0"
+        ], 
+        [
+            "NAME:Attributes",
+            "Name:="		, "Circle0",
+            "Flags:="		, "",
+            "Color:="		, "(143 175 143)",
+            "Transparency:="	, 0,
+            "PartCoordinateSystem:=", "Global",
+            "UDMId:="		, "",
+            "MaterialValue:="	, "\"vacuum\"",
+            "SurfaceMaterialValue:=", "\"\"",
+            "SolveInside:="		, True,
+            "IsMaterialEditable:="	, True,
+            "UseMaterialAppearance:=", False,
+            "IsLightweight:="	, False
+        ])
+    
+    # remove cylinder to create gap for lump port
+    oEditor.CreateCylinder(
+        [
+            "NAME:CylinderParameters",
+            "XCenter:="		, "0mm",
+            "YCenter:="		, "(ri*1.5 + wT*(0*2.2+1))",
+            "ZCenter:="		, "-4*wT",
+            "Radius:="		, "wT",
+            "Height:="		, "-wT/2",
+            "WhichAxis:="		, "Y",
+            "NumSides:="		, "0"
+        ], 
+        [
+            "NAME:Attributes",
+            "Name:="		, "remove_cy",
+            "Flags:="		, "",
+            "Color:="		, "(143 175 143)",
+            "Transparency:="	, 0,
+            "PartCoordinateSystem:=", "Global",
+            "UDMId:="		, "",
+            "MaterialValue:="	, "\"vacuum\"",
+            "SurfaceMaterialValue:=", "\"\"",
+            "SolveInside:="		, True,
+            "IsMaterialEditable:="	, True,
+            "UseMaterialAppearance:=", False,
+            "IsLightweight:="	, False
+        ])
+
+    # lump port
+    oEditor.CreateRectangle(
+        [
+            "NAME:RectangleParameters",
+            "IsCovered:="		, True,
+            "XStart:="		, "-wT/2",
+            "YStart:="		, "(ri*1.5 + wT*(0*2.2+1))-wT/2",
+            "ZStart:="		, "-4*wT",
+            "Width:="		, "wT",
+            "Height:="		, "wT/2",
+            "WhichAxis:="		, "Z"
+        ], 
+        [
+            "NAME:Attributes",
+            "Name:="		, "lp",
+            "Flags:="		, "",
+            "Color:="		, "(255 0 0)",
+            "Transparency:="	, 0,
+            "PartCoordinateSystem:=", "Global",
+            "UDMId:="		, "",
+            "MaterialValue:="	, "\"vacuum\"",
+            "SurfaceMaterialValue:=", "\"\"",
+            "SolveInside:="		, True,
+            "IsMaterialEditable:="	, True,
+            "UseMaterialAppearance:=", False,
+            "IsLightweight:="	, False
+        ])
+
+    # airbox
+    oEditor.CreateBox(
+        [
+            "NAME:BoxParameters",
+            "XPosition:="		, "-airBoxDim",
+            "YPosition:="		, "-airBoxDim",
+            "ZPosition:="		, "-airBoxDim",
+            "XSize:="		, "2*airBoxDim",
+            "YSize:="		, "2*airBoxDim",
+            "ZSize:="		, "2*airBoxDim"
+        ], 
+        [
+            "NAME:Attributes",
+            "Name:="		, "airBox",
+            "Flags:="		, "",
+            "Color:="		, "(143 175 143)",
+            "Transparency:="	, 1,
+            "PartCoordinateSystem:=", "Global",
+            "UDMId:="		, "",
+            "MaterialValue:="	, "\"vacuum\"",
+            "SurfaceMaterialValue:=", "\"\"",
+            "SolveInside:="		, True,
+            "IsMaterialEditable:="	, True,
+            "UseMaterialAppearance:=", False,
+            "IsLightweight:="	, False
+        ])
+    
 #==========================================================================#
 #==========================================================================#
 #==========================================================================#
@@ -406,7 +524,7 @@ def create_CW_Coil(NXY,N,O,nxy,sep_xy,sep_z,fnList):
 #                       FUNCTION NAME: MAIN
 ############################################################################
 O   = 'CW' # O=1
-NXY = 5
+NXY = 3
 Nxy = []
 for idx in range(0,NXY):
     Nxy.append(idx)
@@ -430,8 +548,8 @@ for nxy in range(0,NXY):
     elif(O=='CCW'):
         create_CW_Coil(NXY,N,O,nxy,sep_xy,sep_z,fnList)
         O = 'CW' # switch orientation
-
-
+    
+create_circ_cylind()
 ############################################################################
 #                            END: MAIN
 ############################################################################
