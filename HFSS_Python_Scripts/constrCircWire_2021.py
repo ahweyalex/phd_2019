@@ -5,7 +5,7 @@
 import ScriptEnv
 ScriptEnv.Initialize("Ansoft.ElectronicsDesktop")
 oDesktop.RestoreWindow()
-oProject = oDesktop.SetActiveProject("Ellipse_Loop_Temp")
+oProject = oDesktop.SetActiveProject("M12_Ellipse_Loop_Temp")
 oDesign = oProject.SetActiveDesign("HFSSDesign1")
 oEditor = oDesign.SetActiveEditor("3D Modeler")
 
@@ -124,13 +124,13 @@ def create_CCW_Coil(NXY,N,O,nxy,sep_xy,sep_z,fnList):
                 [
                     "NAME:PLPoint",
                     "X:="			, "0mm",
-                    "Y:="			, "(1.5*ri + wT*("+str(nxy+1)+"*2.2+1))",
+                    "Y:="			, "(2*ri + wT*("+str(nxy+1)+"*2.2+1))",
                     "Z:="			, "zEnd"
                 ],
                 [
                     "NAME:PLPoint",
                     "X:="			, "0mm",
-                    "Y:="			, "(1.5*ri + wT*("+str(nxy+1)+"*2.2+1))",
+                    "Y:="			, "(2*ri + wT*("+str(nxy+1)+"*2.2+1))",
                     "Z:="			, "-4*wT"
                 ],
                 [
@@ -323,13 +323,13 @@ def create_CW_Coil(NXY,N,O,nxy,sep_xy,sep_z,fnList):
                 [
                     "NAME:PLPoint",
                     "X:="			, "0mm",
-                    "Y:="			, "(1.5*ri + wT*("+str(nxy+1)+"*2.2+1))",
+                    "Y:="			, "(2*ri + wT*("+str(nxy+1)+"*2.2+1))",
                     "Z:="			, "0"
                 ],
                 [
                     "NAME:PLPoint",
                     "X:="			, "0mm",
-                    "Y:="			, "(1.5*ri + wT*("+str(nxy+1)+"*2.2+1))",
+                    "Y:="			, "(2*ri + wT*("+str(nxy+1)+"*2.2+1))",
                     "Z:="			, "-4*wT"
                 ],
                 [
@@ -475,7 +475,7 @@ def create_circ_cylind():
         ], 
         [
             "NAME:Attributes",
-            "Name:="		, "lp",
+            "Name:="		, "lp2",
             "Flags:="		, "",
             "Color:="		, "(255 0 0)",
             "Transparency:="	, 0,
@@ -524,12 +524,12 @@ def create_circ_cylind():
 #                       FUNCTION NAME: MAIN
 ############################################################################
 O   = 'CW' # O=1
-NXY = 3
+NXY = 1
 Nxy = []
 for idx in range(0,NXY):
     Nxy.append(idx)
     
-N   = 1
+N   = 4
 wT0 = 0.2546
 wT  = str(wT0) + "mm"
 h 	= (wT0*1e-3)*0.35
