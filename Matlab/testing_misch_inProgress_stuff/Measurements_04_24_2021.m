@@ -61,7 +61,7 @@ FTH30d = importdata(FTH30);
 FTH40d = importdata(FTH40);
 FTH50d = importdata(FTH50);
 %% extract f and imag
-F    = FH1d.data(:,1); % frequency
+F    = FH1d.data(:,1)./1e6; % frequency
 % imag - 0.5 by 0.5
 FH1i  = FH1d.data(:,5)./1e-3; 
 FH2i  = FH2d.data(:,5)./1e-3; 
@@ -105,6 +105,10 @@ FH7L  = FH7i./coeff;
 FH8L  = FH8i./coeff;
 FH9L  = FH9i./coeff;
 FH10L = FH10i./coeff;
+FH20L = FH20i./coeff;
+FH30L = FH30i./coeff;
+FH40L = FH40i./coeff;
+FH50L = FH50i./coeff;
 % converting - 0.75 by 0.75
 FTH1L  = FTH1i./coeff;
 FTH2L  = FTH2i./coeff;
@@ -116,21 +120,62 @@ FTH7L  = FTH7i./coeff;
 FTH8L  = FTH8i./coeff;
 FTH9L  = FTH9i./coeff;
 FTH10L = FTH10i./coeff;
+FTH20L = FTH20i./coeff;
+FTH30L = FTH30i./coeff;
+FTH40L = FTH40i./coeff;
+FTH50L = FH50i./coeff;
 %% plotting 
 FS  = 12; % FONT SIZE
 int = 22; % 2MHz, starting index for frequency
-
+% converting - 0.5 by 0.5
 figure(1)
-H1 = plot(F(int:end),FH1L(int:end));
-%,...
-%          F,FH6L, F,FH7L, F,FH8L, F,FH9L, F,FH10L);
+H1 = plot(F(int:end),FH1L(int:end), F(int:end),FH3L(int:end),...
+    F(int:end),FH4L(int:end), F(int:end),FH5L(int:end),...
+    F(int:end),FH6L(int:end), F(int:end),FH7L(int:end),...
+    F(int:end),FH8L(int:end), F(int:end),FH9L(int:end),...
+    F(int:end),FH10L(int:end));
 xlabel('Frequency [MHz]','fontweight','bold','fontsize',FS);
 ylabel('Inductance','fontweight','bold','fontsize',FS);
 title('radius: 0.5in by 0.5in ',...
     'fontweight','bold','fontsize',FS);
 %legend('N=1','N=2','N=3','N=4','N=5','N=6','N=7','N=8','N=9','N=10');
+legend('N=1','N=3','N=4','N=5','N=6','N=7','N=8','N=9','N=10');
+%
+figure(2)
+H2 = plot(F(int:end),FH10L(int:end),F(int:end),FH20L(int:end),...
+    F(int:end),FH30L(int:end),F(int:end),FH40L(int:end),...
+    F(int:end),FH50L(int:end));
+xlabel('Frequency [MHz]','fontweight','bold','fontsize',FS);
+ylabel('Inductance','fontweight','bold','fontsize',FS);
+title('radius: 0.5in by 0.5in ',...
+    'fontweight','bold','fontsize',FS);
+set(H2(1),'color','r'); set(H2(2),'color','b'); set(H2(3),'color','g');
+set(H2(4),'color','m'); set(H2(5),'color','k');
+legend('N=10','N=20','N=30','N=40','N=50');
 
-
-
-
+% converting - 0.75 by 0.75
+figure(3)
+H3 = plot(F(int:end),FTH1L(int:end), F(int:end),FTH3L(int:end),...
+    F(int:end),FTH4L(int:end), F(int:end),FTH5L(int:end),...
+    F(int:end),FTH6L(int:end), F(int:end),FTH7L(int:end),...
+    F(int:end),FTH8L(int:end), F(int:end),FTH9L(int:end),...
+    F(int:end),FTH10L(int:end));
+xlabel('Frequency [MHz]','fontweight','bold','fontsize',FS);
+ylabel('Inductance','fontweight','bold','fontsize',FS);
+title('radius: 0.75in by 0.75in ',...
+    'fontweight','bold','fontsize',FS);
+%legend('N=1','N=2','N=3','N=4','N=5','N=6','N=7','N=8','N=9','N=10');
+legend('N=1','N=3','N=4','N=5','N=6','N=7','N=8','N=9','N=10');
+%%
+figure(4)
+H4 = plot(F(int:end),FTH10L(int:end),F(int:end),FTH20L(int:end),...
+    F(int:end),FTH30L(int:end),F(int:end),FTH40L(int:end),...
+    F(int:end),FTH50L(int:end));
+xlabel('Frequency [MHz]','fontweight','bold','fontsize',FS);
+ylabel('Inductance','fontweight','bold','fontsize',FS);
+title('radius: 0.75in by 0.75in ',...
+    'fontweight','bold','fontsize',FS);
+set(H4(1),'color','r'); set(H4(2),'color','b'); set(H4(3),'color','g');
+set(H4(4),'color','m'); set(H4(5),'color','k');
+legend('N=10','N=20','N=30','N=40','N=50');
 
