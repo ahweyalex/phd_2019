@@ -1,5 +1,5 @@
 % Alexander Moreno
-% DATE: 04-16-2020
+% DATE: 04-16-2021
 clear all; close all; clc;
 % --------------------------------[INPUTS]-------------------------------%
 %----------------------------INPUTS:LOOP1---------------------------------%
@@ -9,13 +9,15 @@ I1      = 1;            % current <scalar> [A]
 u0      = 4*pi*10^-7;   % free space permeability <scalar> [H/m]
 %ra1     = 10e-3;        % y-axis <scalar> [m]
 %ri1     = 15e-3;        % x-axis <scalar> [m]
-ra1     = 35.25e-3;        % y-axis <scalar> [m]
-ri1     = 35.25e-3;        % x-axis <scalar> [m]
+%ra1     = 35.25e-3;        % y-axis <scalar> [m]
+%ri1     = 35.25e-3;        % x-axis <scalar> [m]
+ra1     = 5e-3;        % y-axis <scalar> [m]
+ri1     = 5e-3;        % x-axis <scalar> [m]
 L1      = ra1;          % y-axis <scalar> [m]
 W1      = ri1;          % x-axis <scalar> [m]
 %=========================================================================%
-Nxy1    = 1;            % number of coils <scalar>
-N       = 14;            % number of turns in z-direction <scalar>
+Nxy1    = 2;            % number of coils <scalar>
+N       = 1;            % number of turns in z-direction <scalar>
 %=========================================================================%
 numSeg  = 200;          % number of points along each coil <scalar>
 gap     = 0;            % gap <scalar> [m]
