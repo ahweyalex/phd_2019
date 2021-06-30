@@ -1,5 +1,5 @@
 % Alexander Moreno
-% DATE: 05-16-2021
+% DATE: 06-16-2021
 clear all; close all; clc;
 tic;
 % --------------------------------[INPUTS]-------------------------------%
@@ -183,10 +183,10 @@ t = 't';
 %Ny = 1e3;  % resolution along y-direction  <scalar> [int]
 %Nz = 100;     % resolution along z-direction  <scalar> [int]
 
-NN = 300;
+NN = 200;
 Nx = NN;  % resolution along x-direction  <scalar> [int]
 Ny = NN;  % resolution along y-direction  <scalar> [int]
-Nz = 10;
+Nz = 200;
 % upper/lower bounds based off the largest dim of loop
 % loop 1 (self)
 if(ri1>ra1)
@@ -282,9 +282,12 @@ bBox12  = [xminb12,yminb12,zminb12; xmaxb12,ymaxb12,zmaxb12];
 %--------------------------PLOT BFIELD LOC--------------------------------%
 %
 % create 1D arrays for each axis
-x_M = linspace(xminb12, xmaxb12, Nx);
-y_M = linspace(yminb12, ymaxb12, Ny);
-z_M = linspace(zminb12, zmaxb12, Nz);
+x_M = linspace(xminb11, xmaxb11, Nx);
+abs(x_M(1) - x_M(2))
+y_M = linspace(yminb11, ymaxb11, Ny);
+abs(y_M(1) - y_M(2))
+z_M = linspace(zminb11, zmaxb11, Nz);
+abs(z_M(1) - z_M(2))
 % get a single plane
 zn = 1;
 [X0,Y0,Z0]=meshgrid(x_M,y_M,z_M);
@@ -328,7 +331,8 @@ d = 'SELF_IND';
 %=========================================================================%
 %%
 % compute self indutance via mag energy 
-[Wm, L11] = Calc_MagEng(SELF_IND,I1);
+%[Wm, L11] = Calc_MagEng(SELF_IND,I1);
+[Wm, L11] = Calc_MagEng_v2(SELF_IND,I1);
 L11/1e-9
-toc;
+%toc;
 disp('done')

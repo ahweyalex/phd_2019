@@ -104,6 +104,22 @@ elseif(SEL=='r' || SEL=='R' || SEL=='s' || SEL=='S') % rectangle
     y2      =  ry/2;
     ANT_LOC = ( X>=x1 & X<=x2 & Y>=y1 & Y<=y2);
 end
+%%
+% plotting to check if its obtaining the correct locations 
+[nx, ny] = size(X);
+nX = reshape(X,nx*ny,1)./1e-3;
+nY = reshape(Y,nx*ny,1)./1e-3;
+FS = 12;
+figure(100)
+H1 = imagesc(nX,nY,ANT_LOC.');
+axis equal tight;
+xlabel('x samples [mm]','FontSize', FS, 'Color', 'r',...
+    'FontWeight', 'bold');
+ylabel('y samples [mm]','FontSize', FS, 'Color', 'g',...
+    'FontWeight', 'bold');
+title('','FontSize', FS, 'Color', 'g',...
+    'FontWeight', 'bold');
+grid on;
 %% -------------------------[SELF-INDUCTANCE]-----------------------------%
 %                               [OLD]
 % % normal bfields 

@@ -18,9 +18,9 @@ ri1     = 15e-3;        % x-axis <scalar> [m]
 L1      = ra1;          % y-axis <scalar> [m]
 W1      = ri1;          % x-axis <scalar> [m]
 %=========================================================================%
-Nxy1    = 1;            % number of coils <scalar>
+Nxy1    = 3;            % number of coils <scalar>
 %N       = 9;            % number of turns in z-direction <scalar>
-N       = 4;            % number of turns in z-direction <scalar>
+N       = 2;            % number of turns in z-direction <scalar>
 
 %=========================================================================%
 numSeg  = 200*6;          % number of points along each coil <scalar>
@@ -139,19 +139,21 @@ sz30_2r = sz30_2r + zpos;
 
 %
 %---------------------------PLOTTING--------------------------------------%
-%%
+%
 FS=10;
 hold all;
 figure(1)
-H = plot3(sx30(1:numel(sx30)/2)./1e-3, sy30(1:numel(sx30)/2)./1e-3,...
-          sz30(1:numel(sx30)/2)./1e-3,'.-',...
-          sx30(numel(sx30)/2+1:end)./1e-3,... 
-          sy30(numel(sx30)/2+1:end)./1e-3,...
-          sz30(numel(sx30)/2+1:end)./1e-3,'.-');
-set(H(1),'color','r'); set(H(2),'color','b');      
+H = plot3(sx30./1e-3,sy30./1e-3,sz30./1e-3);
+%H = plot3(sx30(1:numel(sx30)/2)./1e-3, sy30(1:numel(sx30)/2)./1e-3,...
+%          sz30(1:numel(sx30)/2)./1e-3,'.-',...
+%          sx30(numel(sx30)/2+1:end)./1e-3,... 
+%          sy30(numel(sx30)/2+1:end)./1e-3,...
+%          sz30(numel(sx30)/2+1:end)./1e-3,'.-');
+%set(H(1),'color','r'); set(H(2),'color','b');      
 %H = plot3(sx30(numel(sx30)/2+1:end)/1e-3,... 
 %          sy30(numel(sx30)/2+1:end)/1e-3,...
 %          sz30(numel(sx30)/2+1:end)/1e-3,'.-','Color','r');
+set(H,'LineWidth',3);
 xlabel('x[mm]','FontSize', FS, 'Color', 'r', 'FontWeight', 'bold'); 
 ylabel('y[mm]','FontSize', FS, 'Color', 'g', 'FontWeight', 'bold'); 
 zlabel('z[mm]','FontSize', FS, 'Color', 'b', 'FontWeight', 'bold');
@@ -160,7 +162,7 @@ zlabel('z[mm]','FontSize', FS, 'Color', 'b', 'FontWeight', 'bold');
 title('Example Nxy:1 N:3','FontSize', FS,...
     'FontWeight', 'bold');
 S30 = [sx30,sy30,sz30]';
-legend('Inner','Outer');
+%legend('Inner','Outer');
 view(140,45); grid on;
 %view(0,90);
 hold on;
@@ -186,8 +188,8 @@ t = 't';
 %Ny = 1e3;  % resolution along y-direction  <scalar> [int]
 %Nz = 2;     % resolution along z-direction  <scalar> [int]
 
-Nx = 25;  % resolution along x-direction  <scalar> [int]
-Ny = 25;  % resolution along y-direction  <scalar> [int]
+Nx = 1000;  % resolution along x-direction  <scalar> [int]
+Ny = 1000;  % resolution along y-direction  <scalar> [int]
 Nz = 2;
 % upper/lower bounds based off the largest dim of loop
 % loop 1 (self)

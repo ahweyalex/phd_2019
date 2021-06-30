@@ -121,12 +121,6 @@ function [Wm, L11, WM, L] = Calc_MagEng(SELF_IND,I)
     X = SELF_IND.X;
     Y = SELF_IND.Y;
     Z = SELF_IND.Z;
-    % BField values
-    BX = SELF_IND.BX;
-    BY = SELF_IND.BY;
-    BZ = SELF_IND.BZ;
-    [Nx Ny Nz] = size(X);
-    % del x, del y, del z
     % assumes uniform spacing 
     delx = abs( X(1,1,1) - X(1,2,1) );
     dely = abs( Y(1,1,1) - Y(2,1,1) );
@@ -136,6 +130,21 @@ function [Wm, L11, WM, L] = Calc_MagEng(SELF_IND,I)
     disz = abs( Z(1,1,1) - Z(1,1,end) );
     vol  = disx.*disy.*disz;
     res  = delx*dely*delz;
+    % BField values
+    BX = SELF_IND.BX;
+    BY = SELF_IND.BY;
+    BZ = SELF_IND.BZ;
+    [Nx Ny Nz] = size(X);
+    xDEL = delx.*ones([Ny Nx Nz]); 
+    yDEL = dely.*ones([Ny Nx Nz]); 
+    zDEL = delz.*ones([Ny Nx Nz]); 
+    xyzDEL = xDEL.*yDEL.*zDEL;
+    sumDEL = sum(xyzDEL(1:end-1,1:end-1,1:end-1),'all');
+    % del x, del y, del z
+    ind = (1/u0)*sumDEL*sum(BX(1:end-1,1:end-1,1:end-1).^2 ... 
+    + BY(1:end-1,1:end-1,1:end-1).^2 ... 
+    + BZ(1:end-1,1:end-1,1:end-1).^2,'all');
+    
     % squared   
     %magBX = sqrt(BX.^2);
     %magBY = sqrt(BY.^2);
@@ -145,17 +154,17 @@ function [Wm, L11, WM, L] = Calc_MagEng(SELF_IND,I)
     magBZ = abs(BZ).^2;
     
     %  
-    magBX_res = (1/u0).*(magBX.*res);
-    magBY_res = (1/u0).*(magBY.*res);
-    magBZ_res = (1/u0).*(magBZ.*res);
+    magBX_res = (magBX);
+    magBY_res = (magBY);
+    magBZ_res = (magBZ);
     % summation 
     sumBX = sum(magBX_res,'all');
     sumBY = sum(magBY_res,'all');
     sumBZ = sum(magBZ_res,'all');
     % alt
-    sumBX2 = sum(magBX,'all');
-    sumBY2 = sum(magBY,'all');
-    sumBZ2 = sum(magBZ,'all');
+    sumBX2 = sum(magBX(1:end-1,1:end-1,1:end-1),'all');
+    sumBY2 = sum(magBY(1:end-1,1:end-1,1:end-1),'all');
+    sumBZ2 = sum(magBZ(1:end-1,1:end-1,1:end-1),'all');
     
     % trapz 
 %     trapBX = trapz(trapz(trapz(BX.^2,1),2),3).*(1/u0).*res;
@@ -169,7 +178,7 @@ function [Wm, L11, WM, L] = Calc_MagEng(SELF_IND,I)
     B = (sumBX2  + sumBY2);
     
     % work (magnetic energy)  
-    Wm  = (1/2).*(sumBX  + sumBY  + sumBZ);
+    Wm  = (1/u0).*(1/2).*(sumBX  + sumBY  + sumBZ).*sumDEL;
     WM  = (1/2).*(trapBX + trapBY + trapBZ);
     WM2  = (1/2).*(trapBX + trapBY + trapBZ).*res;
     WM3 = (1/2).*(B).*vol;
