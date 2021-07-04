@@ -18,9 +18,9 @@ ri1     = 15e-3;        % x-axis <scalar> [m]
 L1      = ra1;          % y-axis <scalar> [m]
 W1      = ri1;          % x-axis <scalar> [m]
 %=========================================================================%
-Nxy1    = 3;            % number of coils <scalar>
+Nxy1    = 1;            % number of coils <scalar>
 %N       = 9;            % number of turns in z-direction <scalar>
-N       = 2;            % number of turns in z-direction <scalar>
+N       = 3;            % number of turns in z-direction <scalar>
 
 %=========================================================================%
 numSeg  = 200*6;          % number of points along each coil <scalar>

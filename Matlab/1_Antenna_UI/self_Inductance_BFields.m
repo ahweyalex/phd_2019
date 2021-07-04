@@ -122,19 +122,20 @@ title('','FontSize', FS, 'Color', 'g',...
 grid on;
 %% -------------------------[SELF-INDUCTANCE]-----------------------------%
 %                               [OLD]
-% % normal bfields 
-% Bnorm  = BZ(:,:,zn);
-% % find indices assoicated with normal bfields at tag/loop's location upon
-% % the plane
-% [idx]  = find(ANT_LOC)';     % indices 
-% % loop's bfields at indices associated with loop 1's location
-% BF     = Bnorm(idx);     
-% % multiply loop's bfields by delta surface area
-% BFA    = BF.*dA;              
-% % sum all product(BF,dA) together 
-% sumB   = sum(sum(sum(BFA,1),2),3); 
-% phi_11 = abs(sumB);
-% [L11]  = (phi_11/I1)*N*NXY; % self inductance 
+% normal bfields 
+Bnorm  = BZ(:,:,zn);
+% find indices assoicated with normal bfields at tag/loop's location upon
+% the plane
+[idx]  = find(ANT_LOC)';     % indices 
+% loop's bfields at indices associated with loop 1's location
+BF     = Bnorm(idx);     
+% multiply loop's bfields by delta surface area
+BFA    = BF.*dA;              
+% sum all product(BF,dA) together 
+sumB   = sum(sum(sum(BFA,1),2),3); 
+phi_11 = abs(sumB);
+[L11]  = (phi_11/I1)*N*NXY; % self inductance 
+t='t';
 %-------------------------------------------------------------------------%
 %                               [NEW]
 % obtain bfields of cutplane of interests 
@@ -161,3 +162,5 @@ sumBz = abs(sum(sum(sum(BFAz,1),2),3));
 sumB  = [sumBx,sumBy,sumBz];
 normV = [0,0,1];
 L11 = dot(sumB,normV)*N*NXY*(1/I1);
+t='t';
+

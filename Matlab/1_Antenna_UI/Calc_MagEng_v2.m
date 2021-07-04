@@ -113,7 +113,7 @@
 %%%                                                                     %%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
 %function [Wm] = Calc_MagEng(zEnd, ANT1, SELF_IND)
-function [Wm, L11, WM, L] = Calc_MagEng(SELF_IND,I)
+function [Wm, L11, WM, L] = Calc_MagEng_v2(SELF_IND,I)
 % SET VARIABLES
     % permeability of free space
     u0 = 4*pi*10^(-7); % [H/m]
@@ -121,29 +121,36 @@ function [Wm, L11, WM, L] = Calc_MagEng(SELF_IND,I)
     X = SELF_IND.X;
     Y = SELF_IND.Y;
     Z = SELF_IND.Z;
+    [Nx Ny Nz] = size(X);
     % assumes uniform spacing 
-    delx = abs( X(1,1,1) - X(1,2,1) );
-    dely = abs( Y(1,1,1) - Y(2,1,1) );
-    delz = abs( Z(1,1,1) - Z(1,1,2) );
+    %delx = abs( X(1,1,1) - X(1,2,1) );
+    %dely = abs( Y(1,1,1) - Y(2,1,1) );
+    %delz = abs( Z(1,1,1) - Z(1,1,2) );
+    
     disx = abs( X(1,1,1) - X(1,end,1) );
     disy = abs( Y(1,1,1) - Y(end,1,1) );
     disz = abs( Z(1,1,1) - Z(1,1,end) );
+    delx = disx/Nx;
+    dely = disy/Ny;
+    delz = disz/Nz;
+    
     vol  = disx.*disy.*disz;
     res  = delx*dely*delz;
     % BField values
     BX = SELF_IND.BX;
     BY = SELF_IND.BY;
     BZ = SELF_IND.BZ;
-    [Nx Ny Nz] = size(X);
+    
     xDEL = delx.*ones([Ny Nx Nz]); 
     yDEL = dely.*ones([Ny Nx Nz]); 
     zDEL = delz.*ones([Ny Nx Nz]); 
     xyzDEL = xDEL.*yDEL.*zDEL;
-    sumDEL = sum(xyzDEL(1:end-1,1:end-1,1:end-1),'all');
+    %sumDEL = sum(xyzDEL(1:end-1,1:end-1,1:end-1),'all');
+    sumDEL = sum(xyzDEL,'all');
     % del x, del y, del z
-    ind = (1/u0)*sumDEL*sum(BX(1:end-1,1:end-1,1:end-1).^2 ... 
-    + BY(1:end-1,1:end-1,1:end-1).^2 ... 
-    + BZ(1:end-1,1:end-1,1:end-1).^2,'all');
+    %ind = (1/u0)*sumDEL*sum(BX(1:end-1,1:end-1,1:end-1).^2 ... 
+    %+ BY(1:end-1,1:end-1,1:end-1).^2 ... 
+    %+ BZ(1:end-1,1:end-1,1:end-1).^2,'all');
     
     % squared   
     %magBX = sqrt(BX.^2);
@@ -175,13 +182,14 @@ function [Wm, L11, WM, L] = Calc_MagEng(SELF_IND,I)
     trapBZ = trapz(trapz(trapz(BZ.^2,1),2),3).*(1/u0).*res;
 % dot product function 
     %B = (sumBX2  + sumBY2 + sumBZ2);
-    B = (sumBX2  + sumBY2);
-    
+    magB = magBX + magBY + magBZ;
+    magB = magB.*res;
     % work (magnetic energy)  
-    Wm  = (1/u0).*(1/2).*(sumBX  + sumBY  + sumBZ).*sumDEL;
+    %Wm  = (1/u0).*(1/2).*(sumBX  + sumBY  + sumBZ).*sumDEL;
+    Wm = (1/u0).*(1/2).*sum(magB,'all').*sumDEL;
     WM  = (1/2).*(trapBX + trapBY + trapBZ);
     WM2  = (1/2).*(trapBX + trapBY + trapBZ).*res;
-    WM3 = (1/2).*(B).*vol;
+    %WM3 = (1/2).*(B).*vol;
     
     %WM  = (1/2).*(1/u0).*(sum((BX + BY + BZ),'all').^2).*res;
     %WM2 = (1/2).*(1/u0).*((sum(BX,'all') + sum(BY,'all') +sum(BX,'all')).^2) .*res;
@@ -193,10 +201,6 @@ function [Wm, L11, WM, L] = Calc_MagEng(SELF_IND,I)
     %magBXYZ_sq = magBXYZ.^2;
     %WM4 = (1/2).*(1/u0).*sum(magBXYZ_sq,'all'); 
     
-    L11 = (2.*Wm)./(I.^2); 
-    L   = (2.*WM)./(I.^2);
-    L2  = (2.*WM2)./(I.^2);
-    L3  = (2.*WM3)./(I.^2);
-    % L_  = (2.*WM2)./(I.^2);
+    L11 = (2.*Wm)./(I.^2);
     t='t';
 end

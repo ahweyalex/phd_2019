@@ -16,9 +16,9 @@ W1      = ri1;          % x-axis <scalar> [m]
 %=========================================================================%
 Nxy1    = 1;            % number of coils <scalar>
 %N       = 9;            % number of turns in z-direction <scalar>
-N       = 1;            % number of turns in z-direction <scalar>
+N       = 3;            % number of turns in z-direction <scalar>
 %=========================================================================%
-numSeg  = 200*6;          % number of points along each coil <scalar>
+numSeg  = 200*6*N;          % number of points along each coil <scalar>
 gap     = 0;            % gap <scalar> [m]
 h       = wT*0.35;      % height of structure
 zEnd    = N*2*pi*h;     % final z-value 
@@ -183,10 +183,10 @@ t = 't';
 %Ny = 1e3;  % resolution along y-direction  <scalar> [int]
 %Nz = 100;     % resolution along z-direction  <scalar> [int]
 
-NN = 200;
+NN = 1000;
 Nx = NN;  % resolution along x-direction  <scalar> [int]
 Ny = NN;  % resolution along y-direction  <scalar> [int]
-Nz = 200;
+Nz = 30;
 % upper/lower bounds based off the largest dim of loop
 % loop 1 (self)
 if(ri1>ra1)
@@ -210,20 +210,26 @@ end
 % lower bounds
 %bds = 2.00;
 %bds = 1.75;
-%bds = 1.50;
-bds = 1.25;
+bds = 1.02;
+%bds = 1.25;
 %bds = 1.10;
 
 xminb11 = -bds*b1;   % lower x-bound
 yminb11 = -bds*b1;   % lower y-bound
 %zminb11 = zEnd/2;     % lower z-bound (self-inductance)
-%zminb11 = 0;     % lower z-bound (self-inductance)
-zminb11 = -bds*zEnd + zEnd;
+zminb11 = 0;     % lower z-bound (self-inductance)
+%zminb11 = -bds*zEnd + zEnd;
+
+%zminb11 = -bds*b1;
+
 % upper bounds 
 xmaxb11 = bds*b1;    % maximum x-bound
 ymaxb11 = bds*b1;    % maximum y-bound
+%zmaxb11 = zEnd*1.10;
 %zmaxb11 = zEnd/2;     % maximum z-bound (self-inductance)
-zmaxb11 = bds*zEnd;     % maximum z-bound (self-inductance)
+%zmaxb11 = bds*zEnd;     % maximum z-bound (self-inductance)
+%zmaxb11 = bds*b1;
+zmaxb11 = zEnd;
 
 %-------------------------mutual-inductance-------------------------------% 
 % upper bounds
@@ -283,11 +289,11 @@ bBox12  = [xminb12,yminb12,zminb12; xmaxb12,ymaxb12,zmaxb12];
 %
 % create 1D arrays for each axis
 x_M = linspace(xminb11, xmaxb11, Nx);
-abs(x_M(1) - x_M(2))
+xdel= abs(x_M(1) - x_M(2))
 y_M = linspace(yminb11, ymaxb11, Ny);
-abs(y_M(1) - y_M(2))
+ydel = abs(y_M(1) - y_M(2))
 z_M = linspace(zminb11, zmaxb11, Nz);
-abs(z_M(1) - z_M(2))
+zdel = abs(z_M(1) - z_M(2))
 % get a single plane
 zn = 1;
 [X0,Y0,Z0]=meshgrid(x_M,y_M,z_M);
@@ -332,7 +338,10 @@ d = 'SELF_IND';
 %%
 % compute self indutance via mag energy 
 %[Wm, L11] = Calc_MagEng(SELF_IND,I1);
-[Wm, L11] = Calc_MagEng_v2(SELF_IND,I1);
-L11/1e-9
+%[Wm, L11] = Calc_MagEng_v2(SELF_IND,I1);
+SEL = 'E';
+[Wm, L11] = Calc_MagEng_v3(SELF_IND, ANT1, I1, SEL);
+
+%L11/1e-9
 %toc;
 disp('done')
