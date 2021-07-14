@@ -1,5 +1,6 @@
 
-function [Wm, L11] = Calc_MagEng_v3(SELF_IND, ANT1, I, SEL)
+%function [Wm, L11] = Calc_MagEng_v3(SELF_IND, ANT1, I, SEL)
+function [Wm, L11] = Calc_MagEng_v3(SELF_IND, ANT1, A, I1, SEL)
     % permeability of free space
     u0 = 4*pi*10^(-7); % [H/m]
     zn = 1; 
@@ -10,6 +11,11 @@ function [Wm, L11] = Calc_MagEng_v3(SELF_IND, ANT1, I, SEL)
     X0  = SELF_IND.X;  % (all) b-fields' x-dir spatial location
     Y0  = SELF_IND.Y;  % (all) b-fields' y-dir spatial location
     Z0  = SELF_IND.Z;  % (all) b-fields' y-dir spatial location
+    % vector magnetic potential
+    AXH = A.AXH;
+    AYH = A.AYH;
+    AZH = A.AZH;
+    
     % a single (XY) plane 
     BX = squeeze(SELF_IND.BX(:,:,zn)); % x-directed b-fields 
     BY = squeeze(SELF_IND.BY(:,:,zn)); % y-directed b-fields 
@@ -27,7 +33,7 @@ function [Wm, L11] = Calc_MagEng_v3(SELF_IND, ANT1, I, SEL)
     xdel = xdis/Nx; 
     ydel = ydis/Ny; 
     zdel = zdis/Nz;
-     res  = xdel*ydel*zdel;
+    dv   = xdel*ydel*zdel;
     % set up spatial location 
     if(SEL=='c' || SEL=='C' || SEL=='e' || SEL=='E') % ellipse
         rx = ANT1.ra;
@@ -60,25 +66,42 @@ ylabel('y samples [mm]','FontSize', FS, 'Color', 'g',...
 title('','FontSize', FS, 'Color', 'g',...
     'FontWeight', 'bold');
 grid on;
-    WM = 0;
-    for nz=1:Nz
-        BNX   = BX(:,:,zn);
-        BNY   = BY(:,:,zn);
-        BNZ   = BZ(:,:,zn);
-        [idx] = find(ANT_LOC)';    % indices where b-fields are located
-        BFx   = BNX(idx);
-        BFy   = BNY(idx);
-        BFz   = BNZ(idx);
-        BF2   = (BFx).^2 + (BFy).^2 + (BFz).^2;
-        % EQU: Wm = (1/2) int_(B^2/mu0) dv'
-        WM = WM + (1/u0).*(1/2).*sum(BF2,'all').*res
-        nz
-    end
-   Wm  = WM;
+%     WM = 0;
+%     for nz=1:Nz
+%         BNX   = BX(:,:,zn);
+%         BNY   = BY(:,:,zn);
+%         BNZ   = BZ(:,:,zn);
+%         [idx] = find(ANT_LOC)';    % indices where b-fields are located
+%         BFx   = BNX(idx);
+%         BFy   = BNY(idx);
+%         BFz   = BNZ(idx);
+%         BF2   = (BFx).^2 + (BFy).^2 + (BFz).^2;
+%         % EQU: Wm = (1/2) int_(B^2/mu0) dv'
+%         WM = WM + (1/u0).*(1/2).*sum(BF2,'all').*res
+%         nz
+%     end
+%   Wm  = WM;
     
-     %BF2 = (BX0).^2 + (BY0).^2 + (BZ0).^2;
-     %Wm  = (1/u0).*(1/2).*sum(BF2,'all').*res;
-    
+    BF2 = (BX0).^2 + (BY0).^2 + (BZ0).^2;
+    Wm  = (1/u0).*(1/2).*sum(BF2.*dv,'all');
     L11 = (2*Wm)./(I.^2);
+    t = 't';
+
+%     WM = zeros([Ny Nx Nz]);
+%     WM2 = 0;    
+%     for nx=1:Nx
+%         for ny=1:Ny
+%             for nz=1:Nz
+%                 WM(ny,nx,nz) = (0.5)*(1/u0)*dv*...
+%                     (BX0(ny,nx,nz)^2 + ...
+%                      BY0(ny,nx,nz)^2 + ...
+%                      BZ0(ny,nx,nz)^2);
+%                  %WM2 = WM2 + WM(ny,nx,nz);
+%             end
+%         end
+%     end
+%     sumWM = sum(Wm,'all');
+%     %sumWM2 = sum(sum(sum(Wm,1),2),3);
+%     L = (2*sumWM)./(I.^2);
     t = 't';
 end

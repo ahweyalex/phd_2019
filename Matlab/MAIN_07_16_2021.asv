@@ -183,10 +183,10 @@ t = 't';
 %Ny = 1e3;  % resolution along y-direction  <scalar> [int]
 %Nz = 100;     % resolution along z-direction  <scalar> [int]
 
-NN = 500;
+NN = 1000;
 Nx = NN;  % resolution along x-direction  <scalar> [int]
 Ny = NN;  % resolution along y-direction  <scalar> [int]
-Nz = 20;
+Nz = 4;
 % upper/lower bounds based off the largest dim of loop
 % loop 1 (self)
 if(ri1>ra1)
@@ -323,13 +323,12 @@ t = 't';
 %--------------------------COMPUTE BFIELDS--------------------------------%
 d = 'SELF_IND';
 %[X11,Y11,Z11,BX11,BY11,BZ11,A] = CalcBSLOW(I1,S30,bBox11,Ns,rotM,d); 
-[X11,Y11,Z11,BX11,BY11,BZ11,AX,AY,AZ] = CalcBSLOW(I1,S30,bBox11,Ns,rotM,d);
-[AXH,AYH,AZH] = ThreeMulti_cross(AX,AY,AZ,BX11,BY11,BZ11);
-AcrossH = struct('AXH',AXH,'AYH',AYH,'AZH',AZH);
-
+[X,Y,Z,BX,BY,BZ,AX,AY,AZ] = CalcBSLOW(I,S,bBox,Ns,rotM,d);
+[AHx,AHy,AHz] = ThreeMulti_cross(AX,AY,AZ,BX,BY,BZ)
 % %[X11,Y11,Z11,BX11,BY11,BZ11] = CalcFAST(I1,S30,bBox11,Ns,rotM,d);
-SELF_IND = struct('X',  X11, 'Y', Y11, 'Z',Z11,...
-                  'BX',BX11,'BY',BY11,'BZ',BZ11);
+SELF_IND = struct('X',  X11,'Y',  Y11,'Z',  Z11,...
+                   'BX',BX11,'BY',BY11,'BZ',BZ11,...);
+
 %d = 'MULT_IND';
 %[X12,Y12,Z12,BX12,BY12,BZ12] = CalcBSLOW(I1,S30,bBox12,Ns,rotM,d);
 %[X12,Y12,Z12,BX12,BY12,BZ12] = CalcFAST(I1,S30,bBox12,Ns,rotM,d);
@@ -344,8 +343,7 @@ SELF_IND = struct('X',  X11, 'Y', Y11, 'Z',Z11,...
 %[Wm, L11] = Calc_MagEng(SELF_IND,I1);
 %[Wm, L11] = Calc_MagEng_v2(SELF_IND,I1);
 SEL = 'E';
-%[Wm, L11] = Calc_MagEng_v3(SELF_IND, ANT1, A, I1, SEL);
-[Wm, L11] = Calc_MagEng_v4(SELF_IND, ANT1, AcrossH, I1, SEL);
+[Wm, L11] = Calc_MagEng_v3(SELF_IND, ANT1, I1, SEL);
 
 %L11/1e-9
 %toc;
