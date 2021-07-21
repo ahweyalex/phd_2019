@@ -1,5 +1,5 @@
 
-function [Wm,L11] = Calc_MagEng_v4(SELF_IND,ANT1,AcrossH,I,SEL)
+function [Wm,WMA,WMB,L11] = Calc_MagEng_v4(SELF_IND,ANT1,AcrossH,I,SEL)
     % permeability of free space
     u0 = 4*pi*10^(-7); % [H/m]
     % all points (BFIELDS and spatial) from SELF_IND
@@ -30,7 +30,7 @@ function [Wm,L11] = Calc_MagEng_v4(SELF_IND,ANT1,AcrossH,I,SEL)
     zdis = abs( Z0(1,1,1) - Z0(1,1,end) );
     xdel = xdis/Nx; 
     ydel = ydis/Ny; 
-    zdel = zdis/Nz;
+    zdel = zdis/Nz; 
     dv   = xdel*ydel*zdel;
 %==========================[Computation]==================================%
 % Wm = (1/2)(1/u0)int_v'[B^2]dv' - (1/2)*int_s'[AxH]*an ds' (6-17)

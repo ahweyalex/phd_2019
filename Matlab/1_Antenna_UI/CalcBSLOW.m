@@ -112,10 +112,36 @@ function [X,Y,Z,BX,BY,BZ,AX,AY,AZ] = CalcBSLOW(I,S,bBox,Ns,rotM,d)
     AZ = zeros(Ny,Nx,Nz);
 %-------------------------self inductance---------------------------------%
     if (d=='SELF_IND')
-        % create 1D arrays for each axis
-        x_M = linspace(xminb, xmaxb, Nx);
-        y_M = linspace(yminb, ymaxb, Ny);
-        z_M = linspace(zminb, zmaxb, Nz);
+        % old 
+        % creates 1D with N elements
+        %%create 1D arrays for each axis
+        %x_M = linspace(xminb, xmaxb, Nx);
+        %y_M = linspace(yminb, ymaxb, Ny);
+        %z_M = linspace(zminb, zmaxb, Nz);
+%--------------------- new: 07-20-2021------------------------------------%
+        % creates 1D with 
+        ra1 = 10e-3;        % radius in y-axis <scalar> [m]
+        dx = (ra1*2)/200;
+        dy = dx;
+        dz = 0.001679683928168/200; % dz = zEnd/200
+        x_M = xminb:dx:xmaxb;
+        y_M = yminb:dy:ymaxb;
+        z_M = zminb:dz:zmaxb;
+        % find the new 1D lengths 
+        Nx=numel(x_M);
+        Ny=numel(y_M);
+        Nz=numel(z_M);
+        % create zero arrays for Bx,By,and Bz (reduce time)
+        BX = zeros(Ny,Nx,Nz);
+        BY = zeros(Ny,Nx,Nz);
+        BZ = zeros(Ny,Nx,Nz);
+        % vector magnetic potential 
+        A0 = 0;
+        AX = zeros(Ny,Nx,Nz);
+        AY = zeros(Ny,Nx,Nz);
+        AZ = zeros(Ny,Nx,Nz);
+%--------------------- end: new:07-20-2021--------------------------------%
+        
         % create multi-dim arrays with the 1D arrays 
         [X,Y,Z]=meshgrid(x_M,y_M,z_M);
         t = 't';

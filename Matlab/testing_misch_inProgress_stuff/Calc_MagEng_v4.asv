@@ -30,29 +30,28 @@ function [Wm,L11] = Calc_MagEng_v4(SELF_IND,ANT1,AcrossH,I,SEL)
     zdis = abs( Z0(1,1,1) - Z0(1,1,end) );
     xdel = xdis/Nx; 
     ydel = ydis/Ny; 
-    zdel = zdis/Nz;
+    zdel = zdis/Nz; 
     dv   = xdel*ydel*zdel;
 %==========================[Computation]==================================%
 % Wm = (1/2)(1/u0)int_v'[B^2]dv' - (1/2)*int_s'[AxH]*an ds' (6-17)
 %      [         WM1           ] - [        WM2           ]    
     % WM1
     B2  = (BX0).^2 + (BY0).^2 + (BZ0).^2;
-    WM0 = (1/u0).*(1/2).*B2.*dv;
-    WM1 = sum(WM0,'all'); 
+    WM1 = (1/u0).*(1/2).*B2.*dv;
+    WMA = sum(WM1,'all'); 
     t ='t';
     % WM2
-    % + znorm
-    zP = (+1)*AZH(:,:,end);
-    % - znorm
-    zN = (-1)*AZH(:,:,1);
-    % + xnorm
-    xP = (+1)*AXH(:,end,:);
-    % - xnorm
-    xN = (-1)*AXH(:,1,:);
-    % + ynorm
-    yP = (+1)*AYH(end,:,:);
-    % - ynorm 
-    yN = (-1)*AYH(1,:,:);
+    anP = (+1);
+    anN = (-1);
+    xP  = (anP)*AXH(:,end,:).*(ydel*zdel);   % + xnorm
+    xN  = (anN)*AXH(:,1,:)  .*(ydel*zdel);   % - xnorm
+    yP  = (anP)*AYH(end,:,:).*(xdel*zdel);   % + ynorm
+    yN  = (anN)*AYH(1,:,:)  .*(xdel*zdel);   % - ynorm
+    zP  = (anP)*AZH(:,:,end).*(xdel*ydel);   % + znorm
+    zN  = (anN)*AZH(:,:,1)  .*(xdel*ydel);   % - znorm
+    WMB = (1/2).*sum(xP+yP+zP+xN+yN+zN,'all');
+    
+    Wm  = WMA - WMB;
+    L11 = (2*Wm)/(I.^2);
+    t='t';
 end
-
-

@@ -19,7 +19,7 @@ Nxy1    = 1;            % number of coils <scalar>
 N       = 3;            % number of turns in z-direction <scalar>
 %=========================================================================%
 numSeg  = 200*6*N;          % number of points along each coil <scalar>
-gap     = 0;            % gap <scalar> [m]
+gap     = 0;            % gap <scalar> [m] 
 h       = wT*0.35;      % height of structure
 zEnd    = N*2*pi*h;     % final z-value 
 %zEnd    = 10e-3;
@@ -186,7 +186,7 @@ t = 't';
 NN = 500;
 Nx = NN;  % resolution along x-direction  <scalar> [int]
 Ny = NN;  % resolution along y-direction  <scalar> [int]
-Nz = 20;
+Nz = 30;
 % upper/lower bounds based off the largest dim of loop
 % loop 1 (self)
 if(ri1>ra1)
@@ -208,8 +208,9 @@ end
 %-------------------min/max bounds for spatial points---------------------%
 %---------------------------self-inductance-------------------------------% 
 % lower bounds
-%bds = 2.00;
-bds = 1.75;
+bds = 3.00; % 200%
+%bds = 2.00; % 100%
+%bds = 1.75;
 %bds = 1.02;
 %bds = 1.25;
 %bds = 1.10;
@@ -345,7 +346,7 @@ SELF_IND = struct('X',  X11, 'Y', Y11, 'Z',Z11,...
 %[Wm, L11] = Calc_MagEng_v2(SELF_IND,I1);
 SEL = 'E';
 %[Wm, L11] = Calc_MagEng_v3(SELF_IND, ANT1, A, I1, SEL);
-[Wm, L11] = Calc_MagEng_v4(SELF_IND, ANT1, AcrossH, I1, SEL);
+[Wm,WMA,WMB,L11] = Calc_MagEng_v4(SELF_IND, ANT1, AcrossH, I1, SEL);
 
 %L11/1e-9
 %toc;
