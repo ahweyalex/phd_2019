@@ -31,6 +31,16 @@ function [Wm,WMA,WMB,L11] = Calc_MagEng_v4(SELF_IND,ANT1,AcrossH,I,SEL)
     xdel = xdis/Nx; 
     ydel = ydis/Ny; 
     zdel = zdis/Nz; 
+    %----------------ADD: 07-21-2021------------------%
+    ra1 = 10e-3;        % radius in y-axis <scalar> [m]
+    dx = (ra1*2)/200;
+    dy = dx;
+    dz = 0.001679683928168/200; % dz = zEnd/200
+    xdel = dx;
+    ydel = dy;
+    zdel = dz;
+    %--------------END: ADD: 07-21-2021---------------%
+    %
     dv   = xdel*ydel*zdel;
 %==========================[Computation]==================================%
 % Wm = (1/2)(1/u0)int_v'[B^2]dv' - (1/2)*int_s'[AxH]*an ds' (6-17)

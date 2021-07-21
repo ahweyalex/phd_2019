@@ -128,9 +128,10 @@ function [X,Y,Z,BX,BY,BZ,AX,AY,AZ] = CalcBSLOW(I,S,bBox,Ns,rotM,d)
         y_M = yminb:dy:ymaxb;
         z_M = zminb:dz:zmaxb;
         % find the new 1D lengths 
-        Nx=numel(x_M);
-        Ny=numel(y_M);
-        Nz=numel(z_M);
+        cbs = 'calcBSlow'
+        Nx=numel(x_M)
+        Ny=numel(y_M)
+        Nz=numel(z_M)
         % create zero arrays for Bx,By,and Bz (reduce time)
         BX = zeros(Ny,Nx,Nz);
         BY = zeros(Ny,Nx,Nz);
@@ -206,10 +207,13 @@ function [X,Y,Z,BX,BY,BZ,AX,AY,AZ] = CalcBSLOW(I,S,bBox,Ns,rotM,d)
                 AY(yn,xn,zn) = A0(2);
                 AZ(yn,xn,zn) = A0(3);
                 t = 't';
+%                 if(mod(zn,20)==0)
+%                     disp(num2str(zn));
+%                 end
             end % END:Z
         end % END:X
-        if(mod(yn,100)==0)
-           disp(num2str(yn));
+        if(mod(yn,10)==0)
+           disp(strcat(num2str(yn),'/',num2str(Ny)));
         end
     end % END:Y
 end % END: CalcBSLOW
