@@ -209,12 +209,12 @@ end
 %---------------------------self-inductance-------------------------------% 
 % lower bounds
 %bds = 3.00; % 200%
-%bds = 2.00; % 100%
+bds = 2.00; % 100%
 %bds = 1.75;
 %bds = 1.02;
 %bds = 1.25;
 %bds = 1.10;
-bds = 1.50;
+%bds = 1.50;
 
 xminb11 = -bds*b1;   % lower x-bound
 yminb11 = -bds*b1;   % lower y-bound
