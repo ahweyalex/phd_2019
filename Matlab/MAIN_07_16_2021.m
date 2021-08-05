@@ -183,10 +183,10 @@ t = 't';
 %Ny = 1e3;  % resolution along y-direction  <scalar> [int]
 %Nz = 100;     % resolution along z-direction  <scalar> [int]
 
-NN = 500;
+NN = 100;
 Nx = NN;  % resolution along x-direction  <scalar> [int]
 Ny = NN;  % resolution along y-direction  <scalar> [int]
-Nz = 30;
+Nz = NN;
 % upper/lower bounds based off the largest dim of loop
 % loop 1 (self)
 if(ri1>ra1)
@@ -216,23 +216,31 @@ bds = 2.00; % 100%
 %bds = 1.10;
 %bds = 1.50;
 
-xminb11 = -bds*b1;   % lower x-bound
-yminb11 = -bds*b1;   % lower y-bound
+%%xminb11 = -bds*b1;   % lower x-bound
+%%yminb11 = -bds*b1;   % lower y-bound
 %zminb11 = zEnd/2;     % lower z-bound (self-inductance)
 %zminb11 = 0;     % lower z-bound (self-inductance)
-zminb11 = -bds*zEnd + zEnd;
+%%zminb11 = -bds*zEnd + zEnd;
 
 %zminb11 = -bds*b1;
 
 % upper bounds 
-xmaxb11 = bds*b1;    % maximum x-bound
-ymaxb11 = bds*b1;    % maximum y-bound
+%%xmaxb11 = bds*b1;    % maximum x-bound
+%%ymaxb11 = bds*b1;    % maximum y-bound
 %zmaxb11 = zEnd*1.10;
 %zmaxb11 = zEnd/2;     % maximum z-bound (self-inductance)
-zmaxb11 = bds*zEnd;     % maximum z-bound (self-inductance)
+%%zmaxb11 = bds*zEnd;     % maximum z-bound (self-inductance)
 %zmaxb11 = bds*b1;
 %zmaxb11 = zEnd;
 
+% lower bounds
+xminb11 = -40e-3;
+yminb11 = -40e-3;
+zminb11 = -40e-3;
+% upper bounds 
+xmaxb11 =  40e-3;
+ymaxb11 =  40e-3;
+zmaxb11 =  40e-3;
 %-------------------------mutual-inductance-------------------------------% 
 % upper bounds
 if(max(sx30_2r)>max(sy30_2r))

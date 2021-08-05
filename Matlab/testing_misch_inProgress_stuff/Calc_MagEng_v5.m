@@ -31,12 +31,30 @@ function [Wm,WMA,WMB,L11] = Calc_MagEng_v4(SELF_IND,ANT1,AcrossH,I,SEL)
     xdel = xdis/Nx; 
     ydel = ydis/Ny; 
     zdel = zdis/Nz; 
-    %----------------ADD: 07-21-2021------------------%
-    ra1 = 10e-3;        % radius in y-axis <scalar> [m]
-    dx = (ra1*2)/200;
-    dy = dx;
-    dz = 0.001679683928168/200; % dz = zEnd/200
-    %--------------END: ADD: 07-21-2021---------------%
+    %----------------ADD: 07-28-2021------------------%
+    %ra1 = 10e-3;        % radius in y-axis <scalar> [m]
+    %dx = (ra1*2)/200;
+    %dy = dx;
+    %dz = 0.001679683928168/200; % dz = zEnd/200
+    %xdel = dx;
+    %ydel = dy;
+    %zdel = dz;
+    % lower bounds
+    xminb11 = min(X0,[],'all');
+    yminb11 = min(Y0,[],'all');
+    zminb11 = min(Z0,[],'all');
+    % upper bounds 
+    xmaxb11 = max(X0,[],'all');
+    ymaxb11 = max(Y0,[],'all');
+    zmaxb11 = max(Z0,[],'all');
+    % distance
+    xdis = abs(xminb11-xmaxb11);
+    ydis = abs(yminb11-ymaxb11);
+    zdis = abs(zminb11-zmaxb11);
+    xdel = xdis/Nx; 
+    ydel = ydis/Ny; 
+    zdel = zdis/Nz;     
+    %--------------END: ADD: 07-28-2021---------------%
     %
     dv   = xdel*ydel*zdel;
 %==========================[Computation]==================================%

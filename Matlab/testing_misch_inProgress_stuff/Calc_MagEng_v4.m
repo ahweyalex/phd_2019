@@ -25,21 +25,34 @@ function [Wm,WMA,WMB,L11] = Calc_MagEng_v4(SELF_IND,ANT1,AcrossH,I,SEL)
     N    = ANT1.N;
     % Deltas
     [Ny, Nx, Nz] = size(X0);
-    xdis = abs( X0(1,1,1) - X0(1,end,1) );
-    ydis = abs( Y0(1,1,1) - Y0(end,1,1) );
-    zdis = abs( Z0(1,1,1) - Z0(1,1,end) );
+    %xdis = abs( X0(1,1,1) - X0(1,end,1) );
+    %ydis = abs( Y0(1,1,1) - Y0(end,1,1) );
+    %zdis = abs( Z0(1,1,1) - Z0(1,1,end) );
+    
+    % lower bounds
+    xminb11 = min(X0,[],'all');
+    yminb11 = min(Y0,[],'all');
+    zminb11 = min(Z0,[],'all');    
+    % upper bounds 
+    xmaxb11 = max(X0,[],'all');
+    ymaxb11 = max(Y0,[],'all');
+    zmaxb11 = max(Z0,[],'all');
+    % distance
+    xdis = abs(xminb11-xmaxb11);
+    ydis = abs(yminb11-ymaxb11);
+    zdis = abs(zminb11-zmaxb11);    
     xdel = xdis/Nx; 
     ydel = ydis/Ny; 
     zdel = zdis/Nz; 
-    %----------------ADD: 07-21-2021------------------%
-    ra1 = 10e-3;        % radius in y-axis <scalar> [m]
-    dx = (ra1*2)/200;
-    dy = dx;
-    dz = 0.001679683928168/200; % dz = zEnd/200
-    xdel = dx;
-    ydel = dy;
-    zdel = dz;
-    %--------------END: ADD: 07-21-2021---------------%
+%     %----------------ADD: 07-21-2021------------------%
+%     ra1 = 10e-3;        % radius in y-axis <scalar> [m]
+%     dx = (ra1*2)/200;
+%     dy = dx;
+%     dz = 0.001679683928168/200; % dz = zEnd/200
+%     xdel = dx;
+%     ydel = dy;
+%     zdel = dz;
+%     %--------------END: ADD: 07-21-2021---------------%
     %
     dv   = xdel*ydel*zdel;
 %==========================[Computation]==================================%
