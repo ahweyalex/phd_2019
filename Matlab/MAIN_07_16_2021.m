@@ -183,7 +183,7 @@ t = 't';
 %Ny = 1e3;  % resolution along y-direction  <scalar> [int]
 %Nz = 100;     % resolution along z-direction  <scalar> [int]
 
-NN = 100;
+NN = 400;
 Nx = NN;  % resolution along x-direction  <scalar> [int]
 Ny = NN;  % resolution along y-direction  <scalar> [int]
 Nz = NN;
@@ -233,14 +233,29 @@ bds = 2.00; % 100%
 %zmaxb11 = bds*b1;
 %zmaxb11 = zEnd;
 
+% abs bounds
+bb = 20e-3;
 % lower bounds
-xminb11 = -40e-3;
-yminb11 = -40e-3;
-zminb11 = -40e-3;
+xminb11 = -bb;
+yminb11 = -bb;
+zminb11 = -bb;
 % upper bounds 
-xmaxb11 =  40e-3;
-ymaxb11 =  40e-3;
-zmaxb11 =  40e-3;
+xmaxb11 = +bb;
+ymaxb11 = +bb;
+zmaxb11 = +bb;
+
+% ------------------------ ADD: 08-16-2021------------------%
+% rewrite NN: 
+% set delta: 
+xd = (2*10e-3)/200;
+x_M = xminb11:xd:xmaxb11;
+NN = round(numel(x_M));
+disp(strcat('NN:',num2str(NN)));
+Nx = NN;  % resolution along x-direction  <scalar> [int]
+Ny = NN;  % resolution along y-direction  <scalar> [int]
+Nz = NN;
+% ------------------------ ADD: 08-16-2021------------------%
+
 %-------------------------mutual-inductance-------------------------------% 
 % upper bounds
 if(max(sx30_2r)>max(sy30_2r))
@@ -357,5 +372,5 @@ SEL = 'E';
 [Wm,WMA,WMB,L11] = Calc_MagEng_v4(SELF_IND, ANT1, AcrossH, I1, SEL);
 
 %L11/1e-9
-%toc;
+toc;
 disp('done')

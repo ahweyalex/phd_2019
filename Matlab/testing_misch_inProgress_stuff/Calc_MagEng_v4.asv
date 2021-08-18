@@ -56,15 +56,16 @@ function [Wm,WMA,WMB,L11] = Calc_MagEng_v4(SELF_IND,ANT1,AcrossH,I,SEL)
     %
     dv   = xdel*ydel*zdel;
     
-    [idx] = find(isnan(BX0));
-    [idy] = find(isnan(BY0));
-    [idz] = find(isnan(BZ0));
+    [rx,cx,px] = find(isnan(BX0));
+    [ry,cy,py] = find(isnan(BY0));
+    [rz,cz,pz] = find(isnan(BZ0));
     for id=1:numel(idx)
-        BX0(idx(id)) = 0.1e-15;
-        BY0(idx(id)) = 0.1e-15;
-        BZ0(idx(id)) = 0.1e-15;
+        BX0(id) = 0;
+        BY0(id) = 0;
+        BZ0(id) = 0;
     end
-       
+ t='t';   
+    
 %==========================[Computation]==================================%
 % Wm = (1/2)(1/u0)int_v'[B^2]dv' - (1/2)*int_s'[AxH]*an ds' (6-17)
 %      [         WM1           ] - [        WM2           ]    
